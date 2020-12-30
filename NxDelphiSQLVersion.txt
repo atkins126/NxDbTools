@@ -1,0 +1,2 @@
+5.0.0
+https://www.slickrocksoftwaredesign.com/Installs/NxDelphiSQLTools/NxDelphiSQLTools5-0-0/NxDelphiSQLToolsSetup.exe

@@ -1,0 +1,34 @@
+﻿
+
+[Exception Log]
+EurekaLog Version=8000
+Activate=1
+atFixSafeCallException=1
+atVCL=1
+atWin32=1
+bugIDUseExceptionModuleDateTime=1
+bugIDUseExceptionModuleVersion=1
+bugIDUseMessage=1
+bugIDUseProjectID=1
+csoShowELThreads=1
+csoShowRTLThreads=1
+csoShowWindowsThreads=1
+Debug=1
+DeleteMapAfterCompile=0
+dpJCL=1
+Encrypt Password=""
+idEurekaLog=1
+idEurekaLogDetailed=1
+idMSClassic=1
+idStepsToReproduce=1
+InjectCode=1
+InjectInfo=1
+InjectOptions=1
+loAttemptToUseSharedMM=1
+loEnableMMDebugMode=1
+LogAppExits=1
+loRAWTracing=1
+ProjectID="{79E75A57-A0CE-43BC-B1A8-7F0A2EA229EF}"
+Stats=1
+_CustomProfile=""
+
