@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2019/11/22 07:42:49.000.662,=Z:\Delphi 10\NxDbSQLViewer\Unit1.pas</Transaction>
+    <Transaction>2019/11/22 07:44:09.000.506,=Z:\Delphi 10\NxDbSQLViewer\Unit1.pas</Transaction>
+    <Transaction>2019/11/22 08:01:41.000.046,Z:\Delphi 10\NxDbSQLViewer\Unit1.dfm=Z:\Delphi 10\NxDbSQLViewer\EditAddDelSQL.dfm</Transaction>
+    <Transaction>2019/11/22 08:01:41.000.046,Z:\Delphi 10\NxDbSQLViewer\Unit1.pas=Z:\Delphi 10\NxDbSQLViewer\EditAddDelSQL.pas</Transaction>
+  </Transactions>
+</BorlandProject>
