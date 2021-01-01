@@ -932,7 +932,7 @@ end;
 
 procedure Tfrm_SelectProject.btn_ResetLocalDbPathClick(Sender: TObject);
 begin
-  edit_DbPath.Text := DelphiSQLToolsDbPath;
+  edit_DbPath.Text := DelphiDbDefaultPath;
 end;
 
 
