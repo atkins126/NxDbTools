@@ -14,9 +14,9 @@ uses
    Vcl.DBCGrids, Vcl.DBCtrls, Vcl.Imaging.pngimage, Vcl.Menus,
   Vcl.WinXCtrls,
 
-  GemMruList, PngImageList, Global,
+  GemMruList, PngImageList, Global, SBPro,
 
-  nxdb, Data.DB,
+  nxdb, Data.DB, nxpvPlatformImplementation,
 
   RzEdit, RzDBEdit, RzPanel, RzDBNav,
 
@@ -24,12 +24,10 @@ uses
   JvRadioButton, JvRollOut, JvLabel, JvDBControls, JvButton, JvPanel, JvCombobox,
   JvTransparentButton, JvExControls, JvLED, JvExExtCtrls, JvExtComponent,
   JvDBSearchComboBox, JvExMask, JvToolEdit, JvMaskEdit, JvDBFindEdit, JvListBox,
-  JvXPCore, JvXPButtons,
+  JvXPCore, JvXPButtons, JvImage, JvImageList, JvSpeedButton,
+  JvComboListBox, GEMDBLabel, JvBalloonHint, JvBehaviorLabel
 
-  {$IFDEF  USE_CODESITE} CodeSiteLogging, {$ENDIF}
-
-  SBPro, JvImage, JvImageList, JvSpeedButton,
-  JvComboListBox, GEMDBLabel, JvBalloonHint, JvBehaviorLabel;
+  {$IFDEF  USE_CODESITE}, CodeSiteLogging {$ENDIF};
 
 
 type
@@ -86,7 +84,7 @@ type
     edit_DbPath             : TEdit;
     edt_Alias               : TEdit;
     edt_NetWorkServer       : TEdit;
-    Label12                 : TLabel;
+    lbl_CaptionForDBAlais: TLabel;
     Label11                 : TLabel;
     Label10                 : TLabel;
     Label9                  : TLabel;
@@ -102,8 +100,8 @@ type
     Label5                  : TLabel;
     Label15                 : TLabel;
     Label16                 : TLabel;
-    Label17                 : TLabel;
-    Label18                 : TLabel;
+    lbl_CaptionForServerLb: TLabel;
+    lbl_CaptionNetServerSelected: TLabel;
     GEMDBLabel1             : TGEMDBLabel;
     btn_CopyDbTables        : TButton;
     btn__SplitViewOpenClose : TButton;
@@ -182,8 +180,7 @@ var
 
 implementation
 uses
-  {$IFDEF BACKUPIDE}frm_BackupPrjs,  {$ELSE} NxToolsMain, {$ENDIF}
-  GEMUseFullRoutines, DataMod;
+  NxToolsMain, GEMUseFullRoutines, DataMod;
 {$R *.dfm}
 {.$R Moreimages.res}
 
@@ -363,13 +360,13 @@ end;
 
 procedure Tfrm_SelectProject.SetDialogServerType;
 begin
-  Label12.Enabled              := rb_NetworkedDb.Checked;
-  edt_Alias.enabled            := rb_NetworkedDb.Checked;
-  Label17.Enabled              := rb_NetworkedDb.Checked;
-  lb_ServerNames.Enabled       := rb_NetworkedDb.Checked;
-  Label18.Enabled              := rb_NetworkedDb.Checked;
-  edt_NetWorkServer.Enabled    := rb_NetworkedDb.Checked;
-  ts_DefaultAliasBtnDb.Enabled := rb_NetworkedDb.Checked;
+  lbl_CaptionForDBAlais.Enabled        := rb_NetworkedDb.Checked;
+  edt_Alias.enabled                    := rb_NetworkedDb.Checked;
+  lbl_CaptionForServerLb.Enabled       := rb_NetworkedDb.Checked;
+  lb_ServerNames.Enabled               := rb_NetworkedDb.Checked;
+  lbl_CaptionNetServerSelected.Enabled := rb_NetworkedDb.Checked;
+  edt_NetWorkServer.Enabled            := rb_NetworkedDb.Checked;
+  ts_DefaultAliasBtnDb.Enabled         := rb_NetworkedDb.Checked;
 
   JvXPButton1.Enabled := rb_LocalDb.Checked;
   Label5.Enabled      := rb_LocalDb.Checked;
@@ -377,8 +374,23 @@ begin
 
   act_ConnectBtn.Enabled := rb_NetworkedDb.Checked or rb_LocalDb.Checked;
   lb_ServerNames.Items.Clear;
-  if (act_ConnectBtn.Enabled)  then begin
-    dm_DataMod.nxwint_SqlToolsTrans.GetServerNames(lb_ServerNames.Items, 5);
+
+
+  if rb_NetworkedDb.Checked  then begin
+    dm_DataMod.nxrse_SqlTools.Close;
+    dm_DataMod.nxrse_SqlTools.Transport := dm_DataMod.nxwint_SqlToolsTrans;
+
+//    dm_DataMod.nxwint_SqlToolsTrans.Close;
+//    dm_DataMod.nxwint_SqlToolsTrans.ServerName := '';
+//    dm_DataMod.nxwint_SqlToolsTrans.ServerNameRuntime := '';
+//    dm_DataMod.nxwint_SqlToolsTrans.ServerNameDesigntime := '';
+////    dm_DataMod.nxwint_SqlToolsTrans.Active := true;
+//
+//    dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxrse_SqlTools;
+//
+////    dm_DataMod.nxsn_SqlTools.ServerEngine.Open;
+//
+    dm_DataMod.nxwint_SqlToolsTrans.GetServerNames(lb_ServerNames.Items, 5000);
     lb_ServerNames.ItemIndex := lb_ServerNames.Items.IndexOf(edt_NetWorkServer.Text);
   end
   else begin
@@ -576,13 +588,12 @@ begin
       end;
     lstGemMruList1.Add(string(fPrjInfo.PrjName), string(fPrjInfo.PrjPath));
     fPrjInfo.EndUpdate;
-    {$IFDEF NXSQLTOOLS}frm_NxToolsMain.ProjectInfo{$ELSE}frm_BackupTools.ProjectInfo{$ENDIF}:= fPrjInfo;
+    frm_NxToolsMain.ProjectInfo := fPrjInfo;
     OpenProject(Sender);
   end
   else begin
     fPrjInfo.EndUpdate;
-    {$IFDEF NXSQLTOOLS}frm_NxToolsMain.ProjectInfo{$ELSE}frm_BackupTools.ProjectInfo{$ENDIF}:= fPrjInfo;
-//    frm_NxToolsMain.ProjectInfo := fPrjInfo;
+    frm_NxToolsMain.ProjectInfo := fPrjInfo;
   end;
 end;
 
@@ -628,8 +639,12 @@ procedure Tfrm_SelectProject.act_SetNetwodkDbTypeExecute(Sender: TObject);
 var
   fStatus: string;
 begin
-  if not SetPrjDbServerType(false, fStatus) then
-    MessageDlg('msg 627-Error in Setup of Networked Database.', mtError, [mbOK], 0);
+  SetDialogServerType;
+
+
+
+//  if not SetPrjDbServerType(false, fStatus) then
+//    MessageDlg('msg 627-Error in Setup of Networked Database.', mtError, [mbOK], 0);
 end;
 
 
@@ -667,7 +682,7 @@ end;
 
 procedure Tfrm_SelectProject.FormCreate(Sender: TObject);
 begin
-//  edit_DbPath.Text := DelphiDbDefaultPath;
+//  edit_DbPath.Text := Delphi                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            SQLToolsDbPath;
   lstGemMruList1.MruListFile := MRUFile;
 //  XmlDoc.FileName := PathAndFileAtFormLocSize;
   fprjInfo.ClearPrj;
@@ -677,7 +692,7 @@ begin
   else
     sv_SetLocalNetworkPrjDb_Closing(Sender); // sets width of dialogs
 //  if edit_DbPath.Text = '' then
-//    edit_DbPath.Text := DelphiDbDefaultPath;
+//    edit_DbPath.Text := DelphiSQLToolsDbPath;
 end;
 
 
@@ -867,7 +882,7 @@ begin
         JvDBSearchComboBox1.DataSource := dm_DataMod.ds_NxDbSqlToolsPrjs;
         dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
 {$IFDEF DEBUG}
-showmessage('msg 861-act_ConnectBtnExecute: '+ ExpandUNCFileName(JvSelectDirectory1.Directory));
+showmessage('msg 868-act_ConnectBtnExecute: '+ ExpandUNCFileName(JvSelectDirectory1.Directory));
 {$ENDIF}
         dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('PrjPath').AsString := ExpandUNCFileName(edit_DbPath.Text);
 //                                 ExpandUNCFileName(JvSelectDirectory1.Directory);
@@ -875,7 +890,7 @@ showmessage('msg 861-act_ConnectBtnExecute: '+ ExpandUNCFileName(JvSelectDirecto
 
         sv_SetLocalNetworkPrjDb_.Opened := False;
       except
-        MessageDlg('msg 869-Could NOT open Prjs/SQLBtns database!', mtError, [mbOK], 0);
+        MessageDlg('msg 876-Could NOT open Prjs/SQLBtns database!', mtError, [mbOK], 0);
       end;
     end
     else begin
@@ -884,10 +899,10 @@ showmessage('msg 861-act_ConnectBtnExecute: '+ ExpandUNCFileName(JvSelectDirecto
       NxDelphiSqlTools_Status.DataSource := nil;
       sv_SetLocalNetworkPrjDb_.Opened := true;
       if rb_LocalDb.Checked then
-        MessageDlg('msg 878- Prjs/SQLBtns Db.' +#13+#10+ 'ERROR: ' + fStatus+#13+#10+
+        MessageDlg('msg 885- Prjs/SQLBtns Db.' +#13+#10+ 'ERROR: ' + fStatus+#13+#10+
                    'Try selecting different Folder.', mtError, [mbOK], 0)
       else
-        MessageDlg('msg 881- Prjs/SQLBtns Db.' +#13+#10+ 'ERROR: ' + fStatus+#13+#10+
+        MessageDlg('msg 888- Prjs/SQLBtns Db.' +#13+#10+ 'ERROR: ' + fStatus+#13+#10+
                    'Check or select different sever.', mtError, [mbOK], 0);
     end;
 end;
@@ -917,7 +932,7 @@ end;
 
 procedure Tfrm_SelectProject.btn_ResetLocalDbPathClick(Sender: TObject);
 begin
-  edit_DbPath.Text := DelphiDbDefaultPath;
+  edit_DbPath.Text := DelphiSQLToolsDbPath;
 end;
 
 

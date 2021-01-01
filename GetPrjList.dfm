@@ -591,7 +591,7 @@ object frm_SelectProject: Tfrm_SelectProject
       Height = 13
       Caption = 'Local Database Path:'
     end
-    object Label12: TLabel
+    object lbl_CaptionForDBAlais: TLabel
       Left = 253
       Top = 217
       Width = 118
@@ -631,14 +631,14 @@ object frm_SelectProject: Tfrm_SelectProject
       Font.Style = [fsBold]
       ParentFont = False
     end
-    object Label17: TLabel
+    object lbl_CaptionForServerLb: TLabel
       Left = 4
       Top = 125
       Width = 111
       Height = 13
       Caption = 'Select WinSock Server:'
     end
-    object Label18: TLabel
+    object lbl_CaptionNetServerSelected: TLabel
       Left = 252
       Top = 125
       Width = 80
@@ -669,10 +669,10 @@ object frm_SelectProject: Tfrm_SelectProject
     object rb_NetworkedDb: TJvRadioButton
       Left = 73
       Top = 29
-      Width = 104
+      Width = 137
       Height = 17
+      Action = act_SetNetwodkDbType
       Alignment = taLeftJustify
-      Caption = 'Network Db Type'
       TabOrder = 1
       LinkedControls = <>
     end
