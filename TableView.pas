@@ -230,7 +230,7 @@ begin
   fDockingRect.Ud_Height := Height;
   pgc_TableInfo.ActivePageIndex := 0;
 
-  adpmr_TableFilters.IniFilePath := string(fPrjPath + FilterIniFiles);
+  adpmr_TableFilters.IniFilePath := string(fPrjPath + cFilterIniFiles);
   adpmr_TableFilters.UseIniFile := True;
   adpmr_TableFilters.MaxItems := 7;
 end;

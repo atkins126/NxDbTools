@@ -193,10 +193,6 @@ object frm_TableView: Tfrm_TableView
     TabPosition = tpLeft
     object ts_Grid: TTabSheet
       Caption = 'Data Grid'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object rzdbgrd_1: TRzDBGrid
         Left = 0
         Top = 0
@@ -256,6 +252,7 @@ object frm_TableView: Tfrm_TableView
             Caption = 'Required'
           end>
         GridLines = True
+        Items.ItemData = {}
         ReadOnly = True
         TabOrder = 0
         ViewStyle = vsReport
@@ -285,6 +282,7 @@ object frm_TableView: Tfrm_TableView
             Caption = 'Description'
           end>
         GridLines = True
+        Items.ItemData = {}
         ParentShowHint = False
         ReadOnly = True
         ShowHint = False

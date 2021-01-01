@@ -667,7 +667,7 @@ end;
 
 procedure Tfrm_SelectProject.FormCreate(Sender: TObject);
 begin
-  edit_DbPath.Text := DelphiSQLToolsDbPath;
+//  edit_DbPath.Text := DelphiDbDefaultPath;
   lstGemMruList1.MruListFile := MRUFile;
 //  XmlDoc.FileName := PathAndFileAtFormLocSize;
   fprjInfo.ClearPrj;
@@ -676,8 +676,8 @@ begin
     sv_SetLocalNetworkPrjDb_.Opened := false
   else
     sv_SetLocalNetworkPrjDb_Closing(Sender); // sets width of dialogs
-  if edit_DbPath.Text = '' then
-    edit_DbPath.Text := DelphiSQLToolsDbPath;
+//  if edit_DbPath.Text = '' then
+//    edit_DbPath.Text := DelphiDbDefaultPath;
 end;
 
 
@@ -917,7 +917,7 @@ end;
 
 procedure Tfrm_SelectProject.btn_ResetLocalDbPathClick(Sender: TObject);
 begin
-  edit_DbPath.Text := DelphiSQLToolsDbPath;
+  edit_DbPath.Text := DelphiDbDefaultPath;
 end;
 
 

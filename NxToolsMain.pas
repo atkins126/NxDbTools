@@ -678,27 +678,27 @@ begin
 
   SQLBtnsArray[aIndex].Tag         := aIndex;
   SQLBtnsArray[aIndex].Transparent := false;
-  SQLBtnsArray[aIndex].Color := cBtnColor;
+  SQLBtnsArray[aIndex].Color       := cBtnColor;
   SQLBtnsArray[aIndex].Hint := dm_DataMod.NxSqlButtonsDbTHints.AsString;
-  SQLBtnsArray[aIndex].ShowHint := true;
+  SQLBtnsArray[aIndex].ShowHint    := true;
   SQLBtnsArray[aIndex].UrlHelp := dm_DataMod.NxSqlButtonsDbTNexusDbHelpUrl.AsString;
 
-  SQLBtnsArray[aIndex].Font.Color  := cFontColor;
+  SQLBtnsArray[aIndex].Font.Color := cFontColor;
   SQLBtnsArray[aIndex].BevelOuter := bvRaised;
 
   SQLBtnsArray[aIndex].BtnId := dm_DataMod.NxSqlButtonsDbTBtnId.AsInteger;
   SQLBtnsArray[aIndex].Panel := dm_DataMod.NxSqlButtonsDbTPanelNum.AsInteger;
   SQLBtnsArray[aIndex].Width := dm_DataMod.NxSqlButtonsDbTBtnWidth.AsInteger;
 
-  SQLBtnsArray[aIndex].Height            := BtnDefaultHieght;
+  SQLBtnsArray[aIndex].Height            := cBtnDefaultHieght;
   TwinControl(SQLBtnsArray[aIndex]).Top  := dm_DataMod.NxSqlButtonsDbTBtnTop.AsInteger;
   TwinControl(SQLBtnsArray[aIndex]).Left := dm_DataMod.NxSqlButtonsDbTBtnLeft.AsInteger;
   SQLBtnsArray[aIndex].Top               := dm_DataMod.NxSqlButtonsDbTBtnTop.AsInteger;
   SQLBtnsArray[aIndex].Left              := dm_DataMod.NxSqlButtonsDbTBtnLeft.AsInteger;
 
   SQLBtnsArray[aIndex].PanelRect := Rect(SQLBtnsArray[aIndex].Left, SQLBtnsArray[aIndex].Top,
-                                        SQLBtnsArray[aIndex].Left + SQLBtnsArray[aIndex].Width,
-                                        SQLBtnsArray[aIndex].Top + SQLBtnsArray[aIndex].Height);
+                                         SQLBtnsArray[aIndex].Left + SQLBtnsArray[aIndex].Width,
+                                         SQLBtnsArray[aIndex].Top + SQLBtnsArray[aIndex].Height);
 
   SQLBtnsArray[aIndex].Caption := dm_DataMod.NxSqlButtonsDbTCaption.AsString;
   SQLBtnsArray[aIndex].ExtraText := dm_DataMod.NxSqlButtonsDbTExtraText.AsString;

@@ -12,13 +12,11 @@ uses
 
   Data.DB, nxdb,
 
-  MSspecialFolders,
+  MSspecialFolders, GemINI,
 
   JvPanel,
 
-  SynHighlighterSQL,
-
-  GemINI;
+  SynHighlighterSQL;
 
 type
   TStatusPanelOrder = (spoMemory, spoAlias, spoDefaultPrjDir, spoDbStatus, spoDbVer, spoCurrenPrj);
@@ -34,9 +32,10 @@ type
                 eaTableNameAttri, eaFunctionAttri);
   TTransportUsed = (tranWinSock, tranNamePipe, tranLocalServer, tranSharedMem, tranNone, tranError);
   TDockingFormType = (TSQLForm, TTblForm, TNoForm);
-  tStr95 = string[95];
-  tStr45 = string[45];
-  tStr25 = string[25];
+
+  tStr95  = string[95];
+  tStr45  = string[45];
+  tStr25  = string[25];
   tStr255 = string[255];
 
   TChangeTransport = procedure(aTransport: TTransportUsed) of Object;
@@ -173,7 +172,7 @@ var
   PathAndFileAtFormLocSize   : string;
   AppPath                    : string;
 //  FunctionNamesPath          : string;
-  DelphiSQLToolsDbPath       : string;
+  DelphiDbDefaultPath        : string;
   NxSQLViewerDataIniFile     : tGemINI;
   SQLBtnsArray               : Tarray<tJvPanel>;
 //  RootNodeDbArray            : Tarray<tRootNodeDb>;
@@ -193,18 +192,18 @@ var
 const
   WM_SHOWPRJSDIALOG = WM_APP + 321;
 
-  SRSDpath = '\SlickRockSoftwareDesign\NxDatabaseViewer';
+  cSRSDpath = '\SlickRockSoftwareDesign\NxDatabaseViewer';
 
 //  FunctionNamesFile   = '\sqlFunctionNames.txt'; // remove   // User extra function names for highlighting
-  NxTableViewerIni    = '\nxTableViewer.ini';   // keep  // Floating form location and size memory
+  cNxTableViewerIni    = '\nxTableViewer.ini';   // keep  // Floating form location and size memory
   cDelphiSqToolsDbPath = '\DelphiSqlToolsDb\';   // keep // Nexus Delphi Sql Tools database
-  FormLocSizeDef      = '\FormLocSizeDefs.xml'; // keep  // Location and size of forms memory
-  BtnDefaultHieght    = 20;
+  cFormLocSizeDef      = '\FormLocSizeDefs.xml'; // keep  // Location and size of forms memory
+  cBtnDefaultHieght    = 20;
 //  MRUItemsIni         = '\NexusDbSQLMRUItems.ini'; // remove
-  LocalServerAliases  = '\LocalDbs.txt'; //
-  FilterIniFiles      = '\Filters.ini';
-  DefaultPathForPrjs  = '\NxSQL_Prjs'; // remove
-  cthe_DefaultPrjPath = '\DefaultPrj';
+  cLocalServerAliases  = '\LocalDbs.txt'; //
+  cFilterIniFiles      = '\Filters.ini';
+  cDefaultPathForPrjs  = '\NxSQL_Prjs'; // remove
+  cThe_DefaultPrjPath = '\DefaultPrj';
 
   cPrgFileName = '\ProjectSetup.prj'; // remove
   cMRUFileName = '\MRUPrj.txt';  // ok
@@ -376,8 +375,8 @@ begin
   fPrjPathValidChars := True;
   fTheProjects.NameValueSeparator := '=';
 
-  AppPath := getWinSpecialFolder(CSIDL_LOCAL_APPDATA, False) + SRSDpath;
-  DefaultPathForPrjsFolder := getWinSpecialFolder(CSIDL_PERSONAL, false) + DefaultPathForPrjs + '\';
+  AppPath := getWinSpecialFolder(CSIDL_LOCAL_APPDATA, False) + cSRSDpath;
+  DefaultPathForPrjsFolder := getWinSpecialFolder(CSIDL_PERSONAL, false) + cDefaultPathForPrjs + '\';
   fPrjPathValidChars       := TPath.HasValidPathChars(DefaultPathForPrjsFolder, false);
 
   MRUFile                  := AppPath + cMRUFileName;  //DefaultPathForPrjsFolder +
@@ -392,17 +391,17 @@ begin
 
   ForceDirectories(UpdateInstallPath);
 
-  IniNxSQLPathFile := DefaultPathForPrjsFolder + FilterIniFiles;
+  IniNxSQLPathFile := DefaultPathForPrjsFolder + cFilterIniFiles;
 
   SqlFontStylesSaveFilePath := AppPath + cSqlFontFileName;
 
 
-  PathAndFileIni             := AppPath + NxTableViewerIni;
+  PathAndFileIni             := AppPath + cNxTableViewerIni;
 //  FunctionNamesPath          := AppPath + FunctionNamesFile;
-  DelphiSQLToolsDbPath       := AppPath + cDelphiSqToolsDbPath;
-  PathAndFileAtFormLocSize   := AppPath + FormLocSizeDef;
+  DelphiDbDefaultPath        := AppPath + cDelphiSqToolsDbPath;
+  PathAndFileAtFormLocSize   := AppPath + cFormLocSizeDef;
 //  MRUMenuItemsPathFile       := AppPath + MRUItemsIni;
-  LocalServerAliasesPath     := AppPath + LocalServerAliases;
+  LocalServerAliasesPath     := AppPath + cLocalServerAliases;
 
 end;
 

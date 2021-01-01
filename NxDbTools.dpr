@@ -2,19 +2,6 @@
 program NxDbTools;
 
 uses
-  {$IFDEF EurekaLog}
-  EMemLeaks,
-  EResLeaks,
-  EDialogWinAPIMSClassic,
-  EDialogWinAPIEurekaLogDetailed,
-  EDialogWinAPIStepsToReproduce,
-  EDebugExports,
-  EDebugJCL,
-  EFixSafeCallException,
-  EMapWin32,
-  EAppVCL,
-  ExceptionLog7,
-  {$ENDIF EurekaLog}
   Vcl.Forms,
   TableView in 'TableView.pas' {frm_TableView},
   SQLView in 'SQLView.pas' {frm_SQLView},
@@ -53,5 +40,6 @@ begin
   Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.
+
 
 
