@@ -7,14 +7,14 @@ uses
   Winapi.Windows, Winapi.Messages,
 
   System.SysUtils, System.Variants, System.Classes, System.StrUtils,
-  System.Actions, System.UITypes,
+  System.Actions, System.UITypes, System.ImageList,
 
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons,
   Vcl.ExtCtrls, Vcl.ActnList, Vcl.FileCtrl, Vcl.WinXPanels, Vcl.Mask,
-   Vcl.DBCGrids, Vcl.DBCtrls, Vcl.Imaging.pngimage, Vcl.Menus,
-  Vcl.WinXCtrls,
+  Vcl.DBCGrids, Vcl.DBCtrls, Vcl.Imaging.pngimage, Vcl.Menus, Vcl.ImgList,
+  Vcl.WinXCtrls, Vcl.CategoryButtons,
 
-  GemMruList, PngImageList, Global, SBPro,
+  GemMruList, PngImageList, Global, SBPro, GEMDBLabel,
 
   nxdb, Data.DB, nxpvPlatformImplementation,
 
@@ -25,8 +25,9 @@ uses
   JvTransparentButton, JvExControls, JvLED, JvExExtCtrls, JvExtComponent,
   JvDBSearchComboBox, JvExMask, JvToolEdit, JvMaskEdit, JvDBFindEdit, JvListBox,
   JvXPCore, JvXPButtons, JvImage, JvImageList, JvSpeedButton,
-  JvComboListBox, GEMDBLabel, JvBalloonHint, JvBehaviorLabel,
-  Vcl.CategoryButtons, System.ImageList, Vcl.ImgList
+  JvComboListBox, JvBalloonHint, JvBehaviorLabel,
+
+  CardHelper, PngSpeedButton
 
   {$IFDEF  USE_CODESITE}, CodeSiteLogging {$ENDIF};
 
@@ -43,9 +44,9 @@ type
     act_SetPrjPath          : TAction;
     act_ClickLabel          : TAction;
     act_SetNetwodkDbType    : TAction;
-    CardPanel1              : TCardPanel;
-    Card_CreateSelectPrjDb_: TCard;
-    Card_MostRecentlyUsedPrj_: TCard;
+    cardpnl_Dialogs         : TCardPanel;
+    Card_CreateSelectPrjDb  : TCard;
+    Card_MostRecentlyUsedPrj: TCard;
     lstGemMruList1          : tGemMruList;
     btn_actCnPrefixWizard   : TJvXPButton;
     btn_actCnPrefixWizard1  : TJvXPButton;
@@ -75,7 +76,7 @@ type
     SharedMem2              : TMenuItem;
     None2                   : TMenuItem;
     StatusBarPro            : TStatusBarPro;
-    sv_SetLocalNetworkPrjDb_: TSplitView;
+    sv_MenuItems: TSplitView;
     Shape1                  : TShape;
     Label11                 : TLabel;
     Label10                 : TLabel;
@@ -88,7 +89,6 @@ type
     lbl4                    : TLabel;
     Label2                  : TLabel;
     GEMDBLabel1             : TGEMDBLabel;
-    btn__SplitViewOpenClose : TButton;
     btn_GridMruSelection    : TButton;
     JvDBSearchComboBox1     : TJvDBSearchComboBox;
     JvDBFindEdit1           : TJvDBFindEdit;
@@ -100,7 +100,7 @@ type
     act_ConnectBtn: TAction;
 //    XmlDoc: TXMLDocument;
     act_PrjEdit: TAction;
-    crd_SetDbLocalNetworked: TCard;
+    crd_SetDbServer: TCard;
     crd_CreateNewDbTables: TCard;
     Label13: TLabel;
     rb_LocalDb: TJvRadioButton;
@@ -124,9 +124,15 @@ type
     btn_ConnectDb: TButton;
     Label16: TLabel;
     btn_CopyDbTables: TButton;
-    ctgrybtns_: TCategoryButtons;
-    jvmglst_: TJvImageList;
+    ctgrybtns_Menu: TCategoryButtons;
     il1: TImageList;
+    act_RecentPrjs: TAction;
+    act_CreateEditPrjs: TAction;
+    act_ChangeDbServers: TAction;
+    act_CreateUpdateDb: TAction;
+    act_PackRestDb: TAction;
+    crd_PackRestructureDb: TCard;
+    btn_OpenCloseSv: TPngSpeedButton;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -142,14 +148,13 @@ type
     procedure btn__CloseClick(Sender: TObject);
     procedure btn_CopyDbTablesClick(Sender: TObject);
     procedure act_SetNetwodkDbTypeExecute(Sender: TObject);
-    procedure CardPanel1CardChange(Sender: TObject; PrevCard, NextCard: TCard);
+    procedure cardpnl_DialogsCardChange(Sender: TObject; PrevCard, NextCard: TCard);
     procedure TransPortClick(Sender: TObject);
     procedure SharedMem2Click(Sender: TObject);
-    procedure sv_SetLocalNetworkPrjDb_Closing(Sender: TObject);
-    procedure sv_SetLocalNetworkPrjDb_Opening(Sender: TObject);
+    procedure sv_MenuItemsClosing(Sender: TObject);
+    procedure sv_MenuItemsOpening(Sender: TObject);
     procedure btn__SplitViewOpenCloseClick(Sender: TObject);
     procedure SetDialogServerType;
-    procedure sv_SetLocalNetworkPrjDb_Opened(Sender: TObject);
     procedure timer_SearchTimerBlankTimer(Sender: TObject);
     procedure JvDBFindEdit1Change(Sender: TObject);
     procedure lb_ServerNames1Click(Sender: TObject);
@@ -163,6 +168,13 @@ type
     procedure act_PrjEditExecute(Sender: TObject);
     procedure JvXPButton1Click(Sender: TObject);
     procedure btn_ResetLocalDbPathClick(Sender: TObject);
+    procedure act_RecentPrjsExecute(Sender: TObject);
+    procedure act_CreateEditPrjsExecute(Sender: TObject);
+    procedure act_CreateUpdateDbExecute(Sender: TObject);
+    procedure act_ChangeDbServersExecute(Sender: TObject);
+    procedure act_PackRestDbExecute(Sender: TObject);
+    procedure sv_MenuItemsClosed(Sender: TObject);
+    procedure sv_MenuItemsOpened(Sender: TObject);
 
   private
     { Private declarations }
@@ -174,12 +186,16 @@ type
     procedure SetStatusBar(aMsg: string; aPanel: Byte; aColor: TColor);
     function CloseDelphiSqlToolsDb(var Status: string): boolean;
     procedure SetConnectBtn(aConnected: Boolean);
+    procedure SetFormSize;
   public
     { Public declarations }
     procedure OpenDefaultPrj;
     Function SavePrjDb(afPrjInfo: TProjectInfo; var fStatus: string): boolean;
     property PrjInfo: TProjectInfo read fPrjInfo write fPrjInfo;
   end;
+
+  tCardList = (cl_CardCreatePrjDb,cl_CardMostRecnt, cl_Server, cl_NewDb, cl_Pack);
+  tFwd = (fwd_Width, fwd_Height);
 
 var
   frm_SelectProject: Tfrm_SelectProject;
@@ -191,14 +207,20 @@ uses
 {.$R Moreimages.res}
 
 const
+  cCompactMenuOffset = 150;
   cUsePrjMan = '(Create, Edit, Remove Projects)';
   cUseRecent = '(Select Recently Use Project)';
 
-  cCard_CreateSelectPrjDb_FormW = 965;
-  cCard_CreateSelectPrjDb_FormH = 580;
+  cPrjForm: array[cl_CardCreatePrjDb..cl_Pack, fwd_Width..fwd_Height] of integer =
+                                               (( 965, 580), (683, 552),
+                                                ( 730, 552), (479, 510),
+                                                ( 965, 580));
 
-  cCard_MostRecentlyUsedPrj_FormW = 479;
-  cCard_MostRecentlyUsedPrj_FormH = 510;
+//  cCard_CreateSelectPrjDb_FormW = 965;
+//  cCard_CreateSelectPrjDb_FormH = 580;
+//
+//  cCard_MostRecentlyUsedPrj_FormW = 479;
+//  cCard_MostRecentlyUsedPrj_FormH = 510;
 
   cSplitVFormW = 510;
   cSplitVFormH = 510;
@@ -244,22 +266,22 @@ end;
 
 procedure Tfrm_SelectProject.act_ClickLabelUpdate(Sender: TObject);
 begin
-  act_ClickLabel.Enabled := not sv_SetLocalNetworkPrjDb_.Opened;
+  act_ClickLabel.Enabled := not sv_MenuItems.Opened;
   case act_ClickLabel.Tag of
     0: begin
-      CardPanel1.ActiveCard := Card_CreateSelectPrjDb_;
+      cardpnl_Dialogs.ActiveCard := Card_CreateSelectPrjDb;
       act_ClickLabel.Caption := cUseRecent;
       act_ClickLabel.ImageIndex := 10;
     end;
 
     1: begin
-      CardPanel1.ActiveCard := Card_MostRecentlyUsedPrj_;
+      cardpnl_Dialogs.ActiveCard := Card_MostRecentlyUsedPrj;
       act_ClickLabel.Caption := cUsePrjMan;
       act_ClickLabel.ImageIndex := 9;
     end;
 
     else begin
-      CardPanel1.ActiveCard := Card_CreateSelectPrjDb_;
+      cardpnl_Dialogs.ActiveCard := Card_CreateSelectPrjDb;
       act_ClickLabel.Caption := cUsePrjMan;
       act_ClickLabel.ImageIndex := 10;
     end;
@@ -341,16 +363,22 @@ begin
 end;
 
 
-procedure Tfrm_SelectProject.sv_SetLocalNetworkPrjDb_Closing(Sender: TObject);
+procedure Tfrm_SelectProject.sv_MenuItemsClosed(Sender: TObject);
 begin
-  if CardPanel1.ActiveCard = Card_CreateSelectPrjDb_ then begin
-    frm_SelectProject.Width := cCard_CreateSelectPrjDb_FormW;
-    frm_SelectProject.Height := cCard_CreateSelectPrjDb_FormH;
-  end;
-  if CardPanel1.ActiveCard = Card_MostRecentlyUsedPrj_ then begin
-    frm_SelectProject.Width := cCard_MostRecentlyUsedPrj_FormW;
-    frm_SelectProject.Height := cCard_MostRecentlyUsedPrj_FormW;
-  end;
+  SetFormSize;
+end;
+
+
+procedure Tfrm_SelectProject.sv_MenuItemsClosing(Sender: TObject);
+begin
+//  if cardpnl_Dialogs.ActiveCard = Card_CreateSelectPrjDb then begin
+//    frm_SelectProject.Width := cCard_CreateSelectPrjDb_FormW;
+//    frm_SelectProject.Height := cCard_CreateSelectPrjDb_FormH;
+//  end;
+//  if cardpnl_Dialogs.ActiveCard = Card_MostRecentlyUsedPrj then begin
+//    frm_SelectProject.Width := cCard_MostRecentlyUsedPrj_FormW;
+//    frm_SelectProject.Height := cCard_MostRecentlyUsedPrj_FormW;
+//  end;
 end;
 
 
@@ -374,9 +402,9 @@ begin
   edt_NetWorkServer.Enabled            := rb_NetworkedDb.Checked;
   ts_DefaultAliasBtnDb.Enabled         := rb_NetworkedDb.Checked;
 
-  JvXPButton1.Enabled := rb_LocalDb.Checked;
-  Label5.Enabled      := rb_LocalDb.Checked;
-  edit_DbPath.Enabled := rb_LocalDb.Checked;
+  JvXPButton1.Enabled               := rb_LocalDb.Checked;
+  lbl_CaptionForLocalDbPath.Enabled := rb_LocalDb.Checked;
+  edit_DbPath.Enabled               := rb_LocalDb.Checked;
 
   act_ConnectBtn.Enabled := rb_NetworkedDb.Checked or rb_LocalDb.Checked;
   lb_ServerNames.Items.Clear;
@@ -395,16 +423,28 @@ begin
 end;
 
 
-procedure Tfrm_SelectProject.sv_SetLocalNetworkPrjDb_Opened(Sender: TObject);
+procedure Tfrm_SelectProject.SetFormSize;
+var
+  fOffSet: Integer;
 begin
-  SetDialogServerType;
+  if sv_MenuItems.Opened then
+    fOffSet := 0
+  else
+    fOffSet := cCompactMenuOffset;
+  frm_SelectProject.Width  := cPrjForm[tCardList(cardpnl_Dialogs.ActiveCardIndex), fwd_Width] - fOffSet;
+  frm_SelectProject.Height := cPrjForm[tCardList(cardpnl_Dialogs.ActiveCardIndex), fwd_Height];
 end;
 
 
-procedure Tfrm_SelectProject.sv_SetLocalNetworkPrjDb_Opening(Sender: TObject);
+procedure Tfrm_SelectProject.sv_MenuItemsOpened(Sender: TObject);
 begin
-  frm_SelectProject.Height := cSplitVFormH;
-  frm_SelectProject.Width  := cSplitVFormW;
+  SetFormSize;
+end;
+
+procedure Tfrm_SelectProject.sv_MenuItemsOpening(Sender: TObject);
+begin
+//  frm_SelectProject.Height := cSplitVFormH;
+//  frm_SelectProject.Width  := cSplitVFormW;
   if not ((dm_DataMod.nxtbl_NxDbSqlToolsPrjs.EOF) or (dm_DataMod.nxtbl_NxDbSqlToolsPrjs.BOF)) then
     edit_DbPath.Text := dm_DataMod.nxtbl_NxDbSqlToolsPrjsPrjPath.AsString;
 end;
@@ -631,6 +671,41 @@ begin
 end;
 
 
+procedure Tfrm_SelectProject.act_RecentPrjsExecute(Sender: TObject);
+begin
+  cardpnl_Dialogs.ActiveCard := Card_MostRecentlyUsedPrj;
+  SetFormSize;
+end;
+
+
+procedure Tfrm_SelectProject.act_CreateEditPrjsExecute(Sender: TObject);
+begin
+  cardpnl_Dialogs.ActiveCard := Card_CreateSelectPrjDb;
+  SetFormSize;
+end;
+
+
+procedure Tfrm_SelectProject.act_CreateUpdateDbExecute(Sender: TObject);
+begin
+  cardpnl_Dialogs.ActiveCard := crd_CreateNewDbTables;
+  SetFormSize;
+end;
+
+
+procedure Tfrm_SelectProject.act_ChangeDbServersExecute(Sender: TObject);
+begin
+  cardpnl_Dialogs.ActiveCard := crd_SetDbServer;
+  SetFormSize;
+end;
+
+
+procedure Tfrm_SelectProject.act_PackRestDbExecute(Sender: TObject);
+begin
+  cardpnl_Dialogs.ActiveCard := crd_PackRestructureDb;
+  SetFormSize;
+end;
+
+
 procedure Tfrm_SelectProject.act_SetNetwodkDbTypeExecute(Sender: TObject);
 var
   fStatus: string;
@@ -677,18 +752,19 @@ end;
 
 
 procedure Tfrm_SelectProject.FormCreate(Sender: TObject);
+var
+  Index: Integer;
 begin
 //  edit_DbPath.Text := Delphi                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            SQLToolsDbPath;
   lstGemMruList1.MruListFile := MRUFile;
 //  XmlDoc.FileName := PathAndFileAtFormLocSize;
   fprjInfo.ClearPrj;
   JvFormStorage1.RestoreFormPlacement;
-  if sv_SetLocalNetworkPrjDb_.Opened then
-    sv_SetLocalNetworkPrjDb_.Opened := false
+  if sv_MenuItems.Opened then
+    sv_MenuItems.Opened := false
   else
-    sv_SetLocalNetworkPrjDb_Closing(Sender); // sets width of dialogs
-//  if edit_DbPath.Text = '' then
-//    edit_DbPath.Text := DelphiSQLToolsDbPath;
+    sv_MenuItemsClosing(Sender); // sets width of dialogs
+
 end;
 
 
@@ -735,7 +811,7 @@ begin
   else
     act_ConnectBtn.ImageIndex := 7;
 
-  if CardPanel1.ActiveCard = Card_MostRecentlyUsedPrj_ then begin
+  if cardpnl_Dialogs.ActiveCard = Card_MostRecentlyUsedPrj then begin
     lstGemMruList1.Enabled := JvLED1.Status;
     if JvLED1.Status then begin
       lstGemMruList1.Color := clWindow;
@@ -840,8 +916,8 @@ begin
     act_ConnectBtn.Execute;
   end
   else begin
-    sv_SetLocalNetworkPrjDb_.Open;
-    btn__SplitViewOpenClose.Enabled := False;
+    sv_MenuItems.Open;
+//    btn__SplitViewOpenClose.Enabled := False;
     SetStatusBar('msg 828-Projects/SQLBtns Db NOT found. Use this dialog to setup your db.',1, clRed);
   end;
 end;
@@ -884,7 +960,7 @@ showmessage('msg 868-act_ConnectBtnExecute: '+ ExpandUNCFileName(JvSelectDirecto
 //                                 ExpandUNCFileName(JvSelectDirectory1.Directory);
         dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
 
-        sv_SetLocalNetworkPrjDb_.Opened := False;
+        sv_MenuItems.Opened := False;
       except
         MessageDlg('msg 876-Could NOT open Prjs/SQLBtns database!', mtError, [mbOK], 0);
       end;
@@ -893,7 +969,7 @@ showmessage('msg 868-act_ConnectBtnExecute: '+ ExpandUNCFileName(JvSelectDirecto
       JvDBFindEdit1.DataSource := nil;
       JvDBSearchComboBox1.DataSource := nil;
       NxDelphiSqlTools_Status.DataSource := nil;
-      sv_SetLocalNetworkPrjDb_.Opened := true;
+      sv_MenuItems.Opened := true;
       if rb_LocalDb.Checked then
         MessageDlg('msg 885- Prjs/SQLBtns Db.' +#13+#10+ 'ERROR: ' + fStatus+#13+#10+
                    'Try selecting different Folder.', mtError, [mbOK], 0)
@@ -942,14 +1018,18 @@ end;
 
 procedure Tfrm_SelectProject.btn__SplitViewOpenCloseClick(Sender: TObject);
 begin
-  sv_SetLocalNetworkPrjDb_.Opened := not sv_SetLocalNetworkPrjDb_.Opened;
+  if sv_MenuItems.Opened then
+    sv_MenuItems.Close
+  else
+    sv_MenuItems.Open;
+//  sv_MenuItems.Opened := not sv_MenuItems.Opened;
 end;
 
 
-procedure Tfrm_SelectProject.CardPanel1CardChange(Sender: TObject; PrevCard,
+procedure Tfrm_SelectProject.cardpnl_DialogsCardChange(Sender: TObject; PrevCard,
   NextCard: TCard);
 begin
-  sv_SetLocalNetworkPrjDb_Closing(sender);
+//  sv_MenuItems(sender);
 end;
 
 

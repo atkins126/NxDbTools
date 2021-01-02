@@ -22,7 +22,8 @@ uses
   MoveResizeComponents in 'MoveResizeComponents.pas' {frm_MoveResizeComponents},
   SQLChildFormChangeInterface in 'SQLChildFormChangeInterface.pas',
   FontStuffTest in 'FontStuffTest.pas' {Form1},
-  NxDbToolsDbEvolution_1 in 'NxDbToolsDbEvolution_1.pas';
+  NxDbToolsDbEvolution_1 in 'NxDbToolsDbEvolution_1.pas',
+  CardHelper in 'CardHelper.pas';
 
 {$R *.res}
 
