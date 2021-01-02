@@ -21,7 +21,8 @@ uses
   PassForm in 'PassForm.pas' {frm_Password},
   MoveResizeComponents in 'MoveResizeComponents.pas' {frm_MoveResizeComponents},
   SQLChildFormChangeInterface in 'SQLChildFormChangeInterface.pas',
-  FontStuffTest in 'FontStuffTest.pas' {Form1};
+  FontStuffTest in 'FontStuffTest.pas' {Form1},
+  NxDbToolsDbEvolution_1 in 'NxDbToolsDbEvolution_1.pas';
 
 {$R *.res}
 

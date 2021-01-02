@@ -58,7 +58,6 @@ object dm_DataMod: Tdm_DataMod
     Top = 192
   end
   object nxsn_SqlTools: TnxSession
-    ActiveDesigntime = True
     ServerEngine = nxrse_SqlTools
     Left = 400
     Top = 192
@@ -81,13 +80,11 @@ object dm_DataMod: Tdm_DataMod
   end
   object nxwint_SqlToolsTrans: TnxWinsockTransport
     DisplayCategory = 'Transports'
-    ActiveDesigntime = True
     ServerNameDesigntime = 'SRSDServer@10.0.0.62'
     Left = 488
     Top = 72
   end
   object nxrse_SqlTools: TnxRemoteServerEngine
-    ActiveDesigntime = True
     Transport = nxwint_SqlToolsTrans
     Left = 480
     Top = 128

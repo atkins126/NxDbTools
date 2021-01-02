@@ -25,7 +25,8 @@ uses
   JvTransparentButton, JvExControls, JvLED, JvExExtCtrls, JvExtComponent,
   JvDBSearchComboBox, JvExMask, JvToolEdit, JvMaskEdit, JvDBFindEdit, JvListBox,
   JvXPCore, JvXPButtons, JvImage, JvImageList, JvSpeedButton,
-  JvComboListBox, GEMDBLabel, JvBalloonHint, JvBehaviorLabel
+  JvComboListBox, GEMDBLabel, JvBalloonHint, JvBehaviorLabel,
+  Vcl.CategoryButtons, System.ImageList, Vcl.ImgList
 
   {$IFDEF  USE_CODESITE}, CodeSiteLogging {$ENDIF};
 
@@ -52,7 +53,6 @@ type
     btn_actCnPrefixWizard3  : TJvXPButton;
     btn__Close              : TJvXPButton;
     xpbtn_GetPrjPath        : TJvXPButton;
-    JvXPButton1             : TJvXPButton;
     jvxpbtn_HaltProgram     : TJvXPButton;
     JvXPButton4             : TJvXPButton;
     JvFormStorage1          : TJvFormStorage;
@@ -76,15 +76,7 @@ type
     None2                   : TMenuItem;
     StatusBarPro            : TStatusBarPro;
     sv_SetLocalNetworkPrjDb_: TSplitView;
-    rb_LocalDb              : TJvRadioButton;
-    rb_NetworkedDb          : TJvRadioButton;
     Shape1                  : TShape;
-    Shape2                  : TShape;
-    Shape3                  : TShape;
-    edit_DbPath             : TEdit;
-    edt_Alias               : TEdit;
-    edt_NetWorkServer       : TEdit;
-    lbl_CaptionForDBAlais: TLabel;
     Label11                 : TLabel;
     Label10                 : TLabel;
     Label9                  : TLabel;
@@ -95,32 +87,46 @@ type
     Label3                  : TLabel;
     lbl4                    : TLabel;
     Label2                  : TLabel;
-    Label13                 : TLabel;
-    Label14                 : TLabel;
-    lbl_CaptionForLocalDbPath: TLabel;
-    Label15                 : TLabel;
-    Label16                 : TLabel;
-    lbl_CaptionForServerLb: TLabel;
-    lbl_CaptionNetServerSelected: TLabel;
     GEMDBLabel1             : TGEMDBLabel;
-    btn_CopyDbTables        : TButton;
     btn__SplitViewOpenClose : TButton;
     btn_GridMruSelection    : TButton;
-    btn_ConnectDb           : TButton;
     JvDBSearchComboBox1     : TJvDBSearchComboBox;
     JvDBFindEdit1           : TJvDBFindEdit;
     timer_SearchTimerBlank  : TTimer;
-    ts_DefaultAliasBtnDb    : TToggleSwitch;
     popm_Transport          : TPopupMenu;
     popm_Server             : TPopupMenu;
     popm_Database           : TPopupMenu;
     jvblnhnt_1: TJvBalloonHint;
     act_ConnectBtn: TAction;
-    lb_ServerNames: TJvListBox;
 //    XmlDoc: TXMLDocument;
     act_PrjEdit: TAction;
+    crd_SetDbLocalNetworked: TCard;
+    crd_CreateNewDbTables: TCard;
+    Label13: TLabel;
+    rb_LocalDb: TJvRadioButton;
+    rb_NetworkedDb: TJvRadioButton;
+    Shape2: TShape;
+    Label14: TLabel;
+    lbl_CaptionForLocalDbPath: TLabel;
     bl_1: TJvBehaviorLabel;
     btn_ResetLocalDbPath: TJvXPButton;
+    JvXPButton1: TJvXPButton;
+    edit_DbPath: TEdit;
+    lbl_CaptionForServerLb: TLabel;
+    lb_ServerNames: TJvListBox;
+    lbl_CaptionNetServerSelected: TLabel;
+    edt_NetWorkServer: TEdit;
+    ts_DefaultAliasBtnDb: TToggleSwitch;
+    lbl_CaptionForDBAlais: TLabel;
+    edt_Alias: TEdit;
+    Shape3: TShape;
+    Label15: TLabel;
+    btn_ConnectDb: TButton;
+    Label16: TLabel;
+    btn_CopyDbTables: TButton;
+    ctgrybtns_: TCategoryButtons;
+    jvmglst_: TJvImageList;
+    il1: TImageList;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
