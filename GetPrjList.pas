@@ -97,7 +97,7 @@ type
     Label2                  : TLabel;
     Label13                 : TLabel;
     Label14                 : TLabel;
-    Label5                  : TLabel;
+    lbl_CaptionForLocalDbPath: TLabel;
     Label15                 : TLabel;
     Label16                 : TLabel;
     lbl_CaptionForServerLb: TLabel;
@@ -380,16 +380,6 @@ begin
     dm_DataMod.nxrse_SqlTools.Close;
     dm_DataMod.nxrse_SqlTools.Transport := dm_DataMod.nxwint_SqlToolsTrans;
 
-//    dm_DataMod.nxwint_SqlToolsTrans.Close;
-//    dm_DataMod.nxwint_SqlToolsTrans.ServerName := '';
-//    dm_DataMod.nxwint_SqlToolsTrans.ServerNameRuntime := '';
-//    dm_DataMod.nxwint_SqlToolsTrans.ServerNameDesigntime := '';
-////    dm_DataMod.nxwint_SqlToolsTrans.Active := true;
-//
-//    dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxrse_SqlTools;
-//
-////    dm_DataMod.nxsn_SqlTools.ServerEngine.Open;
-//
     dm_DataMod.nxwint_SqlToolsTrans.GetServerNames(lb_ServerNames.Items, 5000);
     lb_ServerNames.ItemIndex := lb_ServerNames.Items.IndexOf(edt_NetWorkServer.Text);
   end

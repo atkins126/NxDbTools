@@ -26,7 +26,7 @@ object frm_SelectProject: Tfrm_SelectProject
     Width = 755
     Height = 412
     Align = alClient
-    ActiveCard = Card_MostRecentlyUsedPrj_
+    ActiveCard = Card_CreateSelectPrjDb_
     Caption = 'CardPanel1'
     TabOrder = 0
     OnCardChange = CardPanel1CardChange
@@ -584,7 +584,7 @@ object frm_SelectProject: Tfrm_SelectProject
       Font.Style = [fsBold]
       ParentFont = False
     end
-    object Label5: TLabel
+    object lbl_CaptionForLocalDbPath: TLabel
       Left = 45
       Top = 78
       Width = 102
