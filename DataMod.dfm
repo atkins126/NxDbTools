@@ -82,12 +82,12 @@ object dm_DataMod: Tdm_DataMod
     DisplayCategory = 'Transports'
     ServerNameDesigntime = 'SRSDServer@10.0.0.62'
     Left = 488
-    Top = 72
+    Top = 88
   end
   object nxrse_SqlTools: TnxRemoteServerEngine
     Transport = nxwint_SqlToolsTrans
     Left = 480
-    Top = 128
+    Top = 144
   end
   object ds_nxtbl_TransportLUT: TDataSource
     DataSet = nxtbl_TransportLUT

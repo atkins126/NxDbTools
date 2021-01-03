@@ -21,25 +21,26 @@ object frm_SelectProject: Tfrm_SelectProject
   TextHeight = 13
   object cardpnl_Dialogs: TCardPanel
     AlignWithMargins = True
-    Left = 203
+    Left = 213
     Top = 81
-    Width = 1142
+    Width = 1132
     Height = 430
     Align = alClient
-    ActiveCard = Card_MostRecentlyUsedPrj
+    ActiveCard = crd_SetDbServer
     Caption = 'cardpnl_Dialogs'
     TabOrder = 0
     OnCardChange = cardpnl_DialogsCardChange
-    ExplicitWidth = 477
+    ExplicitLeft = 203
+    ExplicitWidth = 1142
     object Card_CreateSelectPrjDb: TCard
       Left = 1
       Top = 1
-      Width = 1140
+      Width = 1130
       Height = 428
       Caption = 'CreateSelectPrjDb'
       CardIndex = 0
       TabOrder = 0
-      ExplicitWidth = 475
+      ExplicitWidth = 1140
       object Label3: TLabel
         Left = 0
         Top = 2
@@ -375,12 +376,12 @@ object frm_SelectProject: Tfrm_SelectProject
     object Card_MostRecentlyUsedPrj: TCard
       Left = 1
       Top = 1
-      Width = 1140
+      Width = 1130
       Height = 428
       Caption = 'Most Recently Used'
       CardIndex = 1
       TabOrder = 1
-      ExplicitWidth = 475
+      ExplicitWidth = 1140
       object lbl4: TLabel
         Left = 19
         Top = 29
@@ -426,12 +427,13 @@ object frm_SelectProject: Tfrm_SelectProject
     object crd_SetDbServer: TCard
       Left = 1
       Top = 1
-      Width = 1140
+      Width = 1130
       Height = 428
       Caption = 'crd_SetDbServer'
       CardIndex = 2
       TabOrder = 2
-      ExplicitWidth = 475
+      ExplicitLeft = 3
+      ExplicitTop = -1
       object Label13: TLabel
         Left = 16
         Top = 6
@@ -482,7 +484,7 @@ object frm_SelectProject: Tfrm_SelectProject
         Visible = False
       end
       object lbl_CaptionForServerLb: TLabel
-        Left = 4
+        Left = 11
         Top = 125
         Width = 115
         Height = 13
@@ -505,7 +507,7 @@ object frm_SelectProject: Tfrm_SelectProject
       object Shape3: TShape
         Left = 11
         Top = 292
-        Width = 479
+        Width = 242
         Height = 8
         Brush.Color = clBlue
       end
@@ -523,8 +525,8 @@ object frm_SelectProject: Tfrm_SelectProject
         ParentFont = False
       end
       object Label16: TLabel
-        Left = 45
-        Top = 343
+        Left = 52
+        Top = 355
         Width = 19
         Height = 19
         Caption = 'Or'
@@ -535,9 +537,29 @@ object frm_SelectProject: Tfrm_SelectProject
         Font.Style = [fsBold]
         ParentFont = False
       end
+      object shp4: TShape
+        Left = 266
+        Top = 292
+        Width = 231
+        Height = 8
+        Brush.Color = clGreen
+      end
+      object lbl_Caption4: TLabel
+        Left = 266
+        Top = 297
+        Width = 64
+        Height = 30
+        Caption = 'Issues:'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -21
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
       object rb_LocalDb: TJvRadioButton
-        Left = 73
-        Top = 6
+        Left = 604
+        Top = 52
         Width = 98
         Height = 17
         Action = act_PrjEdit
@@ -546,8 +568,8 @@ object frm_SelectProject: Tfrm_SelectProject
         LinkedControls = <>
       end
       object rb_NetworkedDb: TJvRadioButton
-        Left = 73
-        Top = 29
+        Left = 604
+        Top = 75
         Width = 142
         Height = 17
         Action = act_SetNetwodkDbType
@@ -582,7 +604,7 @@ object frm_SelectProject: Tfrm_SelectProject
         ShowHint = True
         OnClick = btn_ResetLocalDbPathClick
       end
-      object JvXPButton1: TJvXPButton
+      object jvxpbtn_GetLocalPath: TJvXPButton
         Left = 471
         Top = 66
         Width = 26
@@ -604,9 +626,9 @@ object frm_SelectProject: Tfrm_SelectProject
         Layout = blGlyphTop
         ParentShowHint = False
         ShowHint = True
-        OnClick = JvXPButton1Click
+        OnClick = jvxpbtn_GetLocalPathClick
       end
-      object edit_DbPath: TEdit
+      object edit_LocalDbPath: TEdit
         Left = 1
         Top = 94
         Width = 464
@@ -633,14 +655,14 @@ object frm_SelectProject: Tfrm_SelectProject
         Color = clCream
         ReadOnly = True
         TabOrder = 6
-        Text = 'NxDelphiSqlTools'
       end
       object ts_DefaultAliasBtnDb: TToggleSwitch
         Left = 252
         Top = 191
-        Width = 162
+        Width = 143
         Height = 20
-        StateCaptions.CaptionOn = 'Use Alias You Set up.'
+        State = tssOn
+        StateCaptions.CaptionOn = 'Use Your Alias'
         StateCaptions.CaptionOff = 'Use Defualt Alias'
         TabOrder = 7
         OnClick = ts_DefaultAliasBtnDbClick
@@ -657,17 +679,19 @@ object frm_SelectProject: Tfrm_SelectProject
         Text = 'NxDelphiSqlTools'
       end
       object btn_ConnectDb: TButton
-        Left = 35
+        Left = 45
         Top = 306
-        Width = 33
-        Height = 34
+        Width = 42
+        Height = 47
+        Cursor = crHandPoint
         Action = act_ConnectBtn
-        Images = frm_NxToolsMain.il_AppImages
+        ImageAlignment = iaCenter
+        Images = il1
         TabOrder = 9
       end
       object btn_CopyDbTables: TButton
-        Left = 35
-        Top = 363
+        Left = 45
+        Top = 380
         Width = 179
         Height = 38
         Caption = 'Close Program. Can Not continue with out Db Open.'
@@ -675,26 +699,89 @@ object frm_SelectProject: Tfrm_SelectProject
         WordWrap = True
         OnClick = btn_CopyDbTablesClick
       end
+      object rb_NoServerSelected: TJvRadioButton
+        Left = 604
+        Top = 29
+        Width = 116
+        Height = 17
+        Alignment = taLeftJustify
+        Caption = 'No Server Selected'
+        Checked = True
+        TabOrder = 11
+        TabStop = True
+        LinkedControls = <>
+      end
+      object clblst_ServerIssuses: TJvxCheckListBox
+        Left = 536
+        Top = 327
+        Width = 210
+        Height = 87
+        CheckKind = ckCheckMarks
+        ItemHeight = 13
+        TabOrder = 12
+        InternalVersion = 202
+        Strings = (
+          '1. No Server Selected is Checked'
+          1
+          True
+          '2. Local Db Path not Valid'
+          1
+          True
+          '2. No Severs Listed'
+          1
+          True
+          '2. No Selected Server is Blank.'
+          1
+          True
+          '2. Alias edit blank.'
+          1
+          True
+          '2. Could not find alias.'
+          1
+          True)
+      end
+      object jvrdgrp_ServerType: TJvRadioGroup
+        Left = 45
+        Top = 11
+        Width = 258
+        Height = 35
+        Caption = 'Server Type:'
+        Columns = 3
+        ItemIndex = 2
+        Items.Strings = (
+          'Local'
+          'Network'
+          'No Server')
+        TabOrder = 13
+      end
+      object lstbox_Issues: TListBox
+        Left = 266
+        Top = 327
+        Width = 231
+        Height = 91
+        ItemHeight = 13
+        TabOrder = 14
+      end
     end
     object crd_CreateNewDbTables: TCard
       Left = 1
       Top = 1
-      Width = 1140
+      Width = 1130
       Height = 428
       Caption = 'crd_CreateNewDbTables'
       CardIndex = 3
       TabOrder = 3
-      ExplicitWidth = 475
+      ExplicitWidth = 1140
     end
     object crd_PackRestructureDb: TCard
       Left = 1
       Top = 1
-      Width = 1140
+      Width = 1130
       Height = 428
       Caption = 'crd_PackRestructureDb'
       CardIndex = 4
       TabOrder = 4
-      ExplicitWidth = 475
+      ExplicitWidth = 1140
     end
   end
   object JvPanel1: TJvPanel
@@ -704,7 +791,6 @@ object frm_SelectProject: Tfrm_SelectProject
     Height = 78
     Align = alTop
     TabOrder = 1
-    ExplicitWidth = 683
     object JvLED1: TJvLED
       Left = 0
       Top = 14
@@ -815,28 +901,25 @@ object frm_SelectProject: Tfrm_SelectProject
       end>
     SimplePanel = False
     WordWrap = True
-    ExplicitWidth = 683
   end
   object sv_MenuItems: TSplitView
     Left = 0
     Top = 78
-    Width = 200
+    Width = 210
     Height = 436
     CloseStyle = svcCompact
     Color = clBtnText
     DockSite = True
-    OpenedWidth = 200
+    OpenedWidth = 210
     Placement = svpLeft
     TabOrder = 3
     OnClosed = sv_MenuItemsClosed
-    OnClosing = sv_MenuItemsClosing
     OnOpened = sv_MenuItemsOpened
     OnOpening = sv_MenuItemsOpening
-    ExplicitLeft = -2
     object ctgrybtns_Menu: TCategoryButtons
       Left = 0
       Top = 0
-      Width = 200
+      Width = 210
       Height = 285
       Align = alTop
       BevelInner = bvNone
@@ -883,12 +966,13 @@ object frm_SelectProject: Tfrm_SelectProject
       RegularButtonColor = clBtnText
       SelectedButtonColor = clBlack
       TabOrder = 0
+      ExplicitWidth = 200
     end
   end
   object ActionList1: TActionList
     Images = il1
-    Left = 912
-    Top = 144
+    Left = 1008
+    Top = 128
     object act_DefaultPrj: TAction
       Caption = 'Use Default Project'
       OnExecute = act_DefaultPrjExecute
@@ -909,8 +993,6 @@ object frm_SelectProject: Tfrm_SelectProject
     end
     object act_ClickLabel: TAction
       Caption = '(Create, Edit, Remove Projects)'
-      OnExecute = act_ClickLabelExecute
-      OnUpdate = act_ClickLabelUpdate
     end
     object act_SetNetwodkDbType: TAction
       Caption = 'act_SetNetwodkDbType'
@@ -967,14 +1049,20 @@ object frm_SelectProject: Tfrm_SelectProject
     end
   end
   object JvFormStorage1: TJvFormStorage
-    Active = False
     AppStorage = frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs
     AppStoragePath = '%FORM_NAME%\'
     Options = [fpState, fpSize]
     StoredProps.Strings = (
       'act_ClickLabel.Tag'
       'cardpnl_Dialogs.ActiveCard'
-      'sv_MenuItems.Opened')
+      'sv_MenuItems.Opened'
+      'rb_LocalDb.Checked'
+      'rb_NetworkedDb.Checked'
+      'edit_LocalDbPath.Text'
+      'edt_NetWorkServer.Text'
+      'ts_DefaultAliasBtnDb.State'
+      'edt_Alias.Text'
+      'rb_NoServerSelected.Checked')
     StoredValues = <>
     Left = 817
     Top = 8
@@ -984,8 +1072,8 @@ object frm_SelectProject: Tfrm_SelectProject
     Top = 24
   end
   object popm_Transport: TPopupMenu
-    Left = 928
-    Top = 20
+    Left = 1008
+    Top = 348
     object WinSock2: TMenuItem
       Caption = 'WinSock'
       OnClick = TransPortClick
@@ -1020,8 +1108,8 @@ object frm_SelectProject: Tfrm_SelectProject
     Top = 8
   end
   object popm_Server: TPopupMenu
-    Left = 1032
-    Top = 20
+    Left = 1136
+    Top = 412
     object MenuItem1: TMenuItem
       Caption = 'WinSock'
       OnClick = TransPortClick
@@ -1045,8 +1133,8 @@ object frm_SelectProject: Tfrm_SelectProject
     end
   end
   object popm_Database: TPopupMenu
-    Left = 1120
-    Top = 20
+    Left = 1088
+    Top = 308
     object MenuItem6: TMenuItem
       Caption = 'WinSock'
       OnClick = TransPortClick
@@ -1071,14 +1159,14 @@ object frm_SelectProject: Tfrm_SelectProject
   end
   object jvblnhnt_1: TJvBalloonHint
     UseBalloonAsApplicationHint = True
-    Left = 1240
-    Top = 14
+    Left = 976
+    Top = 86
   end
   object il1: TImageList
     Height = 32
     Width = 32
-    Left = 908
-    Top = 234
+    Left = 1012
+    Top = 218
     Bitmap = {
       494C01010C002400040020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000008000000001002000000000000000

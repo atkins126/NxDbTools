@@ -24,10 +24,10 @@ uses
   JvRadioButton, JvRollOut, JvLabel, JvDBControls, JvButton, JvPanel, JvCombobox,
   JvTransparentButton, JvExControls, JvLED, JvExExtCtrls, JvExtComponent,
   JvDBSearchComboBox, JvExMask, JvToolEdit, JvMaskEdit, JvDBFindEdit, JvListBox,
-  JvXPCore, JvXPButtons, JvImage, JvImageList, JvSpeedButton,
-  JvComboListBox, JvBalloonHint, JvBehaviorLabel,
+  JvXPCore, JvXPButtons, JvImage, JvImageList, JvSpeedButton, JvBehaviorLabel,
+  JvComboListBox, JvBalloonHint,
 
-  CardHelper, PngSpeedButton
+  PngSpeedButton, JvxCheckListBox, JvRadioGroup
 
   {$IFDEF  USE_CODESITE}, CodeSiteLogging {$ENDIF};
 
@@ -42,7 +42,7 @@ type
     act_CreatePrj           : TAction;
     act_DeletePrj           : TAction;
     act_SetPrjPath          : TAction;
-    act_ClickLabel          : TAction;
+//    act_ClickLabel          : TAction;
     act_SetNetwodkDbType    : TAction;
     cardpnl_Dialogs         : TCardPanel;
     Card_CreateSelectPrjDb  : TCard;
@@ -110,8 +110,8 @@ type
     lbl_CaptionForLocalDbPath: TLabel;
     bl_1: TJvBehaviorLabel;
     btn_ResetLocalDbPath: TJvXPButton;
-    JvXPButton1: TJvXPButton;
-    edit_DbPath: TEdit;
+    jvxpbtn_GetLocalPath: TJvXPButton;
+    edit_LocalDbPath: TEdit;
     lbl_CaptionForServerLb: TLabel;
     lb_ServerNames: TJvListBox;
     lbl_CaptionNetServerSelected: TLabel;
@@ -133,6 +133,12 @@ type
     act_PackRestDb: TAction;
     crd_PackRestructureDb: TCard;
     btn_OpenCloseSv: TPngSpeedButton;
+    rb_NoServerSelected: TJvRadioButton;
+    shp4: TShape;
+    lbl_Caption4: TLabel;
+    clblst_ServerIssuses: TJvxCheckListBox;
+    jvrdgrp_ServerType: TJvRadioGroup;
+    lstbox_Issues: TListBox;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -142,8 +148,8 @@ type
     procedure act_DeletePrjExecute(Sender: TObject);
     procedure act_DefaultPrjExecute(Sender: TObject);
     procedure act_CreatePrjExecute(Sender: TObject);
-    procedure act_ClickLabelExecute(Sender: TObject);
-    procedure act_ClickLabelUpdate(Sender: TObject);
+//    procedure act_ClickLabelExecute(Sender: TObject);
+//    procedure act_ClickLabelUpdate(Sender: TObject);
     procedure act_SetPrjPathExecute(Sender: TObject);
     procedure btn__CloseClick(Sender: TObject);
     procedure btn_CopyDbTablesClick(Sender: TObject);
@@ -151,7 +157,7 @@ type
     procedure cardpnl_DialogsCardChange(Sender: TObject; PrevCard, NextCard: TCard);
     procedure TransPortClick(Sender: TObject);
     procedure SharedMem2Click(Sender: TObject);
-    procedure sv_MenuItemsClosing(Sender: TObject);
+//    procedure sv_MenuItemsClosing(Sender: TObject);
     procedure sv_MenuItemsOpening(Sender: TObject);
     procedure btn__SplitViewOpenCloseClick(Sender: TObject);
     procedure SetDialogServerType;
@@ -166,7 +172,7 @@ type
     procedure act_ConnectBtnUpdate(Sender: TObject);
     procedure act_PrjEditUpdate(Sender: TObject);
     procedure act_PrjEditExecute(Sender: TObject);
-    procedure JvXPButton1Click(Sender: TObject);
+    procedure jvxpbtn_GetLocalPathClick(Sender: TObject);
     procedure btn_ResetLocalDbPathClick(Sender: TObject);
     procedure act_RecentPrjsExecute(Sender: TObject);
     procedure act_CreateEditPrjsExecute(Sender: TObject);
@@ -187,6 +193,7 @@ type
     function CloseDelphiSqlToolsDb(var Status: string): boolean;
     procedure SetConnectBtn(aConnected: Boolean);
     procedure SetFormSize;
+    procedure CheckUserServerSelection;
   public
     { Public declarations }
     procedure OpenDefaultPrj;
@@ -194,8 +201,21 @@ type
     property PrjInfo: TProjectInfo read fPrjInfo write fPrjInfo;
   end;
 
-  tCardList = (cl_CardCreatePrjDb,cl_CardMostRecnt, cl_Server, cl_NewDb, cl_Pack);
+  tCardList = (cl_CardCreatePrjDb, cl_CardMostRecnt, cl_Server, cl_NewDb, cl_Pack);
   tFwd = (fwd_Width, fwd_Height);
+
+resourcestring
+  NoServer     = '1. There is no Server Selected!';
+  DbPath       = '2. ''Local Database Path'' is not Valid!';
+  ServerLb     = '2. There are No Network Servers listed!';
+  SelectServer = '2. The ''Selected Server'' box is blank!';
+  AliasBlank   = '2. ''Network Database Alias'' box is blank';
+
+  ButTable     = 'BuNxSqlButtonsDb.nx1';
+  ToolsPrj     = 'NxDbSqlToolsPrjs.nx1';
+  NxSqlBtn     = 'NxSqlButtonsDb.nx1';
+  Trans        = 'TransportLUT.nx1';
+
 
 var
   frm_SelectProject: Tfrm_SelectProject;
@@ -207,23 +227,14 @@ uses
 {.$R Moreimages.res}
 
 const
-  cCompactMenuOffset = 150;
+  cCompactMenuOffset = 160; // opened width - compact width
   cUsePrjMan = '(Create, Edit, Remove Projects)';
   cUseRecent = '(Select Recently Use Project)';
 
   cPrjForm: array[cl_CardCreatePrjDb..cl_Pack, fwd_Width..fwd_Height] of integer =
-                                               (( 965, 580), (683, 552),
-                                                ( 730, 552), (479, 510),
-                                                ( 965, 580));
-
-//  cCard_CreateSelectPrjDb_FormW = 965;
-//  cCard_CreateSelectPrjDb_FormH = 580;
-//
-//  cCard_MostRecentlyUsedPrj_FormW = 479;
-//  cCard_MostRecentlyUsedPrj_FormH = 510;
-
-  cSplitVFormW = 510;
-  cSplitVFormH = 510;
+                                               (( 965, 580), (683, 565),
+                                                ( 730, 575), (479, 565),
+                                                ( 965, 565));
 
   cBtnHintMRU  = 'Select project from a MRU Listing';
   cBtnHintGrid = 'Select project from Db Project Grid Listing';
@@ -240,53 +251,54 @@ begin
 end;
 
 
-procedure Tfrm_SelectProject.act_ClickLabelExecute(Sender: TObject);
-begin
-  case act_ClickLabel.Tag of
-    0: begin
-      act_ClickLabel.Tag := 1;
-      btn_GridMruSelection.Hint :=  cBtnHintGrid;
-      btn_GridMruSelection.Caption := cBtnSelectCaption;
-    end;
-
-    1: begin
-      act_ClickLabel.Tag := 0;
-      btn_GridMruSelection.Hint := cBtnHintMRU;
-      btn_GridMruSelection.Caption := cBtnMRUCaption;
-    end
-
-    else begin
-      act_ClickLabel.Tag := 0;
-      btn_GridMruSelection.Hint := cBtnHintMRU;
-      btn_GridMruSelection.Caption := cBtnMRUCaption;
-    end;
-  end;
-end;
-
-
-procedure Tfrm_SelectProject.act_ClickLabelUpdate(Sender: TObject);
-begin
-  act_ClickLabel.Enabled := not sv_MenuItems.Opened;
-  case act_ClickLabel.Tag of
-    0: begin
-      cardpnl_Dialogs.ActiveCard := Card_CreateSelectPrjDb;
-      act_ClickLabel.Caption := cUseRecent;
-      act_ClickLabel.ImageIndex := 10;
-    end;
-
-    1: begin
-      cardpnl_Dialogs.ActiveCard := Card_MostRecentlyUsedPrj;
-      act_ClickLabel.Caption := cUsePrjMan;
-      act_ClickLabel.ImageIndex := 9;
-    end;
-
-    else begin
-      cardpnl_Dialogs.ActiveCard := Card_CreateSelectPrjDb;
-      act_ClickLabel.Caption := cUsePrjMan;
-      act_ClickLabel.ImageIndex := 10;
-    end;
-  end;
-end;
+//procedure Tfrm_SelectProject.act_ClickLabelExecute(Sender: TObject);
+//begin
+//  case act_ClickLabel.Tag of
+//    0: begin
+//      act_ClickLabel.Tag := 1;
+//      btn_GridMruSelection.Hint :=  cBtnHintGrid;
+//      btn_GridMruSelection.Caption := cBtnSelectCaption;
+//    end;
+//
+//    1: begin
+//      act_ClickLabel.Tag := 0;
+//      btn_GridMruSelection.Hint := cBtnHintMRU;
+//      btn_GridMruSelection.Caption := cBtnMRUCaption;
+//    end
+//
+//    else
+//    begin
+//      act_ClickLabel.Tag := 0;
+//      btn_GridMruSelection.Hint := cBtnHintMRU;
+//      btn_GridMruSelection.Caption := cBtnMRUCaption;
+//    end;
+//  end;
+//end;
+//
+//
+//procedure Tfrm_SelectProject.act_ClickLabelUpdate(Sender: TObject);
+//begin
+//  act_ClickLabel.Enabled := not sv_MenuItems.Opened;
+//  case act_ClickLabel.Tag of
+//    0: begin
+//      cardpnl_Dialogs.ActiveCard := Card_CreateSelectPrjDb;
+//      act_ClickLabel.Caption := cUseRecent;
+//      act_ClickLabel.ImageIndex := 10;
+//    end;
+//
+//    1: begin
+//      cardpnl_Dialogs.ActiveCard := Card_MostRecentlyUsedPrj;
+//      act_ClickLabel.Caption := cUsePrjMan;
+//      act_ClickLabel.ImageIndex := 9;
+//    end;
+//
+//    else begin
+//      cardpnl_Dialogs.ActiveCard := Card_CreateSelectPrjDb;
+//      act_ClickLabel.Caption := cUsePrjMan;
+//      act_ClickLabel.ImageIndex := 10;
+//    end;
+//  end;
+//end;
 
 
 
@@ -369,17 +381,17 @@ begin
 end;
 
 
-procedure Tfrm_SelectProject.sv_MenuItemsClosing(Sender: TObject);
-begin
-//  if cardpnl_Dialogs.ActiveCard = Card_CreateSelectPrjDb then begin
-//    frm_SelectProject.Width := cCard_CreateSelectPrjDb_FormW;
-//    frm_SelectProject.Height := cCard_CreateSelectPrjDb_FormH;
-//  end;
-//  if cardpnl_Dialogs.ActiveCard = Card_MostRecentlyUsedPrj then begin
-//    frm_SelectProject.Width := cCard_MostRecentlyUsedPrj_FormW;
-//    frm_SelectProject.Height := cCard_MostRecentlyUsedPrj_FormW;
-//  end;
-end;
+//procedure Tfrm_SelectProject.sv_MenuItemsClosing(Sender: TObject);
+//begin
+////  if cardpnl_Dialogs.ActiveCard = Card_CreateSelectPrjDb then begin
+////    frm_SelectProject.Width := cCard_CreateSelectPrjDb_FormW;
+////    frm_SelectProject.Height := cCard_CreateSelectPrjDb_FormH;
+////  end;
+////  if cardpnl_Dialogs.ActiveCard = Card_MostRecentlyUsedPrj then begin
+////    frm_SelectProject.Width := cCard_MostRecentlyUsedPrj_FormW;
+////    frm_SelectProject.Height := cCard_MostRecentlyUsedPrj_FormW;
+////  end;
+//end;
 
 
 procedure Tfrm_SelectProject.act_PrjEditExecute(Sender: TObject);
@@ -392,8 +404,90 @@ begin
 end;
 
 
+procedure Tfrm_SelectProject.CheckUserServerSelection;
+
+  function DoFilesExist: Boolean;
+  begin
+    result := true;
+    if not FileExists(GetCorrectedSlashes(DbPath, ButTable, st_Win)) then begin
+      lstbox_Issues.Items.Add('Table not found: '+ButTable);
+      Result := False;
+    end;
+
+    if not FileExists(GetCorrectedSlashes(DbPath, ToolsPrj, st_Win)) then begin
+      lstbox_Issues.Items.Add('Table not found: '+ToolsPrj);
+      Result := False;
+    end;
+
+    if not FileExists(GetCorrectedSlashes(DbPath, NxSqlBtn, st_Win)) then begin
+      lstbox_Issues.Items.Add('Table not found: '+NxSqlBtn);
+      Result := False;
+    end;
+
+    if not FileExists(GetCorrectedSlashes(DbPath, Trans, st_Win)) then begin
+      lstbox_Issues.Items.Add('Table not found: '+Trans);
+      Result := False;
+    end;
+  end;
+
+  function LocalReady: Boolean;
+  begin
+    result := false;
+    if not DirectoryExists(edit_LocalDbPath) then
+    begin
+      lstbox_Issues.Items.Add(DbPath);
+      Result := False;
+    end
+    else
+    begin
+      Result := DoFilesExist;
+    end;
+  end;
+
+  function NetworkReady: Boolean;
+  begin
+    Result := true;
+    if lb_ServerNames.Count < 0 then begin
+      lstbox_Issues.Items.Add(ServerLb);
+      result := False;
+    end;
+    if True then
+
+  end;
+
+begin
+  case jvrdgrp_ServerType.ItemIndex of
+    0: begin
+
+    end;
+
+    1: begin
+    end;
+
+    2:;
+
+  end;
+
+  edit_LocalDbPath.Enabled     := jvrdgrp_ServerType.ItemIndex = 0;
+  ts_DefaultAliasBtnDb.Enabled := jvrdgrp_ServerType.ItemIndex = 0;
+
+  edt_Alias.Enabled            := jvrdgrp_ServerType.ItemIndex = 1;
+  jvxpbtn_GetLocalPath.Enabled := jvrdgrp_ServerType.ItemIndex = 1;
+  btn_ResetLocalDbPath.Enabled := jvrdgrp_ServerType.ItemIndex = 1;
+
+end;
+
+
 procedure Tfrm_SelectProject.SetDialogServerType;
 begin
+  lstbox_Issues.Items.Clear;
+
+  dm_DataMod.nxwint_SqlToolsTrans.close;
+  dm_DataMod.nxsrvrngn_Local.close;
+
+  btn_ConnectDb.Enabled                := False;
+  btn_ConnectDb.ImageIndex             := 8;
+
   lbl_CaptionForDBAlais.Enabled        := rb_NetworkedDb.Checked;
   edt_Alias.enabled                    := rb_NetworkedDb.Checked;
   lbl_CaptionForServerLb.Enabled       := rb_NetworkedDb.Checked;
@@ -402,23 +496,23 @@ begin
   edt_NetWorkServer.Enabled            := rb_NetworkedDb.Checked;
   ts_DefaultAliasBtnDb.Enabled         := rb_NetworkedDb.Checked;
 
-  JvXPButton1.Enabled               := rb_LocalDb.Checked;
-  lbl_CaptionForLocalDbPath.Enabled := rb_LocalDb.Checked;
-  edit_DbPath.Enabled               := rb_LocalDb.Checked;
+  btn_ResetLocalDbPath.Enabled         := rb_LocalDb.Checked;
+  lbl_CaptionForLocalDbPath.Enabled    := rb_LocalDb.Checked;
+  edit_LocalDbPath.Enabled             := rb_LocalDb.Checked;
 
-  act_ConnectBtn.Enabled := rb_NetworkedDb.Checked or rb_LocalDb.Checked;
-  lb_ServerNames.Items.Clear;
+  case jvrdgrp_ServerType.ItemIndex of
+    0: begin
+      dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxsrvrngn_Local;
+      CheckUserServerSelection;
+    end;
 
+    1: begin
+      dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxrse_SqlTools;
+      dm_DataMod.nxwint_SqlToolsTrans.GetServerNames(lb_ServerNames.Items);
+      CheckUserServerSelection;
+    end;
 
-  if rb_NetworkedDb.Checked  then begin
-    dm_DataMod.nxrse_SqlTools.Close;
-    dm_DataMod.nxrse_SqlTools.Transport := dm_DataMod.nxwint_SqlToolsTrans;
-
-    dm_DataMod.nxwint_SqlToolsTrans.GetServerNames(lb_ServerNames.Items, 5000);
-    lb_ServerNames.ItemIndex := lb_ServerNames.Items.IndexOf(edt_NetWorkServer.Text);
-  end
-  else begin
-
+    2:  lstbox_Issues.Items.Add(NoServer);
   end;
 end;
 
@@ -755,15 +849,13 @@ procedure Tfrm_SelectProject.FormCreate(Sender: TObject);
 var
   Index: Integer;
 begin
-//  edit_DbPath.Text := Delphi                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            SQLToolsDbPath;
   lstGemMruList1.MruListFile := MRUFile;
-//  XmlDoc.FileName := PathAndFileAtFormLocSize;
   fprjInfo.ClearPrj;
   JvFormStorage1.RestoreFormPlacement;
-  if sv_MenuItems.Opened then
-    sv_MenuItems.Opened := false
-  else
-    sv_MenuItemsClosing(Sender); // sets width of dialogs
+//  if sv_MenuItems.Opened then
+//    sv_MenuItems.Opened := false
+//  else
+//    sv_MenuItemsClosing(Sender); // sets width of dialogs
 
 end;
 
@@ -878,7 +970,7 @@ function Tfrm_SelectProject.SetPrjDbServerType(aLocalServer: Boolean; var Status
 
     except
       Result := False;
-      MessageDlg('msg 785-Could not Setup Networked Db.'+#13+#10+ 'ERROR: '+Status, mtError, [mbOK], 0);
+      MessageDlg('msg 787785-Could not Setup Networked Db.'+#13+#10+ 'ERROR: '+Status, mtError, [mbOK], 0);
       SetStatusBar('Could not Setup Networked Db.' +#13+#10+'ERROR: '+'Status', 1, clRed);
     end;
   end;
@@ -902,7 +994,7 @@ begin
       Status := 'nxtbl_TransportLUT.open';
       dm_DataMod.nxtbl_TransportLUT.Open;
     except
-      MessageDlg('msg 809 - Error openning: '+ Status , mtError, [mbOK], 0);
+      MessageDlg('msg 901 - Error openning: '+ Status , mtError, [mbOK], 0);
       Result := False;
     end;
   SetConnectBtn(result);
@@ -918,7 +1010,7 @@ begin
   else begin
     sv_MenuItems.Open;
 //    btn__SplitViewOpenClose.Enabled := False;
-    SetStatusBar('msg 828-Projects/SQLBtns Db NOT found. Use this dialog to setup your db.',1, clRed);
+    SetStatusBar('msg 932-Projects/SQLBtns Db NOT found. Use this dialog to setup your db.',1, clRed);
   end;
 end;
 
@@ -931,12 +1023,12 @@ end;
 
 procedure Tfrm_SelectProject.jvxpbtn_HaltProgramClick(Sender: TObject);
 begin
-  if (MessageDlg('mmsg 850-Do want to Halt the program?', mtWarning, [mbYes, mbNo], 0) in [mrYes, mrNone]) then
+  if (MessageDlg('mmsg 945-Do want to Halt the program?', mtWarning, [mbYes, mbNo], 0) in [mrYes, mrNone]) then
     Halt(9);
 end;
 
 
-procedure Tfrm_SelectProject.JvXPButton1Click(Sender: TObject);
+procedure Tfrm_SelectProject.jvxpbtn_GetLocalPathClick(Sender: TObject);
 begin
   if JvSelectDirectory1.Execute then
     edit_DbPath.Text := ExpandUNCFileName(JvSelectDirectory1.Directory);
@@ -984,13 +1076,20 @@ procedure Tfrm_SelectProject.act_ConnectBtnUpdate(Sender: TObject);
 var
   aResult: boolean;
 begin
-  if rb_LocalDb.checked then begin
-    aResult := {(lb_ServerNames.Count > 0) and}
-               (System.SysUtils.DirectoryExists(edit_DbPath.text));
+  if rb_NoServerSelected.Checked then
+  begin
+    aResult := false
   end
-  else begin
-    aResult := lb_ServerNames.Count > 0;
-  end;
+  else
+    if rb_LocalDb.checked then
+    begin
+      aResult := {(lb_ServerNames.Count > 0) and}
+               (System.SysUtils.DirectoryExists(edit_DbPath.text));
+    end
+    else
+    begin
+      aResult := lb_ServerNames.Count > 0;
+    end;
   act_ConnectBtn.enabled := aResult;
 end;
 
