@@ -30,8 +30,6 @@ object frm_SelectProject: Tfrm_SelectProject
     Caption = 'cardpnl_Dialogs'
     TabOrder = 0
     OnCardChange = cardpnl_DialogsCardChange
-    ExplicitLeft = 203
-    ExplicitWidth = 1142
     object Card_CreateSelectPrjDb: TCard
       Left = 1
       Top = 1
@@ -40,7 +38,6 @@ object frm_SelectProject: Tfrm_SelectProject
       Caption = 'CreateSelectPrjDb'
       CardIndex = 0
       TabOrder = 0
-      ExplicitWidth = 1140
       object Label3: TLabel
         Left = 0
         Top = 2
@@ -381,7 +378,6 @@ object frm_SelectProject: Tfrm_SelectProject
       Caption = 'Most Recently Used'
       CardIndex = 1
       TabOrder = 1
-      ExplicitWidth = 1140
       object lbl4: TLabel
         Left = 19
         Top = 29
@@ -432,8 +428,6 @@ object frm_SelectProject: Tfrm_SelectProject
       Caption = 'crd_SetDbServer'
       CardIndex = 2
       TabOrder = 2
-      ExplicitLeft = 3
-      ExplicitTop = -1
       object Label13: TLabel
         Left = 16
         Top = 6
@@ -484,22 +478,22 @@ object frm_SelectProject: Tfrm_SelectProject
         Visible = False
       end
       object lbl_CaptionForServerLb: TLabel
-        Left = 11
-        Top = 125
+        Left = 10
+        Top = 120
         Width = 115
         Height = 13
         Caption = 'Select WinSock Server:'
       end
       object lbl_CaptionNetServerSelected: TLabel
-        Left = 252
-        Top = 125
+        Left = 251
+        Top = 120
         Width = 80
         Height = 13
         Caption = 'Selected Server:'
       end
       object lbl_CaptionForDBAlais: TLabel
-        Left = 253
-        Top = 217
+        Left = 252
+        Top = 251
         Width = 125
         Height = 13
         Caption = 'Network Database Alias:'
@@ -557,25 +551,12 @@ object frm_SelectProject: Tfrm_SelectProject
         Font.Style = [fsBold]
         ParentFont = False
       end
-      object rb_LocalDb: TJvRadioButton
-        Left = 604
-        Top = 52
-        Width = 98
-        Height = 17
-        Action = act_PrjEdit
-        Alignment = taLeftJustify
-        TabOrder = 0
-        LinkedControls = <>
-      end
-      object rb_NetworkedDb: TJvRadioButton
-        Left = 604
-        Top = 75
-        Width = 142
-        Height = 17
-        Action = act_SetNetwodkDbType
-        Alignment = taLeftJustify
-        TabOrder = 1
-        LinkedControls = <>
+      object lbl_CaptionAliasLB: TLabel
+        Left = 256
+        Top = 163
+        Width = 27
+        Height = 13
+        Caption = 'Alias:'
       end
       object btn_ResetLocalDbPath: TJvXPButton
         Left = 432
@@ -583,7 +564,7 @@ object frm_SelectProject: Tfrm_SelectProject
         Width = 33
         Height = 27
         Hint = 'Reset Default Db Path'
-        TabOrder = 2
+        TabOrder = 0
         Glyph.Data = {
           0954506E67496D61676589504E470D0A1A0A0000000D49484452000000180000
           00180806000000E0773DF800000006624B474400FF00FF00FFA0BDA793000001
@@ -611,7 +592,7 @@ object frm_SelectProject: Tfrm_SelectProject
         Height = 49
         Hint = 'Set path to local database'
         Caption = '...'
-        TabOrder = 3
+        TabOrder = 1
         Glyph.Data = {
           0954506E67496D61676589504E470D0A1A0A0000000D49484452000000180000
           00180806000000E0773DF800000006624B474400FF00FF00FFA0BDA793000000
@@ -634,48 +615,48 @@ object frm_SelectProject: Tfrm_SelectProject
         Width = 464
         Height = 21
         Enabled = False
-        TabOrder = 4
+        TabOrder = 2
       end
       object lb_ServerNames: TJvListBox
-        Left = 8
-        Top = 144
-        Width = 225
-        Height = 137
+        Left = 11
+        Top = 139
+        Width = 191
+        Height = 104
         ItemHeight = 13
         Background.FillMode = bfmTile
         Background.Visible = False
-        TabOrder = 5
+        Sorted = True
+        TabOrder = 3
         OnClick = lb_ServerNames1Click
       end
       object edt_NetWorkServer: TEdit
-        Left = 253
-        Top = 144
+        Left = 252
+        Top = 136
         Width = 217
         Height = 21
-        Color = clCream
+        Color = 14811134
         ReadOnly = True
-        TabOrder = 6
+        TabOrder = 4
       end
       object ts_DefaultAliasBtnDb: TToggleSwitch
-        Left = 252
-        Top = 191
+        Left = 52
+        Top = 266
         Width = 143
         Height = 20
-        State = tssOn
         StateCaptions.CaptionOn = 'Use Your Alias'
-        StateCaptions.CaptionOff = 'Use Defualt Alias'
-        TabOrder = 7
+        StateCaptions.CaptionOff = 'Use Default Alias'
+        TabOrder = 5
         OnClick = ts_DefaultAliasBtnDbClick
       end
       object edt_Alias: TEdit
-        Left = 303
-        Top = 236
+        Left = 256
+        Top = 265
         Width = 162
         Height = 21
         Color = clCream
         Enabled = False
         ReadOnly = True
-        TabOrder = 8
+        TabOrder = 6
         Text = 'NxDelphiSqlTools'
       end
       object btn_ConnectDb: TButton
@@ -687,7 +668,7 @@ object frm_SelectProject: Tfrm_SelectProject
         Action = act_ConnectBtn
         ImageAlignment = iaCenter
         Images = il1
-        TabOrder = 9
+        TabOrder = 7
       end
       object btn_CopyDbTables: TButton
         Left = 45
@@ -695,50 +676,9 @@ object frm_SelectProject: Tfrm_SelectProject
         Width = 179
         Height = 38
         Caption = 'Close Program. Can Not continue with out Db Open.'
-        TabOrder = 10
+        TabOrder = 8
         WordWrap = True
         OnClick = btn_CopyDbTablesClick
-      end
-      object rb_NoServerSelected: TJvRadioButton
-        Left = 604
-        Top = 29
-        Width = 116
-        Height = 17
-        Alignment = taLeftJustify
-        Caption = 'No Server Selected'
-        Checked = True
-        TabOrder = 11
-        TabStop = True
-        LinkedControls = <>
-      end
-      object clblst_ServerIssuses: TJvxCheckListBox
-        Left = 536
-        Top = 327
-        Width = 210
-        Height = 87
-        CheckKind = ckCheckMarks
-        ItemHeight = 13
-        TabOrder = 12
-        InternalVersion = 202
-        Strings = (
-          '1. No Server Selected is Checked'
-          1
-          True
-          '2. Local Db Path not Valid'
-          1
-          True
-          '2. No Severs Listed'
-          1
-          True
-          '2. No Selected Server is Blank.'
-          1
-          True
-          '2. Alias edit blank.'
-          1
-          True
-          '2. Could not find alias.'
-          1
-          True)
       end
       object jvrdgrp_ServerType: TJvRadioGroup
         Left = 45
@@ -752,7 +692,8 @@ object frm_SelectProject: Tfrm_SelectProject
           'Local'
           'Network'
           'No Server')
-        TabOrder = 13
+        TabOrder = 9
+        OnClick = jvrdgrp_ServerTypeClick
       end
       object lstbox_Issues: TListBox
         Left = 266
@@ -760,7 +701,18 @@ object frm_SelectProject: Tfrm_SelectProject
         Width = 231
         Height = 91
         ItemHeight = 13
-        TabOrder = 14
+        TabOrder = 10
+      end
+      object jvlstbx_AlaisNames: TJvListBox
+        Left = 251
+        Top = 180
+        Width = 217
+        Height = 65
+        ItemHeight = 13
+        Background.FillMode = bfmTile
+        Background.Visible = False
+        TabOrder = 11
+        OnClick = jvlstbx_AlaisNamesClick
       end
     end
     object crd_CreateNewDbTables: TCard
@@ -771,7 +723,6 @@ object frm_SelectProject: Tfrm_SelectProject
       Caption = 'crd_CreateNewDbTables'
       CardIndex = 3
       TabOrder = 3
-      ExplicitWidth = 1140
     end
     object crd_PackRestructureDb: TCard
       Left = 1
@@ -781,7 +732,6 @@ object frm_SelectProject: Tfrm_SelectProject
       Caption = 'crd_PackRestructureDb'
       CardIndex = 4
       TabOrder = 4
-      ExplicitWidth = 1140
     end
   end
   object JvPanel1: TJvPanel
@@ -966,7 +916,6 @@ object frm_SelectProject: Tfrm_SelectProject
       RegularButtonColor = clBtnText
       SelectedButtonColor = clBlack
       TabOrder = 0
-      ExplicitWidth = 200
     end
   end
   object ActionList1: TActionList
@@ -1056,13 +1005,11 @@ object frm_SelectProject: Tfrm_SelectProject
       'act_ClickLabel.Tag'
       'cardpnl_Dialogs.ActiveCard'
       'sv_MenuItems.Opened'
-      'rb_LocalDb.Checked'
-      'rb_NetworkedDb.Checked'
       'edit_LocalDbPath.Text'
       'edt_NetWorkServer.Text'
       'ts_DefaultAliasBtnDb.State'
       'edt_Alias.Text'
-      'rb_NoServerSelected.Checked')
+      'jvrdgrp_ServerType.ItemIndex')
     StoredValues = <>
     Left = 817
     Top = 8
