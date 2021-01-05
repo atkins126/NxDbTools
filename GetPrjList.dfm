@@ -683,14 +683,15 @@ object frm_SelectProject: Tfrm_SelectProject
       object jvrdgrp_ServerType: TJvRadioGroup
         Left = 45
         Top = 11
-        Width = 258
+        Width = 364
         Height = 35
         Caption = 'Server Type:'
-        Columns = 3
-        ItemIndex = 2
+        Columns = 4
+        ItemIndex = 3
         Items.Strings = (
           'Local'
-          'Network'
+          'Pipe'
+          'Tcpip'
           'No Server')
         TabOrder = 9
         OnClick = jvrdgrp_ServerTypeClick
@@ -899,12 +900,17 @@ object frm_SelectProject: Tfrm_SelectProject
           Items = <
             item
               Action = act_ChangeDbServers
+              Caption = 'ChangeProject Db Server'
             end
             item
               Action = act_CreateUpdateDb
+              Caption = 'Create/Update Project Tables'
+              Hint = 'Create empty Project Db Tables'
             end
             item
               Action = act_PackRestDb
+              Caption = 'Pack/Restructure Project Db'
+              Hint = 'Pack/Restructure Project Db'
             end>
         end>
       Font.Charset = ANSI_CHARSET

@@ -1,7 +1,7 @@
 object dm_DataMod: Tdm_DataMod
   OldCreateOrder = False
   Height = 492
-  Width = 570
+  Width = 645
   object nxseAllEngines: TnxseAllEngines
     Left = 96
     Top = 8
@@ -47,7 +47,7 @@ object dm_DataMod: Tdm_DataMod
     ServerName = ''
     Options = []
     TableExtension = 'nx1'
-    Left = 288
+    Left = 296
     Top = 136
   end
   object nxsqlngn_Local: TnxSqlEngine
@@ -81,8 +81,8 @@ object dm_DataMod: Tdm_DataMod
   object nxwint_SqlToolsTrans: TnxWinsockTransport
     DisplayCategory = 'Transports'
     ServerNameDesigntime = 'SRSDServer@10.0.0.62'
-    Left = 488
-    Top = 88
+    Left = 544
+    Top = 72
   end
   object nxrse_SqlTools: TnxRemoteServerEngine
     Transport = nxwint_SqlToolsTrans
@@ -147,7 +147,7 @@ object dm_DataMod: Tdm_DataMod
   object nxtbl_TransportLUT: TnxTable
     Database = nxdb_SQLBtns
     TableName = 'TransportLUT'
-    Left = 480
+    Left = 488
     Top = 360
     object nxtbl_TransportLUTTransportID: TIntegerField
       FieldName = 'TransportID'
@@ -231,7 +231,12 @@ object dm_DataMod: Tdm_DataMod
   end
   object nxBlowfishRC4SecuredTransport1: TnxBlowfishRC4SecuredTransport
     DisplayCategory = 'Transports,Secured'
-    Left = 328
-    Top = 24
+    Left = 288
+    Top = 8
+  end
+  object nxnmdp_trnsprt: TnxNamedPipeTransport
+    DisplayCategory = 'Transports'
+    Left = 408
+    Top = 72
   end
 end

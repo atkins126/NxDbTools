@@ -71,6 +71,7 @@ type
     nxBlowfishRC4SecuredTransport1: TnxBlowfishRC4SecuredTransport;
     nxsn_SqlTools: TnxSession;
     nxtbl_NxDbSqlToolsPrjsPrjPath: TWideStringField;
+    nxnmdp_trnsprt: TnxNamedPipeTransport;
     procedure NxSqlButtonsDbTAfterDelete(DataSet: TDataSet);
     procedure nxtbl_NxDbSqlToolsPrjsPostError(DataSet: TDataSet;
       E: EDatabaseError; var Action: TDataAction);

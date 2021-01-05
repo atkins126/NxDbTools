@@ -23,7 +23,8 @@ uses
   SQLChildFormChangeInterface in 'SQLChildFormChangeInterface.pas',
   FontStuffTest in 'FontStuffTest.pas' {Form1},
   NxDbToolsDbEvolution_1 in 'NxDbToolsDbEvolution_1.pas',
-  CardHelper in 'CardHelper.pas';
+  CardHelper in 'CardHelper.pas',
+  SaveComponentsToIni in 'SaveComponentsToIni.pas';
 
 {$R *.res}
 

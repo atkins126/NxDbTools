@@ -17,10 +17,10 @@ uses
   adpMRU, SBPro, gemCustomButton, gemArrow,
 
   JvBaseDlg, JvWinDialogs, JvImageList, JvFormPlacement, JvComponentBase,
-  JvAppStorage, JvAppXMLStorage,  JvExControls, JvXPCore, JvXPButtons, JvPanel,
+  JvAppStorage, JvAppXMLStorage, JvExControls, JvXPCore, JvXPButtons, JvPanel,
   JvSpeedButton, JvExStdCtrls, JvButton, JvBrowseFolder, JvListBox, JvMenus,
   JvExMask, JvSpin, JvExExtCtrls, JvExComCtrls, JvComCtrls, JvExtComponent,
-  JvRollOut, JvCombobox, JvColorCombo, JvToolEdit,JvImage,
+  JvRollOut, JvCombobox, JvColorCombo, JvToolEdit, JvImage,
 
   PngImageList, PngBitBtn,
 

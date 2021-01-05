@@ -35,6 +35,14 @@ uses
 type
   tPrjOpenType = (pot_MRU, pot_PrjGrid, pot_Default);
 
+
+  tgemComponentSaveInfo = record
+    fComponent: TControl;
+    fClass: TClass;
+
+
+  end;
+
   Tfrm_SelectProject = class(TForm)
     ActionList1             : TActionList;
     act_DefaultPrj          : TAction;
@@ -254,25 +262,25 @@ var
   XMLPath : string;
   fCild: string;
 begin
-  XMLPath := PathAndFileAtFormLocSize;
-  XmlFile := TXMLDocument.Create(Application);
-  try
-    XmlFile.LoadFromFile(XMLPath);
-    XmlFile.Active := True;
-    MainNode := XmlFile.DocumentElement;
-    fCild := aChildern;
-
-    for i:=0 to MainNode.ChildNodes[aChildern.Strings[0]].ChildNodes.Count-1 do
-    begin
-      CustomerNode := MainNode.ChildNodes['Customers'].ChildNodes[i];
-      MainNode.ChildNodes['Customers'].ChildNodes[i].ChildNodes
-      //Here you can get any imformation
-      ShowMessage(CustomerNode.ChildNodes['address_name'].Text);
-      ShowMessage(CustomerNode.ChildNodes['address_line_1'].Text);
-    end;
-  finally
-    FreeAndNil(XmlFile);
-  end;
+//  XMLPath := PathAndFileAtFormLocSize;
+//  XmlFile := TXMLDocument.Create(Application);
+//  try
+//    XmlFile.LoadFromFile(XMLPath);
+//    XmlFile.Active := True;
+//    MainNode := XmlFile.DocumentElement;
+//    fCild := aChildern;
+//
+//    for i:=0 to MainNode.ChildNodes[aChildern.Strings[0]].ChildNodes.Count-1 do
+//    begin
+//      CustomerNode := MainNode.ChildNodes['Customers'].ChildNodes[i];
+//      MainNode.ChildNodes['Customers'].ChildNodes[i].ChildNodes
+//      //Here you can get any imformation
+//      ShowMessage(CustomerNode.ChildNodes['address_name'].Text);
+//      ShowMessage(CustomerNode.ChildNodes['address_line_1'].Text);
+//    end;
+//  finally
+//    FreeAndNil(XmlFile);
+//  end;
 end;
 
 procedure Tfrm_SelectProject.SetStatusBar(aMsg: string; aPanel: Byte; aColor: TColor);
@@ -1150,22 +1158,35 @@ end;
 
 
 procedure Tfrm_SelectProject.jvrdgrp_ServerTypeClick(Sender: TObject);
+
+  function getParsedString: string;
+  begin
+    ExtractValueInXMLFile(PathAndFileAtFormLocSize, '');
+  end;
+
 begin
+  getParsedString;
   case jvrdgrp_ServerType.ItemIndex of
     0: begin
       dm_DataMod.nxsn_SqlTools.ServerEngine :=  dm_DataMod.nxsrvrngn_Local;
-      edit_LocalDbPath.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject', 'edit_DbPath', 'none');
+//      edit_LocalDbPath.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject', 'edit_DbPath', 'none');
     end;
 
     1: begin
       dm_DataMod.nxsn_SqlTools.ServerEngine :=  dm_DataMod.nxrse_SqlTools;
-      edt_NetWorkServer.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject' ,'edt_NetWorkServer_Text', 'none');
+//      edt_NetWorkServer.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject' ,'edt_NetWorkServer_Text', 'none');
 
-      edt_Alias.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject' ,'edt_Alias_Text', 'none');
+//      edt_Alias.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject' ,'edt_Alias_Text', 'none');
     end;
 
     2: begin
+      dm_DataMod.nxsn_SqlTools.ServerEngine :=  dm_DataMod.nxrse_SqlTools;
+//      edt_NetWorkServer.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject' ,'edt_NetWorkServer_Text', 'none');
 
+//      edt_Alias.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject' ,'edt_Alias_Text', 'none');
+    end;
+
+    3: begin
     end;
   end;
   SetDialogServerType;
