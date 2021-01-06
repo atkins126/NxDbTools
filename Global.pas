@@ -169,6 +169,7 @@ type
 
 var
   PathAndFileIni             : string;
+  PrjSetupCompomentsIni      : string;
   PathAndFileAtFormLocSize   : string;
   AppPath                    : string;
 //  FunctionNamesPath          : string;
@@ -198,6 +199,7 @@ const
   cNxTableViewerIni    = '\nxTableViewer.ini';   // keep  // Floating form location and size memory
   cDelphiSqToolsDbPath = '\DelphiSqlToolsDb\';   // keep // Nexus Delphi Sql Tools database
   cFormLocSizeDef      = '\FormLocSizeDefs.xml'; // keep  // Location and size of forms memory
+  cPrjSetUpComponents  = '\PrjSetUp.ini';
   cBtnDefaultHieght    = 20;
 //  MRUItemsIni         = '\NexusDbSQLMRUItems.ini'; // remove
   cLocalServerAliases  = '\LocalDbs.txt'; //
@@ -397,7 +399,9 @@ begin
 
 
   PathAndFileIni             := AppPath + cNxTableViewerIni;
-//  FunctionNamesPath          := AppPath + FunctionNamesFile;
+
+
+  PrjSetupCompomentsIni      := AppPath + cPrjSetUpComponents;
   DelphiDbDefaultPath        := AppPath + cDelphiSqToolsDbPath;
   PathAndFileAtFormLocSize   := AppPath + cFormLocSizeDef;
 //  MRUMenuItemsPathFile       := AppPath + MRUItemsIni;

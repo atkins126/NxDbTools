@@ -14,7 +14,7 @@ uses
   Vcl.DBCGrids, Vcl.DBCtrls, Vcl.Imaging.pngimage, Vcl.Menus, Vcl.ImgList,
   Vcl.WinXCtrls, Vcl.CategoryButtons,
 
-  GemMruList, PngImageList, Global, SBPro, GEMDBLabel,
+  GemMruList, PngImageList, Global, SBPro, GEMDBLabel, SaveComponentsToIni,
 
   nxdb, Data.DB,
 
@@ -32,119 +32,118 @@ uses
   {$IFDEF  USE_CODESITE}, CodeSiteLogging {$ENDIF};
 
 
+
 type
   tPrjOpenType = (pot_MRU, pot_PrjGrid, pot_Default);
 
 
-  tgemComponentSaveInfo = record
-    fComponent: TControl;
-    fClass: TClass;
+  tIniComponent = (icTJVRadioGrp, icTEditLocalDbPath, icTEditServer, icTEditAlias,
+                   icToggleAliasToUse);
 
 
-  end;
 
   Tfrm_SelectProject = class(TForm)
-    ActionList1             : TActionList;
-    act_DefaultPrj          : TAction;
-    act_OpenPrj             : TAction;
-    act_CreatePrj           : TAction;
-    act_DeletePrj           : TAction;
-    act_SetPrjPath          : TAction;
-//    act_ClickLabel          : TAction;
-    act_SetNetwodkDbType    : TAction;
-    cardpnl_Dialogs         : TCardPanel;
-    Card_CreateSelectPrjDb  : TCard;
-    Card_MostRecentlyUsedPrj: TCard;
-    lstGemMruList1          : tGemMruList;
-    btn_actCnPrefixWizard   : TJvXPButton;
-    btn_actCnPrefixWizard1  : TJvXPButton;
-    btn_actCnPrefixWizard2  : TJvXPButton;
-    btn_actCnPrefixWizard3  : TJvXPButton;
-    btn__Close              : TJvXPButton;
-    xpbtn_GetPrjPath        : TJvXPButton;
-    jvxpbtn_HaltProgram     : TJvXPButton;
-    JvXPButton4             : TJvXPButton;
-    JvFormStorage1          : TJvFormStorage;
-    JvPanel1                : TJvPanel;
-    JvLED1                  : TJvLED;
-    DBCtrlGrid1             : TDBCtrlGrid;
-    rzdbed_PrjName          : TRzDBEdit;
-    RzDBEdit1               : TRzDBEdit;
-    RzDBEdit2               : TRzDBEdit;
-    RzDBEdit3               : TRzDBEdit;
-    RzDBEdit4               : TRzDBEdit;
-    RzDBEdit5               : TRzDBEdit;
-    RzDBMemo1               : TRzDBMemo;
-    RzDBNavigator1          : TRzDBNavigator;
-    NxDelphiSqlTools_Status : TJvDBStatusLabel;
-    JvSelectDirectory1      : TJvSelectDirectory;
-    WinSock2                : TMenuItem;
-    NamePipe2               : TMenuItem;
-    LocalServer2            : TMenuItem;
-    SharedMem2              : TMenuItem;
-    None2                   : TMenuItem;
-    StatusBarPro            : TStatusBarPro;
-    sv_MenuItems: TSplitView;
-    Shape1                  : TShape;
-    Label11                 : TLabel;
-    Label10                 : TLabel;
-    Label9                  : TLabel;
-    Label8                  : TLabel;
-    Label7                  : TLabel;
-    Label6                  : TLabel;
-    Label1                  : TLabel;
-    Label3                  : TLabel;
-    lbl4                    : TLabel;
-    Label2                  : TLabel;
-    GEMDBLabel1             : TGEMDBLabel;
-    btn_GridMruSelection    : TButton;
-    JvDBSearchComboBox1     : TJvDBSearchComboBox;
-    JvDBFindEdit1           : TJvDBFindEdit;
-    timer_SearchTimerBlank  : TTimer;
-    popm_Transport          : TPopupMenu;
-    popm_Server             : TPopupMenu;
-    popm_Database           : TPopupMenu;
-    jvblnhnt_1: TJvBalloonHint;
-    act_ConnectBtn: TAction;
-//    XmlDoc: TXMLDocument;
-    act_PrjEdit: TAction;
-    crd_SetDbServer: TCard;
-    crd_CreateNewDbTables: TCard;
-    Label13: TLabel;
-    Shape2: TShape;
-    Label14: TLabel;
-    lbl_CaptionForLocalDbPath: TLabel;
-    bl_1: TJvBehaviorLabel;
-    btn_ResetLocalDbPath: TJvXPButton;
-    jvxpbtn_GetLocalPath: TJvXPButton;
-    edit_LocalDbPath: TEdit;
-    lbl_CaptionForServerLb: TLabel;
-    lb_ServerNames: TJvListBox;
-    lbl_CaptionNetServerSelected: TLabel;
-    edt_NetWorkServer: TEdit;
-    ts_DefaultAliasBtnDb: TToggleSwitch;
-    lbl_CaptionForDBAlais: TLabel;
-    edt_Alias: TEdit;
-    Shape3: TShape;
-    Label15: TLabel;
-    btn_ConnectDb: TButton;
-    Label16: TLabel;
-    btn_CopyDbTables: TButton;
-    ctgrybtns_Menu: TCategoryButtons;
-    il1: TImageList;
-    act_RecentPrjs: TAction;
-    act_CreateEditPrjs: TAction;
-    act_ChangeDbServers: TAction;
-    act_CreateUpdateDb: TAction;
-    act_PackRestDb: TAction;
-    crd_PackRestructureDb: TCard;
-    btn_OpenCloseSv: TPngSpeedButton;
-    shp4: TShape;
-    lbl_Caption4: TLabel;
-    jvrdgrp_ServerType: TJvRadioGroup;
-    lstbox_Issues: TListBox;
-    jvlstbx_AlaisNames: TJvListBox;
-    lbl_CaptionAliasLB: TLabel;
+    ActionList1                  : TActionList;
+    act_DefaultPrj               : TAction;
+    act_OpenPrj                  : TAction;
+    act_CreatePrj                : TAction;
+    act_DeletePrj                : TAction;
+    act_SetPrjPath               : TAction;
+//    act_ClickLabel             : TAction;
+    act_SetNetwodkDbType         : TAction;
+    cardpnl_Dialogs              : TCardPanel;
+    Card_CreateSelectPrjDb       : TCard;
+    Card_MostRecentlyUsedPrj     : TCard;
+    lstGemMruList1               : tGemMruList;
+    btn_actCnPrefixWizard        : TJvXPButton;
+    btn_actCnPrefixWizard1       : TJvXPButton;
+    btn_actCnPrefixWizard2       : TJvXPButton;
+    btn_actCnPrefixWizard3       : TJvXPButton;
+    btn__Close                   : TJvXPButton;
+    xpbtn_GetPrjPath             : TJvXPButton;
+    jvxpbtn_HaltProgram          : TJvXPButton;
+    JvXPButton4                  : TJvXPButton;
+    JvFormStorage1               : TJvFormStorage;
+    JvPanel1                     : TJvPanel;
+    JvLED1                       : TJvLED;
+    DBCtrlGrid1                  : TDBCtrlGrid;
+    rzdbed_PrjName               : TRzDBEdit;
+    RzDBEdit1                    : TRzDBEdit;
+    RzDBEdit2                    : TRzDBEdit;
+    RzDBEdit3                    : TRzDBEdit;
+    RzDBEdit4                    : TRzDBEdit;
+    RzDBEdit5                    : TRzDBEdit;
+    RzDBMemo1                    : TRzDBMemo;
+    RzDBNavigator1               : TRzDBNavigator;
+    NxDelphiSqlTools_Status      : TJvDBStatusLabel;
+    JvSelectDirectory1           : TJvSelectDirectory;
+    WinSock2                     : TMenuItem;
+    NamePipe2                    : TMenuItem;
+    LocalServer2                 : TMenuItem;
+    SharedMem2                   : TMenuItem;
+    None2                        : TMenuItem;
+    StatusBarPro                 : TStatusBarPro;
+    sv_MenuItems                 : TSplitView;
+    Shape1                       : TShape;
+    Label11                      : TLabel;
+    Label10                      : TLabel;
+    Label9                       : TLabel;
+    Label8                       : TLabel;
+    Label7                       : TLabel;
+    Label6                       : TLabel;
+    Label1                       : TLabel;
+    Label3                       : TLabel;
+    lbl4                         : TLabel;
+    Label2                       : TLabel;
+    GEMDBLabel1                  : TGEMDBLabel;
+    btn_GridMruSelection         : TButton;
+    JvDBSearchComboBox1          : TJvDBSearchComboBox;
+    JvDBFindEdit1                : TJvDBFindEdit;
+    timer_SearchTimerBlank       : TTimer;
+    popm_Transport               : TPopupMenu;
+    popm_Server                  : TPopupMenu;
+    popm_Database                : TPopupMenu;
+    jvblnhnt_1                   : TJvBalloonHint;
+    act_ConnectBtn               : TAction;
+//    XmlDoc                     : TXMLDocument;
+    act_PrjEdit                  : TAction;
+    crd_SetDbServer              : TCard;
+    crd_CreateNewDbTables        : TCard;
+    Label13                      : TLabel;
+    Shape2                       : TShape;
+    Label14                      : TLabel;
+    lbl_CaptionForLocalDbPath    : TLabel;
+    bl_1                         : TJvBehaviorLabel;
+    btn_ResetLocalDbPath         : TJvXPButton;
+    jvxpbtn_GetLocalPath         : TJvXPButton;
+    edit_LocalDbPath             : TEdit;
+    lbl_CaptionForServerLb       : TLabel;
+    lb_ServerNames               : TJvListBox;
+    lbl_CaptionNetServerSelected : TLabel;
+    edt_NetWorkServer            : TEdit;
+    ts_DefaultAliasBtnDb         : TToggleSwitch;
+    lbl_CaptionForDBAlais        : TLabel;
+    edt_Alias                    : TEdit;
+    Shape3                       : TShape;
+    Label15                      : TLabel;
+    btn_ConnectDb                : TButton;
+    Label16                      : TLabel;
+    btn_CopyDbTables             : TButton;
+    ctgrybtns_Menu               : TCategoryButtons;
+    il1                          : TImageList;
+    act_RecentPrjs               : TAction;
+    act_CreateEditPrjs           : TAction;
+    act_ChangeDbServers          : TAction;
+    act_CreateUpdateDb           : TAction;
+    act_PackRestDb               : TAction;
+    crd_PackRestructureDb        : TCard;
+    btn_OpenCloseSv              : TPngSpeedButton;
+    shp4                         : TShape;
+    lbl_Caption4                 : TLabel;
+    jvrdgrp_ServerType           : TJvRadioGroup;
+    lstbox_Issues                : TListBox;
+    jvlstbx_AlaisNames           : TJvListBox;
+    lbl_CaptionAliasLB           : TLabel;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -192,7 +191,9 @@ type
 
   private
     { Private declarations }
-    fPrjInfo: TProjectInfo;
+    fPrjInfo     : TProjectInfo;
+    fComponentIni: array[tIniComponent] of TObject;
+
     procedure OpenPrjFrom(Sender: TObject; PrjOpenType: tPrjOpenType);
     procedure OpenProject(sender: TObject);
     procedure RemoveFolder(const Dir: string);
@@ -967,11 +968,12 @@ begin
   lstGemMruList1.MruListFile := MRUFile;
   fprjInfo.ClearPrj;
   JvFormStorage1.RestoreFormPlacement;
-//  if sv_MenuItems.Opened then
-//    sv_MenuItems.Opened := false
-//  else
-//    sv_MenuItemsClosing(Sender); // sets width of dialogs
 
+  fComponentIni[icTJVRadioGrp]      := jvrdgrp_ServerType;
+  fComponentIni[icTEditLocalDbPath] := edit_LocalDbPath;
+  fComponentIni[icTEditServer]      := edt_NetWorkServer;
+  fComponentIni[icTEditAlias]       := edt_Alias;
+  fComponentIni[icToggleAliasToUse] := ts_DefaultAliasBtnDb;
 end;
 
 
@@ -1118,6 +1120,8 @@ end;
 
 procedure Tfrm_SelectProject.FormShow(Sender: TObject);
 begin
+  IniSaveComponnents(PrjSetupCompomentsIni, fComponentIni);//, Ext_Section:String='', false);
+ // fComponentIni
   SetDialogServerType;
 //  if (rb_LocalDb.Checked or rb_NetworkedDb.checked) then begin
 //    act_ConnectBtn.Execute;
