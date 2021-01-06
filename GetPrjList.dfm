@@ -834,6 +834,15 @@ object frm_SelectProject: Tfrm_SelectProject
       TabOrder = 1
       OnClick = jvxpbtn_HaltProgramClick
     end
+    object btn_1: TButton
+      Left = 480
+      Top = 32
+      Width = 75
+      Height = 25
+      Caption = 'btn_1'
+      TabOrder = 2
+      OnClick = btn_1Click
+    end
   end
   object StatusBarPro: TStatusBarPro
     Left = 0
@@ -1010,12 +1019,7 @@ object frm_SelectProject: Tfrm_SelectProject
     StoredProps.Strings = (
       'act_ClickLabel.Tag'
       'cardpnl_Dialogs.ActiveCard'
-      'sv_MenuItems.Opened'
-      'edit_LocalDbPath.Text'
-      'edt_NetWorkServer.Text'
-      'ts_DefaultAliasBtnDb.State'
-      'edt_Alias.Text'
-      'jvrdgrp_ServerType.ItemIndex')
+      'sv_MenuItems.Opened')
     StoredValues = <>
     Left = 817
     Top = 8

@@ -144,6 +144,7 @@ type
     lstbox_Issues                : TListBox;
     jvlstbx_AlaisNames           : TJvListBox;
     lbl_CaptionAliasLB           : TLabel;
+    btn_1: TButton;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -188,11 +189,12 @@ type
     procedure sv_MenuItemsOpened(Sender: TObject);
     procedure jvlstbx_AlaisNamesClick(Sender: TObject);
     procedure jvrdgrp_ServerTypeClick(Sender: TObject);
+    procedure btn_1Click(Sender: TObject);
 
   private
     { Private declarations }
     fPrjInfo     : TProjectInfo;
-    fComponentIni: array[tIniComponent] of TObject;
+    fComponentIni: array[0..4] of TObject; //array[tIniComponent] of TObject;
 
     procedure OpenPrjFrom(Sender: TObject; PrjOpenType: tPrjOpenType);
     procedure OpenProject(sender: TObject);
@@ -958,6 +960,7 @@ begin
 
 
   CanClose := JvLED1.Status;
+  IniSaveComponents(PrjSetupCompomentsIni, fComponentIni);//, Ext_Section:String='', false);
 end;
 
 
@@ -969,11 +972,11 @@ begin
   fprjInfo.ClearPrj;
   JvFormStorage1.RestoreFormPlacement;
 
-  fComponentIni[icTJVRadioGrp]      := jvrdgrp_ServerType;
-  fComponentIni[icTEditLocalDbPath] := edit_LocalDbPath;
-  fComponentIni[icTEditServer]      := edt_NetWorkServer;
-  fComponentIni[icTEditAlias]       := edt_Alias;
-  fComponentIni[icToggleAliasToUse] := ts_DefaultAliasBtnDb;
+  fComponentIni[Ord(icTJVRadioGrp)]      := jvrdgrp_ServerType;
+  fComponentIni[Ord(icTEditLocalDbPath)] := edit_LocalDbPath;
+  fComponentIni[Ord(icTEditServer)]      := edt_NetWorkServer;
+  fComponentIni[Ord(icTEditAlias)]       := edt_Alias;
+  fComponentIni[Ord(icToggleAliasToUse)] := ts_DefaultAliasBtnDb;
 end;
 
 
@@ -1120,8 +1123,7 @@ end;
 
 procedure Tfrm_SelectProject.FormShow(Sender: TObject);
 begin
-  IniSaveComponnents(PrjSetupCompomentsIni, fComponentIni);//, Ext_Section:String='', false);
- // fComponentIni
+  IniLoadComponents(PrjSetupCompomentsIni, fComponentIni);//, Ext_Section:String='', false);
   SetDialogServerType;
 //  if (rb_LocalDb.Checked or rb_NetworkedDb.checked) then begin
 //    act_ConnectBtn.Execute;
@@ -1262,6 +1264,11 @@ begin
 //  act_ConnectBtn.enabled := aResult;
 end;
 
+
+procedure Tfrm_SelectProject.btn_1Click(Sender: TObject);
+begin
+  Close;
+end;
 
 procedure Tfrm_SelectProject.btn_CopyDbTablesClick(Sender: TObject);
 begin
