@@ -618,7 +618,7 @@ object frm_SelectProject: Tfrm_SelectProject
         TabOrder = 2
       end
       object lb_ServerNames: TJvListBox
-        Left = 11
+        Left = 2
         Top = 139
         Width = 191
         Height = 104
@@ -681,7 +681,7 @@ object frm_SelectProject: Tfrm_SelectProject
         OnClick = btn_CopyDbTablesClick
       end
       object jvrdgrp_ServerType: TJvRadioGroup
-        Left = 45
+        Left = 35
         Top = 11
         Width = 364
         Height = 35
@@ -935,8 +935,8 @@ object frm_SelectProject: Tfrm_SelectProject
   end
   object ActionList1: TActionList
     Images = il1
-    Left = 1008
-    Top = 128
+    Left = 824
+    Top = 104
     object act_DefaultPrj: TAction
       Caption = 'Use Default Project'
       OnExecute = act_DefaultPrjExecute

@@ -195,13 +195,11 @@ const
 
   cSRSDpath = '\SlickRockSoftwareDesign\NxDatabaseViewer';
 
-//  FunctionNamesFile   = '\sqlFunctionNames.txt'; // remove   // User extra function names for highlighting
   cNxTableViewerIni    = '\nxTableViewer.ini';   // keep  // Floating form location and size memory
   cDelphiSqToolsDbPath = '\DelphiSqlToolsDb\';   // keep // Nexus Delphi Sql Tools database
   cFormLocSizeDef      = '\FormLocSizeDefs.xml'; // keep  // Location and size of forms memory
   cPrjSetUpComponents  = '\PrjSetUp.ini';
   cBtnDefaultHieght    = 20;
-//  MRUItemsIni         = '\NexusDbSQLMRUItems.ini'; // remove
   cLocalServerAliases  = '\LocalDbs.txt'; //
   cFilterIniFiles      = '\Filters.ini';
   cDefaultPathForPrjs  = '\NxSQL_Prjs'; // remove
@@ -212,6 +210,9 @@ const
   cUpdateInstallPath = '\Installer'; //ok
   cSqlBtnsDbAlias    = 'NxDelphiSqlTools'; // ok
   cSqlFontFileName   = '\EditorFonts.bin'; // ok
+
+  cNxDbTimeOut = 5000;
+
 
   cTransportTypes: array[TTransportUsed] of string = ('Win Sock', 'Named Pipe',
                                                       'Local Server', 'Shared Mem',

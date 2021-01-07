@@ -86,7 +86,7 @@ object dm_DataMod: Tdm_DataMod
   end
   object nxrse_SqlTools: TnxRemoteServerEngine
     Transport = nxwint_SqlToolsTrans
-    Left = 480
+    Left = 488
     Top = 144
   end
   object ds_nxtbl_TransportLUT: TDataSource
@@ -237,6 +237,6 @@ object dm_DataMod: Tdm_DataMod
   object nxnmdp_trnsprt: TnxNamedPipeTransport
     DisplayCategory = 'Transports'
     Left = 408
-    Top = 72
+    Top = 80
   end
 end

@@ -221,6 +221,7 @@ resourcestring
   DbPath       = '2. ''Local Database Path'' is not Valid!';
   ServerLb     = '2. There are No Network Servers listed!';
   SelectServer = '2. The ''Selected Server'' box is blank!';
+  SelectSerNotInLb = '2. The ''Selected Server'' not in List of Servers!';
   AliasList    = '2. The Alias list is empty';
   AliasBlank   = '2. ''Network Database Alias'' box is blank';
   AliasNotFound= '2. Alias not found in Db';
@@ -236,7 +237,7 @@ var
 
 implementation
 uses
-  NxToolsMain, GEMUseFullRoutines, DataMod, XMLDoc, XMLIntf;
+  NxToolsMain, nxllTransport, GEMUseFullRoutines, DataMod, XMLDoc, XMLIntf;
 {$R *.dfm}
 {.$R Moreimages.res}
 
@@ -265,6 +266,7 @@ var
   XMLPath : string;
   fCild: string;
 begin
+//LB_FINDSTRING
 //  XMLPath := PathAndFileAtFormLocSize;
 //  XmlFile := TXMLDocument.Create(Application);
 //  try
@@ -494,11 +496,12 @@ procedure Tfrm_SelectProject.CheckUserServerSelection;
 
   //==================
 
-  function NetworkReady: Boolean;
+  function NetworkReady(aTrans: TnxBaseTransport): Boolean;
 
     //==================
     function CheckServerLB: Boolean;
     begin
+
       Result := True;
       if lb_ServerNames.Count < 1 then begin
         lstbox_Issues.Items.Add(ServerLb);
@@ -507,7 +510,10 @@ procedure Tfrm_SelectProject.CheckUserServerSelection;
     end;
 
     //==================
+
     function CheckSelectedServer: Boolean;
+    var
+      index: Integer;
     begin
       Result := True;
       if edt_NetWorkServer.Text = '' then
@@ -515,21 +521,53 @@ procedure Tfrm_SelectProject.CheckUserServerSelection;
         lstbox_Issues.Items.Add(SelectServer);
         result := False;
       end
+      else
+      begin
+        index := lb_ServerNames.Items.IndexOf(edt_NetWorkServer.Text);
+        if index = -1 then
+          lstbox_Issues.Items.Add(SelectSerNotInLb)
+        else
+          lb_ServerNames.ItemIndex := index;
+
+      end;
+
     end;
 
     //==================
     function CheckAliasLB: Boolean;
+    var
+      s: string;
     begin
       Result := True;
-      dm_DataMod.nxwint_SqlToolsTrans.Open;
-      dm_DataMod.nxrse_SqlTools.Open;
-      dm_DataMod.nxsn_SqlTools.Open;
-      dm_DataMod.nxsn_SqlTools.GetAliasNames(jvlstbx_AlaisNames.Items);
-      if jvlstbx_AlaisNames.Items.Count <1 then
-      begin
-        lstbox_Issues.Items.Add(AliasList);
-        result := False;
-      end
+      try
+        s:= aTrans.Name;
+        aTrans.Open;
+        s := 'Server Open';
+        dm_DataMod.nxrse_SqlTools.Open;
+        s := 'Session Open';
+        dm_DataMod.nxsn_SqlTools.Open;
+        s := 'Get Alias List';
+        dm_DataMod.nxsn_SqlTools.GetAliasNames(jvlstbx_AlaisNames.Items);
+        if jvlstbx_AlaisNames.Items.Count <1 then
+        begin
+          lstbox_Issues.Items.Add(AliasList);
+          result := False;
+        end;
+      except
+        on e: EDatabaseError do
+          begin
+            lstbox_Issues.Items.Add('Database Error Last Action: Open - ' + s);
+            lstbox_Issues.Items.Add('Error Msg: ' + E.Message);
+            result := False;
+          end;
+
+        on E: Exception do
+          begin
+            lstbox_Issues.Items.Add('General Exception Error Msg: ' + E.Message);
+            result := False;
+          end;
+
+      end;
     end;
 
     //==================
@@ -551,7 +589,8 @@ procedure Tfrm_SelectProject.CheckUserServerSelection;
         Result := False;
       end
       else
-        if not TestSelectedAliasInLB(edt_Alias.Text) then begin
+        if not TestSelectedAliasInLB(edt_Alias.Text) then
+        begin
           lstbox_Issues.Items.Add(AliasNotFound);
           Result := False;
         end;
@@ -571,32 +610,41 @@ procedure Tfrm_SelectProject.CheckUserServerSelection;
 begin
   case jvrdgrp_ServerType.ItemIndex of
     0: begin
+      dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxsrvrngn_Local;
       btn_ConnectDb.Enabled := LocalReady;
     end;
 
     1: begin
-      btn_ConnectDb.Enabled := NetworkReady;
+      dm_DataMod.nxrse_SqlTools.Transport := dm_DataMod. nxnmdp_trnsprt;
+      dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxrse_SqlTools;
+      dm_DataMod. nxnmdp_trnsprt.GetServerNames(lb_ServerNames.Items, cNxDbTimeOut);
+      btn_ConnectDb.Enabled := NetworkReady(dm_DataMod. nxnmdp_trnsprt);
     end;
 
-    2:;
+    2: begin
+      dm_DataMod.nxrse_SqlTools.Transport := dm_DataMod. nxwint_SqlToolsTrans;
+      dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxrse_SqlTools;
+      dm_DataMod. nxwint_SqlToolsTrans.GetServerNames(lb_ServerNames.Items, cNxDbTimeOut);
+      btn_ConnectDb.Enabled := NetworkReady(dm_DataMod. nxwint_SqlToolsTrans);
+    end;
 
   end;
 
-  edit_LocalDbPath.Enabled     := jvrdgrp_ServerType.ItemIndex = 0;
-  ts_DefaultAliasBtnDb.Enabled := jvrdgrp_ServerType.ItemIndex = 0;
-
-  edt_Alias.Enabled            := jvrdgrp_ServerType.ItemIndex = 1;
-  jvxpbtn_GetLocalPath.Enabled := jvrdgrp_ServerType.ItemIndex = 1;
-  btn_ResetLocalDbPath.Enabled := jvrdgrp_ServerType.ItemIndex = 1;
-
+//  edit_LocalDbPath.Enabled     := jvrdgrp_ServerType.ItemIndex = 0;
+//  ts_DefaultAliasBtnDb.Enabled := jvrdgrp_ServerType.ItemIndex = 0;
+//
+//  edt_Alias.Enabled            := jvrdgrp_ServerType.ItemIndex = 1;
+//  jvxpbtn_GetLocalPath.Enabled := jvrdgrp_ServerType.ItemIndex = 1;
+//  btn_ResetLocalDbPath.Enabled := jvrdgrp_ServerType.ItemIndex = 1;
+//
 end;
 
 
 procedure Tfrm_SelectProject.SetDialogServerType;
 begin
-//  lstbox_Issues.Items.Clear;
-//  lb_ServerNames.Items.Clear;
-//  jvlstbx_AlaisNames.Items.Clear;
+  lstbox_Issues.Items.Clear;
+  lb_ServerNames.Items.Clear;
+  jvlstbx_AlaisNames.Items.Clear;
 
   dm_DataMod.nxwint_SqlToolsTrans.close;
   dm_DataMod.nxsrvrngn_Local.close;
@@ -604,34 +652,18 @@ begin
   btn_ConnectDb.Enabled                := False;
   btn_ConnectDb.ImageIndex             := 8;
 
-  lbl_CaptionForDBAlais.Enabled        := jvrdgrp_ServerType.ItemIndex = 1;
-  edt_Alias.enabled                    := jvrdgrp_ServerType.ItemIndex = 1;
-  lbl_CaptionForServerLb.Enabled       := jvrdgrp_ServerType.ItemIndex = 1;
-  lb_ServerNames.Enabled               := jvrdgrp_ServerType.ItemIndex = 1;
-  lbl_CaptionNetServerSelected.Enabled := jvrdgrp_ServerType.ItemIndex = 1;
-  edt_NetWorkServer.Enabled            := jvrdgrp_ServerType.ItemIndex = 1;
-  ts_DefaultAliasBtnDb.Enabled         := jvrdgrp_ServerType.ItemIndex = 1;
+  lbl_CaptionForDBAlais.Enabled        :=  jvrdgrp_ServerType.ItemIndex = 1 or 2;
+  edt_Alias.enabled                    :=  jvrdgrp_ServerType.ItemIndex = 1 or 2;
+  lbl_CaptionForServerLb.Enabled       :=  jvrdgrp_ServerType.ItemIndex = 1 or 2;
+  lb_ServerNames.Enabled               :=  jvrdgrp_ServerType.ItemIndex = 1 or 2;
+  lbl_CaptionNetServerSelected.Enabled :=  jvrdgrp_ServerType.ItemIndex = 1 or 2;
+  edt_NetWorkServer.Enabled            :=  jvrdgrp_ServerType.ItemIndex = 1 or 2;
+  ts_DefaultAliasBtnDb.Enabled         :=  jvrdgrp_ServerType.ItemIndex = 1 or 2;
 
-  btn_ResetLocalDbPath.Enabled         := jvrdgrp_ServerType.ItemIndex = 0;
-  lbl_CaptionForLocalDbPath.Enabled    := jvrdgrp_ServerType.ItemIndex = 0;
-  edit_LocalDbPath.Enabled             := jvrdgrp_ServerType.ItemIndex = 0;
-
-
-
-//  case jvrdgrp_ServerType.ItemIndex of
-//    0: begin
-//      dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxsrvrngn_Local;
-//      CheckUserServerSelection;
-//    end;
-//
-//    1: begin
-//      dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxrse_SqlTools;
-//      dm_DataMod.nxwint_SqlToolsTrans.GetServerNames(lb_ServerNames.Items, 5000);
-//      CheckUserServerSelection;
-//    end;
-//
-//    2:  lstbox_Issues.Items.Add(NoServer);
-//  end;
+  btn_ResetLocalDbPath.Enabled         :=  jvrdgrp_ServerType.ItemIndex = 0;
+  lbl_CaptionForLocalDbPath.Enabled    :=  jvrdgrp_ServerType.ItemIndex = 0;
+  edit_LocalDbPath.Enabled             :=  jvrdgrp_ServerType.ItemIndex = 0;
+  jvxpbtn_GetLocalPath.Enabled         :=  jvrdgrp_ServerType.ItemIndex = 0;
 end;
 
 
@@ -1123,8 +1155,10 @@ end;
 
 procedure Tfrm_SelectProject.FormShow(Sender: TObject);
 begin
-  IniLoadComponents(PrjSetupCompomentsIni, fComponentIni);//, Ext_Section:String='', false);
+  IniLoadComponents(PrjSetupCompomentsIni, fComponentIni, false);
   SetDialogServerType;
+  CheckUserServerSelection;
+
 //  if (rb_LocalDb.Checked or rb_NetworkedDb.checked) then begin
 //    act_ConnectBtn.Execute;
 //  end
@@ -1165,28 +1199,30 @@ end;
 
 procedure Tfrm_SelectProject.jvrdgrp_ServerTypeClick(Sender: TObject);
 
-  function getParsedString: string;
-  begin
-    ExtractValueInXMLFile(PathAndFileAtFormLocSize, '');
-  end;
+//  function getParsedString: string;
+//  begin
+//    ExtractValueInXMLFile(PathAndFileAtFormLocSize, '');
+//  end;
 
 begin
-  getParsedString;
+//  getParsedString;
   case jvrdgrp_ServerType.ItemIndex of
     0: begin
-      dm_DataMod.nxsn_SqlTools.ServerEngine :=  dm_DataMod.nxsrvrngn_Local;
+      dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxsrvrngn_Local;
 //      edit_LocalDbPath.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject', 'edit_DbPath', 'none');
     end;
 
     1: begin
-      dm_DataMod.nxsn_SqlTools.ServerEngine :=  dm_DataMod.nxrse_SqlTools;
+      dm_DataMod.nxrse_SqlTools.Transport :=  dm_DataMod.nxnmdp_trnsprt;
+      dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxrse_SqlTools;
 //      edt_NetWorkServer.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject' ,'edt_NetWorkServer_Text', 'none');
 
 //      edt_Alias.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject' ,'edt_Alias_Text', 'none');
     end;
 
     2: begin
-      dm_DataMod.nxsn_SqlTools.ServerEngine :=  dm_DataMod.nxrse_SqlTools;
+      dm_DataMod.nxrse_SqlTools.Transport :=  dm_DataMod.nxwint_SqlToolsTrans;
+      dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxrse_SqlTools;
 //      edt_NetWorkServer.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject' ,'edt_NetWorkServer_Text', 'none');
 
 //      edt_Alias.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject' ,'edt_Alias_Text', 'none');
@@ -1272,7 +1308,7 @@ end;
 
 procedure Tfrm_SelectProject.btn_CopyDbTablesClick(Sender: TObject);
 begin
-  if (MessageDlg('msg 916-Continue with closing program?', mtWarning, [mbYes, mbNo], 0) = mrYes) then
+  if (MessageDlg('msg 1295-Continue with closing program?', mtWarning, [mbYes, mbNo], 0) = mrYes) then
     Halt(9);
 end;
 

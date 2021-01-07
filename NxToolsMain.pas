@@ -2409,7 +2409,7 @@ begin
 
     dm_DataMod.nxRemoteServerEngine.Transport :=  dm_DataMod.nxNamedPipeTransport;
     dm_DataMod.nxSession.ServerEngine := dm_DataMod.nxRemoteServerEngine;
-    dm_DataMod.nxNamedPipeTransport.GetServerNames(lst_ServerListBox.Items, 5000);
+    dm_DataMod.nxNamedPipeTransport.GetServerNames(lst_ServerListBox.Items, cNxDbTimeOut);
     setEnableTransportBtns(true);
 
     SetMemoryUsageLabel;
@@ -2427,7 +2427,7 @@ begin
   try
     setEnableTransportBtns(False);
     dm_DataMod.nxRemoteServerEngine.Transport :=  dm_DataMod.nxWinsockTransport;
-    dm_DataMod.nxWinsockTransport.GetServerNames(lst_ServerListBox.Items, 5000);
+    dm_DataMod.nxWinsockTransport.GetServerNames(lst_ServerListBox.Items, cNxDbTimeOut);
     dm_DataMod.nxSession.ServerEngine := dm_DataMod.nxRemoteServerEngine;
 
     setEnableTransportBtns(true);
