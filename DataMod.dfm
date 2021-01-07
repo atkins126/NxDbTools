@@ -81,7 +81,7 @@ object dm_DataMod: Tdm_DataMod
   object nxwint_SqlToolsTrans: TnxWinsockTransport
     DisplayCategory = 'Transports'
     ServerNameDesigntime = 'SRSDServer@10.0.0.62'
-    Left = 544
+    Left = 552
     Top = 72
   end
   object nxrse_SqlTools: TnxRemoteServerEngine

@@ -118,7 +118,6 @@ type
     jvxpbtn_GetLocalPath         : TJvXPButton;
     edit_LocalDbPath             : TEdit;
     lbl_CaptionForServerLb       : TLabel;
-    lb_ServerNames               : TJvListBox;
     lbl_CaptionNetServerSelected : TLabel;
     edt_NetWorkServer            : TEdit;
     ts_DefaultAliasBtnDb         : TToggleSwitch;
@@ -145,6 +144,9 @@ type
     jvlstbx_AlaisNames           : TJvListBox;
     lbl_CaptionAliasLB           : TLabel;
     btn_1: TButton;
+    lb_ServerNames: TListBox;
+    jvpnl_1: TJvPanel;
+    actvtyndctr_1: TActivityIndicator;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -599,12 +601,16 @@ procedure Tfrm_SelectProject.CheckUserServerSelection;
   //==================
 
   begin
+    actvtyndctr_1.Animate := True;
+    frm_SelectProject.Cursor := crHourGlass;
+//    RePaint;
     Result := false;
     if CheckServerLB then
       if CheckSelectedServer then
         if CheckAliasLB then
           if CheckSelectedAlias then
             result := True;
+    actvtyndctr_1.Animate := False;
   end;
 
 begin
@@ -629,14 +635,6 @@ begin
     end;
 
   end;
-
-//  edit_LocalDbPath.Enabled     := jvrdgrp_ServerType.ItemIndex = 0;
-//  ts_DefaultAliasBtnDb.Enabled := jvrdgrp_ServerType.ItemIndex = 0;
-//
-//  edt_Alias.Enabled            := jvrdgrp_ServerType.ItemIndex = 1;
-//  jvxpbtn_GetLocalPath.Enabled := jvrdgrp_ServerType.ItemIndex = 1;
-//  btn_ResetLocalDbPath.Enabled := jvrdgrp_ServerType.ItemIndex = 1;
-//
 end;
 
 
@@ -652,13 +650,20 @@ begin
   btn_ConnectDb.Enabled                := False;
   btn_ConnectDb.ImageIndex             := 8;
 
-  lbl_CaptionForDBAlais.Enabled        :=  jvrdgrp_ServerType.ItemIndex = 1 or 2;
-  edt_Alias.enabled                    :=  jvrdgrp_ServerType.ItemIndex = 1 or 2;
-  lbl_CaptionForServerLb.Enabled       :=  jvrdgrp_ServerType.ItemIndex = 1 or 2;
-  lb_ServerNames.Enabled               :=  jvrdgrp_ServerType.ItemIndex = 1 or 2;
-  lbl_CaptionNetServerSelected.Enabled :=  jvrdgrp_ServerType.ItemIndex = 1 or 2;
-  edt_NetWorkServer.Enabled            :=  jvrdgrp_ServerType.ItemIndex = 1 or 2;
-  ts_DefaultAliasBtnDb.Enabled         :=  jvrdgrp_ServerType.ItemIndex = 1 or 2;
+  lbl_CaptionForDBAlais.Enabled        :=  jvrdgrp_ServerType.ItemIndex in [1, 2];
+  edt_Alias.enabled                    :=  jvrdgrp_ServerType.ItemIndex in [1, 2];
+  lbl_CaptionForServerLb.Enabled       :=  jvrdgrp_ServerType.ItemIndex in [1, 2];
+  lb_ServerNames.Enabled               :=  jvrdgrp_ServerType.ItemIndex in [1, 2];
+  lbl_CaptionNetServerSelected.Enabled :=  jvrdgrp_ServerType.ItemIndex in [1, 2];
+  edt_NetWorkServer.Enabled            :=  jvrdgrp_ServerType.ItemIndex in [1, 2];
+  ts_DefaultAliasBtnDb.Enabled         :=  jvrdgrp_ServerType.ItemIndex in [1, 2];
+  case jvrdgrp_ServerType.ItemIndex of
+    1: lbl_CaptionForServerLb.Caption := 'Select Named Pipe Server:';
+    2: lbl_CaptionForServerLb.Caption := 'Select Tcpip Server:';
+  end;
+
+
+
 
   btn_ResetLocalDbPath.Enabled         :=  jvrdgrp_ServerType.ItemIndex = 0;
   lbl_CaptionForLocalDbPath.Enabled    :=  jvrdgrp_ServerType.ItemIndex = 0;
@@ -1370,18 +1375,23 @@ begin
                'made not on an item in the list.', mtError, [mbOK], 0)
   else begin
     SetConnectBtn(false);
-    dm_DataMod.nxwint_SqlToolsTrans.Close;
-    edt_NetWorkServer.Text := lb_ServerNames.Items[lb_ServerNames.ItemIndex];
+    case jvrdgrp_ServerType.ItemIndex of
+      1: begin
+        dm_DataMod.nxnmdp_trnsprt.Close;
+        edt_NetWorkServer.Text := lb_ServerNames.Items[lb_ServerNames.ItemIndex];
+        dm_DataMod.nxnmdp_trnsprt.ServerNameRuntime := edt_NetWorkServer.Text;
+        dm_DataMod.nxnmdp_trnsprt.ServerName := edt_NetWorkServer.Text;
+        CheckUserServerSelection;
+      end;
 
-    dm_DataMod.nxwint_SqlToolsTrans.ServerNameRuntime := edt_NetWorkServer.Text;
-    dm_DataMod.nxwint_SqlToolsTrans.ServerName := edt_NetWorkServer.Text;
-
-
-    dm_DataMod.nxwint_SqlToolsTrans.Open;
-    dm_DataMod.nxrse_SqlTools.Open;
-    dm_DataMod.nxsn_SqlTools.Open;
-    dm_DataMod.nxsn_SqlTools.GetAliasNames(jvlstbx_AlaisNames.Items);
-
+      2: begin
+        dm_DataMod.nxwint_SqlToolsTrans.Close;
+        edt_NetWorkServer.Text := lb_ServerNames.Items[lb_ServerNames.ItemIndex];
+        dm_DataMod.nxwint_SqlToolsTrans.ServerNameRuntime := edt_NetWorkServer.Text;
+        dm_DataMod.nxwint_SqlToolsTrans.ServerName := edt_NetWorkServer.Text;
+        CheckUserServerSelection;
+      end;
+    end;
   end;
 end;
 

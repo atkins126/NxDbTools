@@ -30,6 +30,7 @@ object frm_SelectProject: Tfrm_SelectProject
     Caption = 'cardpnl_Dialogs'
     TabOrder = 0
     OnCardChange = cardpnl_DialogsCardChange
+    ExplicitWidth = 660
     object Card_CreateSelectPrjDb: TCard
       Left = 1
       Top = 1
@@ -428,6 +429,8 @@ object frm_SelectProject: Tfrm_SelectProject
       Caption = 'crd_SetDbServer'
       CardIndex = 2
       TabOrder = 2
+      ExplicitLeft = 0
+      ExplicitTop = -1
       object Label13: TLabel
         Left = 16
         Top = 6
@@ -617,18 +620,6 @@ object frm_SelectProject: Tfrm_SelectProject
         Enabled = False
         TabOrder = 2
       end
-      object lb_ServerNames: TJvListBox
-        Left = 2
-        Top = 139
-        Width = 191
-        Height = 104
-        ItemHeight = 13
-        Background.FillMode = bfmTile
-        Background.Visible = False
-        Sorted = True
-        TabOrder = 3
-        OnClick = lb_ServerNames1Click
-      end
       object edt_NetWorkServer: TEdit
         Left = 252
         Top = 136
@@ -636,7 +627,7 @@ object frm_SelectProject: Tfrm_SelectProject
         Height = 21
         Color = 14811134
         ReadOnly = True
-        TabOrder = 4
+        TabOrder = 3
       end
       object ts_DefaultAliasBtnDb: TToggleSwitch
         Left = 52
@@ -645,7 +636,7 @@ object frm_SelectProject: Tfrm_SelectProject
         Height = 20
         StateCaptions.CaptionOn = 'Use Your Alias'
         StateCaptions.CaptionOff = 'Use Default Alias'
-        TabOrder = 5
+        TabOrder = 4
         OnClick = ts_DefaultAliasBtnDbClick
       end
       object edt_Alias: TEdit
@@ -656,7 +647,7 @@ object frm_SelectProject: Tfrm_SelectProject
         Color = clCream
         Enabled = False
         ReadOnly = True
-        TabOrder = 6
+        TabOrder = 5
         Text = 'NxDelphiSqlTools'
       end
       object btn_ConnectDb: TButton
@@ -668,7 +659,7 @@ object frm_SelectProject: Tfrm_SelectProject
         Action = act_ConnectBtn
         ImageAlignment = iaCenter
         Images = il1
-        TabOrder = 7
+        TabOrder = 6
       end
       object btn_CopyDbTables: TButton
         Left = 45
@@ -676,7 +667,7 @@ object frm_SelectProject: Tfrm_SelectProject
         Width = 179
         Height = 38
         Caption = 'Close Program. Can Not continue with out Db Open.'
-        TabOrder = 8
+        TabOrder = 7
         WordWrap = True
         OnClick = btn_CopyDbTablesClick
       end
@@ -693,7 +684,7 @@ object frm_SelectProject: Tfrm_SelectProject
           'Pipe'
           'Tcpip'
           'No Server')
-        TabOrder = 9
+        TabOrder = 8
         OnClick = jvrdgrp_ServerTypeClick
       end
       object lstbox_Issues: TListBox
@@ -702,7 +693,7 @@ object frm_SelectProject: Tfrm_SelectProject
         Width = 231
         Height = 91
         ItemHeight = 13
-        TabOrder = 10
+        TabOrder = 9
       end
       object jvlstbx_AlaisNames: TJvListBox
         Left = 251
@@ -712,8 +703,32 @@ object frm_SelectProject: Tfrm_SelectProject
         ItemHeight = 13
         Background.FillMode = bfmTile
         Background.Visible = False
-        TabOrder = 11
+        TabOrder = 10
         OnClick = jvlstbx_AlaisNamesClick
+      end
+      object lb_ServerNames: TListBox
+        Left = 16
+        Top = 139
+        Width = 201
+        Height = 121
+        ItemHeight = 13
+        TabOrder = 11
+        OnClick = lb_ServerNames1Click
+      end
+      object jvpnl_1: TJvPanel
+        Left = 118
+        Top = 316
+        Width = 65
+        Height = 58
+        Color = clGrayText
+        ParentBackground = False
+        TabOrder = 12
+        object actvtyndctr_1: TActivityIndicator
+          AlignWithMargins = True
+          Left = 1
+          Top = 1
+          IndicatorSize = aisLarge
+        end
       end
     end
     object crd_CreateNewDbTables: TCard
@@ -1122,8 +1137,8 @@ object frm_SelectProject: Tfrm_SelectProject
   object il1: TImageList
     Height = 32
     Width = 32
-    Left = 1012
-    Top = 218
+    Left = 1244
+    Top = 146
     Bitmap = {
       494C01010C002400040020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000008000000001002000000000000000
