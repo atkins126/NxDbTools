@@ -26,11 +26,11 @@ uses
 
   SynEditOptionsDialog, SynEditMiscClasses, SynEditSearch, SynEditPrint,
   SynCompletionProposal, SynHighlighterPas, SynEditHighlighter,
-  SynHighlighterSQL, SynEdit, SynMemo, SynEditKeyCmds,
+  SynHighlighterSQL, SynEdit, SynEditKeyCmds,
 
   {RzCmboBx,} RzCommon, RzButton,  RzEdit, LbCipher, LbClass,
 
-  SQLChildFormChangeInterface, Global;
+  SQLChildFormChangeInterface, Global, SynEditCodeFolding;
 
 
 type
@@ -56,7 +56,6 @@ type
     dbgrd_SQLDBGrid: TDBGrid;
     stsbrpr_StatusBar: TStatusBarPro;
     pnl_1: TPanel;
-    synm_SQLEditor: TSynMemo;
     pnl_11: TPanel;
     lbl_1: TLabel;
     lbl_FieldTypelabel: TLabel;
@@ -141,6 +140,7 @@ type
     mniRecentFIlters1: TMenuItem;
     mniCloseMenu1: TMenuItem;
     lblwfsh1: TLbBlowfish;
+    synm_SQLEditor: TSynEdit;
     procedure FormGetSiteInfo(Sender: TObject; DockClient: TControl;
       var InfluenceRect: TRect; MousePos: TPoint; var CanDock: Boolean);
     procedure FormActivate(Sender: TObject);
@@ -245,7 +245,7 @@ uses
 const
   SQLFilterSectionPrefix = 'SQL';
 
-function SearchText(Control: TSynMemo; Search: string; SearchOptions: TSearchOptions): Boolean;
+function SearchText(Control: TSynEdit; Search: string; SearchOptions: TSearchOptions): Boolean;
 var
   Text: string;
   Index: Integer;
@@ -466,7 +466,7 @@ end;
 procedure Tfrm_SQLView.act_RunSQLCodeExecute(Sender: TObject);
 //------------------ ActionExecute SQL Actions --------------------------------
 
-  procedure LoadSQL(theDataSet: TnxQuery; SQLEditor: TSynMemo);
+  procedure LoadSQL(theDataSet: TnxQuery; SQLEditor: TSynEdit);
   begin
     nxtbl_MasterTable.Close;
     theDataSet.Close;
@@ -996,12 +996,12 @@ end;
 (*
 procedure TForm12.synm_1DragDrop(Sender, Source: TObject; X, Y: Integer);
 Var
-  LMemo: TSynMemo;
+  LMemo: TSynEdit;
   InsertText: String;
 Begin
   InsertText := (Source as TEdit).Text;
 
-  LMemo := TSynMemo(Sender);
+  LMemo := TSynEdit(Sender);
   // "When the text is dropped, it should replace any text that is currently highlighted." : OK
   If LMemo.SelAvail Then
     LMemo.ExecuteCommand( ecDeleteChar , #0, Nil );
@@ -1014,11 +1014,11 @@ procedure TForm12.synm_1DragOver(Sender, Source: TObject; X, Y: Integer;
   State: TDragState; var Accept: Boolean);
 Var
   LCoord: TBufferCoord;
-  LMemo: TSynMemo;
+  LMemo: TSynEdit;
 Begin
   Accept := (Source is TEdit) and ((Source as TEdit).Text <> '');
 
-  LMemo := TSynMemo(Sender);
+  LMemo := TSynEdit(Sender);
   // In your case you would rather test something with your tree...
 //  Accept := Clipboard.AsText <> '';
   // "As you drag over the TSynEdit, the caret should mark the current drop position": OK
@@ -1031,7 +1031,7 @@ end;
 procedure Tfrm_SQLView.synm_SQLEditorDragDrop(Sender, Source: TObject; X,
   Y: Integer);
 Var
-  LMemo: TSynMemo;
+  LMemo: TSynEdit;
   InsertText: String;
 Begin
 //  if (Source as TListBox).Name = 'lst_TablesLB' then
@@ -1046,7 +1046,7 @@ Begin
     InsertText := (Source as TTreeView).DragValue;
 
 
-  LMemo := TSynMemo(Sender);
+  LMemo := TSynEdit(Sender);
   // "When the text is dropped, it should replace any text that is currently highlighted." : OK
   If LMemo.SelAvail Then
     LMemo.ExecuteCommand( ecDeleteChar , #0, Nil );
@@ -1059,12 +1059,12 @@ procedure Tfrm_SQLView.synm_SQLEditorDragOver(Sender, Source: TObject; X,
   Y: Integer; State: TDragState; var Accept: Boolean);
 Var
   LCoord: TBufferCoord;
-  LMemo: TSynMemo;
+  LMemo: TSynEdit;
 Begin
   Accept := //((Source is TlistBox) and ((Source as TListBox).ItemIndex <> -1))  or
             ((Source is tTreeView) and ((Source as tTreeView).DragValue <> ''));
 
-  LMemo := TSynMemo(Sender);
+  LMemo := TSynEdit(Sender);
   If LMemo.GetPositionOfMouse(LCoord) Then
     LMemo.CaretXY := LCoord;
 end;

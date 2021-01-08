@@ -321,6 +321,7 @@ type
     Label13                              : TLabel;
     act_ExpandTreeTF                     : TAction;
     act_CollapseTreeTF                   : TAction;
+    actvtyndctr__1: TActivityIndicator;
 
     procedure FormCreate(Sender: TObject);
     procedure btn__SplitViewOpenCloseClick(Sender: TObject);

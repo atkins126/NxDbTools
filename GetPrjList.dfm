@@ -30,7 +30,6 @@ object frm_SelectProject: Tfrm_SelectProject
     Caption = 'cardpnl_Dialogs'
     TabOrder = 0
     OnCardChange = cardpnl_DialogsCardChange
-    ExplicitWidth = 660
     object Card_CreateSelectPrjDb: TCard
       Left = 1
       Top = 1
@@ -310,6 +309,7 @@ object frm_SelectProject: Tfrm_SelectProject
           'Cancel Changes'
           'Refresh record data')
         BorderOuter = fsNone
+        Color = 15987699
         TabOrder = 6
         VisualStyle = vsGradient
       end
@@ -429,8 +429,6 @@ object frm_SelectProject: Tfrm_SelectProject
       Caption = 'crd_SetDbServer'
       CardIndex = 2
       TabOrder = 2
-      ExplicitLeft = 0
-      ExplicitTop = -1
       object Label13: TLabel
         Left = 16
         Top = 6
@@ -715,19 +713,83 @@ object frm_SelectProject: Tfrm_SelectProject
         TabOrder = 11
         OnClick = lb_ServerNames1Click
       end
-      object jvpnl_1: TJvPanel
-        Left = 118
-        Top = 316
-        Width = 65
-        Height = 58
-        Color = clGrayText
+      object jvpnl_PleaseWait: TJvPanel
+        Left = 172
+        Top = 163
+        Width = 93
+        Height = 62
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -11
+        HotTrackFont.Name = 'Tahoma'
+        HotTrackFont.Style = []
+        Color = clYellow
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -21
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
         ParentBackground = False
+        ParentFont = False
         TabOrder = 12
-        object actvtyndctr_1: TActivityIndicator
-          AlignWithMargins = True
+        Visible = False
+        object img_1: TImage
           Left = 1
           Top = 1
-          IndicatorSize = aisLarge
+          Width = 91
+          Height = 48
+          Align = alTop
+          Center = True
+          Picture.Data = {
+            0954506E67496D61676589504E470D0A1A0A0000000D49484452000000300000
+            003008060000005702F98700000006624B474400FF00FF00FFA0BDA793000003
+            C34944415478DAED99494C13511880FF379D16EA9620B2A8A8B4601422A0504C
+            8C8A6C232E70D2A8713BC0411385839E257AF0A889D683315113D1B8C4C40318
+            51B0D56A6222285B0C1A6925811041D4C4859676DAE73FC586568B1666EA6B23
+            7F3279336FFBFF6FDEFF967F8640940B616DC034006B03FE39C0E9EA2A332550
+            18166308351D3973A924AC00A76AAA68388CF7C9D1B3172765D354009E60B22E
+            4CF65B1060435801FCA5BABC4891D1303698A76CC77F0F20DB9D7041B09CAB37
+            4FCA6D140368B68AE594D07A397D701CD95292CADF6302D06473DEC42E76C8E9
+            0308BD2EE834BB5901F462174B6401007927E8793D2300971D935879006017F4
+            EA19AC008630499009308800C98C00149803406F0A7ACD2E26000F7B9DB91E0F
+            6955BB86C99AA7D9A0717D08A99D539D00CFD675824B3D8F0247F384544D1B13
+            0049D08D1A31294B7E7F035674EE0BA94D57F635184CF60E5C23BACF6639FA65
+            0398DFD214B74AECC42D396E79F72148E9BBF0C7FAFD8B0EC2EB0CA3A4F8B3CA
+            CD67172D25FD4C012469B23A2BF12C7C9173DB21BFA500667F690F5AEFEB9C55
+            D0B2DA021E0E172E4A2B8534CD65B9BA150B689A6CA211AD3A8CF3010C2DC530
+            F35B7740F9F75919D09A6F92FC5E526BC4B5BF4609BD8A01DC7A4535715AF101
+            DE6ED0DA7B210F21621D7DDE3247EC62AFF10EAD77CF7B14F789DF6830105744
+            0148523F40676847C57A4AA158323EB755F0E6BFC86F86D19814F43230D963F8
+            8A8A056444299D8AC7C43F21EE2244A1341292D8B5A99226B323862F57D2F8B0
+            0034F6D1B99C5334E1DBCEF9A5A8DDADE64B362D229F2216A0B99FC653A7D884
+            B7ABA4E7BCD652C09D0A5E1A1EF8AAB4110D2F94A6908F1107E03F897D7986E7
+            8518B07038074CFE55237312E3B9E80A7617DA560CB40ECF3FFB2306C0B791FD
+            9A1FC485FC1822642333D91CCBDCA07A89B7BF9DE92770219F8CA8C09D5BAC8F
+            7DC314C077989B6273B687B9FB36570107F038782985B4B7B5D2F742B0A69F98
+            5015E61694EAD54F98004C14D010EA82CC570760FE409DF77960E17EE8CE3C8F
+            EEA40E06CA2EA0091652721E07E4B46F87F8E1FB01753FCE2B838E95B7C74EA2
+            81C232A40C0CEAA5379FD5B1071287EE04AD3F94B40D8399AB3812BC7F36CBA0
+            5EB4A10BE8C69E286475EE85A4F7B7FED86670FE4EE8CAAA1B574D8855D0F1E9
+            8C00C6E7405ACF71D0D94E86D4CE96760CAFDA9F16B0FCB06515B7A2010D2AF7
+            08ACB5A4871ED46B12E1E9FA1EF0A8B4D222B5B954A76E6402505D5E64C6A450
+            4E1F2826638379527F65940488FACFEBD10730FD93EF2F32FD932FDA641A80B5
+            443DC00F89777940117A3C3B0000000049454E44AE426082}
+          Proportional = True
+          Stretch = True
+          ExplicitLeft = 72
+          ExplicitWidth = 128
+        end
+        object lbl_1: TLabel
+          Left = 1
+          Top = 3
+          Width = 91
+          Height = 58
+          Align = alBottom
+          Alignment = taCenter
+          Caption = 'Working Hard'
+          WordWrap = True
+          ExplicitTop = 152
+          ExplicitWidth = 109
         end
       end
     end
@@ -1076,8 +1138,8 @@ object frm_SelectProject: Tfrm_SelectProject
     Enabled = False
     Interval = 2000
     OnTimer = timer_SearchTimerBlankTimer
-    Left = 680
-    Top = 8
+    Left = 792
+    Top = 200
   end
   object popm_Server: TPopupMenu
     Left = 1136

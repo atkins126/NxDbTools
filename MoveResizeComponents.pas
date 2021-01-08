@@ -17,7 +17,7 @@ uses
 
   RzPanel,
 
-  SynMemo,  SynEdit, SynDBEdit,
+  SynEdit, SynDBEdit,
 
   Data.DB,
 
@@ -49,7 +49,6 @@ type
     btn_GetButtonsOldDb     : TButton;
     grp_DefSQLBtns          : TGroupBox;
     Label5                  : TLabel;
-    synm_SQLBtnTest         : TSynMemo;
     RzPanel2                : TRzPanel;
     btn_SaveSqlButtons      : TButton;
     dbmmo1                  : TDBMemo;
@@ -79,6 +78,7 @@ type
     btn__SplitViewOpenClose : TButton;
     act_MoveBtnRtL          : TAction;
     RzURLLabel1             : TRzURLLabel;
+    synm_SQLBtnTest: TSynEdit;
     procedure FormShow(Sender: TObject);
     procedure RzPanel1Paint(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);

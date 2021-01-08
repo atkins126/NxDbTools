@@ -27,7 +27,7 @@ uses
   JvXPCore, JvXPButtons, JvImage, JvImageList, JvSpeedButton, JvBehaviorLabel,
   JvComboListBox, JvBalloonHint, JvRadioGroup,
 
-  PngSpeedButton
+  PngSpeedButton, JvAnimatedImage
 
   {$IFDEF  USE_CODESITE}, CodeSiteLogging {$ENDIF};
 
@@ -145,8 +145,9 @@ type
     lbl_CaptionAliasLB           : TLabel;
     btn_1: TButton;
     lb_ServerNames: TListBox;
-    jvpnl_1: TJvPanel;
-    actvtyndctr_1: TActivityIndicator;
+    jvpnl_PleaseWait: TJvPanel;
+    img_1: TImage;
+    lbl_1: TLabel;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -208,6 +209,7 @@ type
     procedure SetFormSize;
     procedure CheckUserServerSelection;
     function ReadConfigXmlFile(aChildern: tStrings): string;
+    procedure PleaseWait(aOn: Boolean);
   public
     { Public declarations }
     procedure OpenDefaultPrj;
@@ -357,7 +359,6 @@ end;
 
 
 procedure Tfrm_SelectProject.act_CreatePrjExecute(Sender: TObject);
-{$ENDREGION}
 begin
   dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Insert;
 end;
@@ -601,7 +602,6 @@ procedure Tfrm_SelectProject.CheckUserServerSelection;
   //==================
 
   begin
-    actvtyndctr_1.Animate := True;
     frm_SelectProject.Cursor := crHourGlass;
 //    RePaint;
     Result := false;
@@ -610,10 +610,11 @@ procedure Tfrm_SelectProject.CheckUserServerSelection;
         if CheckAliasLB then
           if CheckSelectedAlias then
             result := True;
-    actvtyndctr_1.Animate := False;
   end;
 
 begin
+  PleaseWait(true);
+  frm_SelectProject.Cursor := crHourGlass;
   case jvrdgrp_ServerType.ItemIndex of
     0: begin
       dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxsrvrngn_Local;
@@ -635,6 +636,7 @@ begin
     end;
 
   end;
+  PleaseWait(false);
 end;
 
 
@@ -799,6 +801,13 @@ begin
     Exit;
   end;
   Close;
+end;
+
+
+procedure Tfrm_SelectProject.PleaseWait(aOn: Boolean);
+begin
+   jvpnl_PleaseWait.Visible := aOn;
+   jvpnl_PleaseWait.Refresh;
 end;
 
 
@@ -1237,6 +1246,7 @@ begin
     end;
   end;
   SetDialogServerType;
+  CheckUserServerSelection;
 end;
 
 
@@ -1381,6 +1391,7 @@ begin
         edt_NetWorkServer.Text := lb_ServerNames.Items[lb_ServerNames.ItemIndex];
         dm_DataMod.nxnmdp_trnsprt.ServerNameRuntime := edt_NetWorkServer.Text;
         dm_DataMod.nxnmdp_trnsprt.ServerName := edt_NetWorkServer.Text;
+
         CheckUserServerSelection;
       end;
 

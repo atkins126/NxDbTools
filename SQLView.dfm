@@ -150,50 +150,13 @@ object frm_SQLView: Tfrm_SQLView
     Anchors = []
     Constraints.MinHeight = 60
     TabOrder = 2
-    object synm_SQLEditor: TSynMemo
-      Left = 1
-      Top = 35
-      Width = 1212
-      Height = 109
-      Align = alClient
-      Constraints.MinHeight = 20
-      Constraints.MinWidth = 20
-      Color = 14548991
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Courier New'
-      Font.Style = []
-      TabOrder = 0
-      OnDragDrop = synm_SQLEditorDragDrop
-      OnDragOver = synm_SQLEditorDragOver
-      CodeFolding.CollapsedLineColor = clGrayText
-      CodeFolding.FolderBarLinesColor = clGrayText
-      CodeFolding.ShowCollapsedLine = True
-      CodeFolding.IndentGuidesColor = clGray
-      CodeFolding.IndentGuides = True
-      UseCodeFolding = False
-      Gutter.AutoSize = True
-      Gutter.Font.Charset = DEFAULT_CHARSET
-      Gutter.Font.Color = clWindowText
-      Gutter.Font.Height = -11
-      Gutter.Font.Name = 'Courier New'
-      Gutter.Font.Style = []
-      Highlighter = SynSQLSyn
-      Lines.Strings = (
-        '')
-      SearchEngine = syndtsrch_SQLEdt
-      OnChange = synm_SQLEditorChange
-      OnStatusChange = synm_SQLEditorStatusChange
-      FontSmoothing = fsmNone
-    end
     object pnl_MenuBar: TPanel
       Left = 1
       Top = 1
       Width = 1212
       Height = 34
       Align = alTop
-      TabOrder = 1
+      TabOrder = 0
       object btn_SQLNewDoc: TSpeedButton
         Left = 4
         Top = 1
@@ -1279,6 +1242,33 @@ object frm_SQLView: Tfrm_SQLView
         Visible = False
       end
     end
+    object synm_SQLEditor: TSynEdit
+      Left = 1
+      Top = 35
+      Width = 1212
+      Height = 109
+      Align = alClient
+      Color = 14876413
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Consolas'
+      Font.Style = []
+      Font.Quality = fqClearTypeNatural
+      TabOrder = 1
+      UseCodeFolding = False
+      Gutter.Font.Charset = DEFAULT_CHARSET
+      Gutter.Font.Color = clWindowText
+      Gutter.Font.Height = -11
+      Gutter.Font.Name = 'Consolas'
+      Gutter.Font.Style = []
+      Lines.Strings = (
+        'synm_SQLEditor')
+      ExplicitLeft = 573
+      ExplicitTop = 37
+      ExplicitWidth = 200
+      ExplicitHeight = 150
+    end
   end
   object pnl_11: TPanel
     Left = 0
@@ -1416,12 +1406,9 @@ object frm_SQLView: Tfrm_SQLView
     Font.Height = -13
     Font.Name = 'Courier New'
     Font.Style = []
+    Font.Quality = fqClearTypeNatural
     TabOrder = 4
-    CodeFolding.CollapsedLineColor = clGrayText
-    CodeFolding.FolderBarLinesColor = clGrayText
     CodeFolding.ShowCollapsedLine = True
-    CodeFolding.IndentGuidesColor = clGray
-    CodeFolding.IndentGuides = True
     UseCodeFolding = False
     Gutter.Font.Charset = DEFAULT_CHARSET
     Gutter.Font.Color = clWindowText
@@ -1433,7 +1420,6 @@ object frm_SQLView: Tfrm_SQLView
       '')
     OnChange = syndt_DelphiCodeMemoChange
     OnStatusChange = syndt_DelphiCodeMemoStatusChange
-    FontSmoothing = fsmNone
   end
   object dbgrd1: TDBGrid
     Left = 0
@@ -1554,7 +1540,6 @@ object frm_SQLView: Tfrm_SQLView
       'LOWER'
       'EXTRACT')
     EndOfTokenChr = '()[]. '
-    Editor = synm_SQLEditor
     ShortCut = 8224
     DoLookupWhenNotExact = False
     Options = [scoUseInsertList, scoCompleteWithTab, scoCompleteWithEnter]

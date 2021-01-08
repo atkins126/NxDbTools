@@ -151,6 +151,7 @@ object frm_MoveResizeComponents: Tfrm_MoveResizeComponents
     Width = 216
     Height = 366
     Anchors = [akLeft, akTop, akBottom]
+    Color = 15987699
     GridXSize = 5
     GridYSize = 25
     TabOrder = 2
@@ -196,34 +197,26 @@ object frm_MoveResizeComponents: Tfrm_MoveResizeComponents
       Font.Style = [fsUnderline]
       ParentFont = False
     end
-    object synm_SQLBtnTest: TSynMemo
-      Left = 3
-      Top = 72
-      Width = 606
-      Height = 137
-      Color = 14024701
+    object synm_SQLBtnTest: TSynEdit
+      Left = 8
+      Top = 80
+      Width = 337
+      Height = 129
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
-      Font.Name = 'Courier New'
+      Font.Name = 'Consolas'
       Font.Style = []
+      Font.Quality = fqClearTypeNatural
       TabOrder = 0
-      CodeFolding.CollapsedLineColor = clGrayText
-      CodeFolding.FolderBarLinesColor = clGrayText
-      CodeFolding.ShowCollapsedLine = False
-      CodeFolding.IndentGuidesColor = clGray
-      CodeFolding.IndentGuides = True
       UseCodeFolding = False
       Gutter.Font.Charset = DEFAULT_CHARSET
       Gutter.Font.Color = clWindowText
       Gutter.Font.Height = -11
-      Gutter.Font.Name = 'Courier New'
+      Gutter.Font.Name = 'Consolas'
       Gutter.Font.Style = []
       Lines.Strings = (
-        'Click Button diffinition, result '
-        'displayed here.')
-      ReadOnly = True
-      FontSmoothing = fsmNone
+        'synm_SQLBtnTest')
     end
   end
   object RzPanel2: TRzPanel
@@ -233,6 +226,7 @@ object frm_MoveResizeComponents: Tfrm_MoveResizeComponents
     Width = 238
     Height = 366
     Anchors = [akLeft, akTop, akBottom]
+    Color = 15987699
     GridXSize = 5
     GridYSize = 25
     TabOrder = 5
