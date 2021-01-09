@@ -58,11 +58,13 @@ object dm_DataMod: Tdm_DataMod
     Top = 192
   end
   object nxsn_SqlTools: TnxSession
+    ActiveDesigntime = True
     ServerEngine = nxrse_SqlTools
     Left = 400
     Top = 192
   end
   object nxdb_SQLBtns: TnxDatabase
+    ActiveDesigntime = True
     Session = nxsn_SqlTools
     AliasName = 'NxDelphiSqlTools'
     Left = 400
@@ -80,11 +82,13 @@ object dm_DataMod: Tdm_DataMod
   end
   object nxwint_SqlToolsTrans: TnxWinsockTransport
     DisplayCategory = 'Transports'
+    ActiveDesigntime = True
     ServerNameDesigntime = 'SRSDServer@10.0.0.62'
     Left = 552
     Top = 72
   end
   object nxrse_SqlTools: TnxRemoteServerEngine
+    ActiveDesigntime = True
     Transport = nxwint_SqlToolsTrans
     Left = 488
     Top = 144
@@ -95,6 +99,7 @@ object dm_DataMod: Tdm_DataMod
     Top = 408
   end
   object nxtbl_NxDbSqlToolsPrjs: TnxTable
+    ActiveDesigntime = True
     Database = nxdb_SQLBtns
     OnEditError = nxtbl_NxDbSqlToolsPrjsEditError
     OnPostError = nxtbl_NxDbSqlToolsPrjsPostError
@@ -145,6 +150,7 @@ object dm_DataMod: Tdm_DataMod
     end
   end
   object nxtbl_TransportLUT: TnxTable
+    ActiveDesigntime = True
     Database = nxdb_SQLBtns
     TableName = 'TransportLUT'
     Left = 488
@@ -191,9 +197,6 @@ object dm_DataMod: Tdm_DataMod
       FieldName = 'Caption'
       Required = True
       Size = 25
-    end
-    object NxSqlButtonsDbTAddToEditorFunctionList: TBooleanField
-      FieldName = 'AddToEditorFunctionList'
     end
     object NxSqlButtonsDbTExtraText: TWideStringField
       FieldName = 'ExtraText'
