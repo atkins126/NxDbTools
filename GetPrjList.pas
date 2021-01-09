@@ -207,7 +207,7 @@ type
     function CloseDelphiSqlToolsDb(var Status: string): boolean;
     procedure SetConnectBtn(aConnected: Boolean);
     procedure SetFormSize;
-    procedure CheckUserServerSelection;
+    procedure CheckUserServerSelection(FullNetWorkServerTest: Boolean = false);
     function ReadConfigXmlFile(aChildern: tStrings): string;
     procedure PleaseWait(aOn: Boolean);
   public
@@ -452,7 +452,7 @@ begin
 end;
 
 
-procedure Tfrm_SelectProject.CheckUserServerSelection;
+procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boolean = false);
 
   //==================
 
@@ -622,6 +622,8 @@ begin
     end;
 
     1: begin
+      if FullNetWorkServerTest then begin
+
       dm_DataMod.nxrse_SqlTools.Transport := dm_DataMod. nxnmdp_trnsprt;
       dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxrse_SqlTools;
       dm_DataMod. nxnmdp_trnsprt.GetServerNames(lb_ServerNames.Items, cNxDbTimeOut);
@@ -646,8 +648,13 @@ begin
   lb_ServerNames.Items.Clear;
   jvlstbx_AlaisNames.Items.Clear;
 
-  dm_DataMod.nxwint_SqlToolsTrans.close;
-  dm_DataMod.nxsrvrngn_Local.close;
+  with dm_DataMod do
+  begin
+    nxwint_SqlToolsTrans.close;
+    nxsrvrngn_Local.close;
+    nxnmdp_trnsprt.Close;
+    nxrse_SqlTools.Close;
+  end;
 
   btn_ConnectDb.Enabled                := False;
   btn_ConnectDb.ImageIndex             := 8;
@@ -1172,15 +1179,6 @@ begin
   IniLoadComponents(PrjSetupCompomentsIni, fComponentIni, false);
   SetDialogServerType;
   CheckUserServerSelection;
-
-//  if (rb_LocalDb.Checked or rb_NetworkedDb.checked) then begin
-//    act_ConnectBtn.Execute;
-//  end
-//  else begin
-//    sv_MenuItems.Open;
-////    btn__SplitViewOpenClose.Enabled := False;
-//    SetStatusBar('msg 932-Projects/SQLBtns Db NOT found. Use this dialog to setup your db.',1, clRed);
-//  end;
 end;
 
 
@@ -1212,41 +1210,21 @@ end;
 
 
 procedure Tfrm_SelectProject.jvrdgrp_ServerTypeClick(Sender: TObject);
-
-//  function getParsedString: string;
-//  begin
-//    ExtractValueInXMLFile(PathAndFileAtFormLocSize, '');
-//  end;
-
 begin
-//  getParsedString;
   case jvrdgrp_ServerType.ItemIndex of
     0: begin
-      dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxsrvrngn_Local;
-//      edit_LocalDbPath.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject', 'edit_DbPath', 'none');
+      SetDialogServerType;
+      CheckUserServerSelection;
     end;
 
-    1: begin
-      dm_DataMod.nxrse_SqlTools.Transport :=  dm_DataMod.nxnmdp_trnsprt;
-      dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxrse_SqlTools;
-//      edt_NetWorkServer.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject' ,'edt_NetWorkServer_Text', 'none');
-
-//      edt_Alias.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject' ,'edt_Alias_Text', 'none');
-    end;
-
-    2: begin
-      dm_DataMod.nxrse_SqlTools.Transport :=  dm_DataMod.nxwint_SqlToolsTrans;
-      dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxrse_SqlTools;
-//      edt_NetWorkServer.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject' ,'edt_NetWorkServer_Text', 'none');
-
-//      edt_Alias.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject' ,'edt_Alias_Text', 'none');
+    1..2: begin
+      SetDialogServerType;
+      CheckUserServerSelection(True);
     end;
 
     3: begin
     end;
   end;
-  SetDialogServerType;
-  CheckUserServerSelection;
 end;
 
 

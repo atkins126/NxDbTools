@@ -781,15 +781,14 @@ object frm_SelectProject: Tfrm_SelectProject
         end
         object lbl_1: TLabel
           Left = 1
-          Top = 3
+          Top = 1
           Width = 91
-          Height = 58
+          Height = 60
           Align = alBottom
           Alignment = taCenter
           Caption = 'Working Hard'
           WordWrap = True
-          ExplicitTop = 152
-          ExplicitWidth = 109
+          ExplicitTop = 3
         end
       end
     end
