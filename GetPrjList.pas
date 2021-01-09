@@ -209,7 +209,7 @@ type
     procedure SetFormSize;
     procedure CheckUserServerSelection(FullNetWorkServerTest: Boolean = false);
     function ReadConfigXmlFile(aChildern: tStrings): string;
-    procedure PleaseWait(aToDo: tServerOperation);
+    procedure PleaseWait(aToDo: boolean);
   public
     { Public declarations }
     procedure OpenDefaultPrj;
@@ -676,8 +676,8 @@ begin
       end;
       act_ConnectBtn.Enabled := NetworkReady(dm_DataMod. nxwint_SqlToolsTrans);
     end;
-
   end;
+  PleaseWait(false);
 end;
 
 
@@ -851,34 +851,16 @@ end;
 
 
 
-procedure Tfrm_SelectProject.PleaseWait(aToDo: tServerOperation);
-var
-  OldCursor: TCursor;
+procedure Tfrm_SelectProject.PleaseWait(aToDo: Boolean);
 begin
-  OldCursor := Screen.Cursor;
-  Screen.Cursor := crHourGlass;
-  try
-    jvpnl_PleaseWait.Visible := true;
+  jvpnl_PleaseWait.Visible := aToDo;
+  if aToDo then
+  begin
+    Screen.Cursor := crHourGlass;
     jvpnl_PleaseWait.Refresh;
-    case aToDo of
-      soSetSelectServer: SetDialogServerType;
-
-      soFirstAndCheck: begin
-        SetDialogServerType;
-        CheckUserServerSelection;
-      end;
-
-      soOpenDb: begin
-        SetDialogServerType;
-        CheckUserServerSelection;
-        //and open server
-      end;
-
-    end;
-  finally
-    jvpnl_PleaseWait.Visible := false;
-    Screen.Cursor := OldCursor;
-  end;
+  end
+  else
+    Screen.Cursor := crDefault;
 end;
 
 
@@ -1452,7 +1434,6 @@ begin
         CheckUserServerSelection(True);
       end;
     end;
-    PleaseWait(soFirstAndCheck);
   end;
 end;
 

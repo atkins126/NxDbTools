@@ -870,9 +870,9 @@ object frm_SelectProject: Tfrm_SelectProject
     object GEMDBLabel1: TGEMDBLabel
       Left = 42
       Top = 27
-      Width = 98
+      Width = 38
       Height = 19
-      Caption = 'GEMDBLabel1'
+      Caption = 'MOW'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -16
