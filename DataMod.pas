@@ -64,7 +64,6 @@ type
     NxSqlButtonsDbTSqlCode                : TnxMemoField;
     NxSqlButtonsDbTHints                  : TWideStringField;
     NxSqlButtonsDbTNexusDbHelpUrl         : TWideStringField;
-    NxSqlButtonsDbTAddToEditorFunctionList: TBooleanField;
     NxSqlButtonsDbTCursorBeforeThisChar: TnxStringField;
     NxSqlButtonsDbTColor: TnxLargeintField;
     nxPascalScriptEngine1: TnxPascalScriptEngine;

@@ -140,7 +140,6 @@ type
     shp4                         : TShape;
     lbl_Caption4                 : TLabel;
     jvrdgrp_ServerType           : TJvRadioGroup;
-    lstbox_Issues                : TListBox;
     jvlstbx_AlaisNames           : TJvListBox;
     lbl_CaptionAliasLB           : TLabel;
     btn_1: TButton;
@@ -148,6 +147,7 @@ type
     jvpnl_PleaseWait: TJvPanel;
     img_1: TImage;
     lbl_1: TLabel;
+    mmo_IssuesMemo: TMemo;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -460,22 +460,22 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
   begin
     result := true;
     if not FileExists(GetCorrectedSlashes(DbPath, ButTable, st_Win)) then begin
-      lstbox_Issues.Items.Add('Table not found: '+ButTable);
+      mmo_IssuesMemo.Lines.Add('Table not found: '+ButTable);
       Result := False;
     end;
 
     if not FileExists(GetCorrectedSlashes(DbPath, ToolsPrj, st_Win)) then begin
-      lstbox_Issues.Items.Add('Table not found: '+ToolsPrj);
+      mmo_IssuesMemo.Lines.Add('Table not found: '+ToolsPrj);
       Result := False;
     end;
 
     if not FileExists(GetCorrectedSlashes(DbPath, NxSqlBtn, st_Win)) then begin
-      lstbox_Issues.Items.Add('Table not found: '+NxSqlBtn);
+      mmo_IssuesMemo.Lines.Add('Table not found: '+NxSqlBtn);
       Result := False;
     end;
 
     if not FileExists(GetCorrectedSlashes(DbPath, Trans, st_Win)) then begin
-      lstbox_Issues.Items.Add('Table not found: '+Trans);
+      mmo_IssuesMemo.Lines.Add('Table not found: '+Trans);
       Result := False;
     end;
   end;
@@ -487,7 +487,7 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
     result := false;
     if not DirectoryExists(edit_LocalDbPath.Text) then
     begin
-      lstbox_Issues.Items.Add(DbPath);
+      mmo_IssuesMemo.Lines.Add(DbPath);
       Result := False;
     end
     else
@@ -506,7 +506,7 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
     begin
       Result := True;
       if lb_ServerNames.Count < 1 then begin
-        lstbox_Issues.Items.Add(ServerLb);
+        mmo_IssuesMemo.Lines.Add(ServerLb);
         result := False;
       end
     end;
@@ -520,7 +520,7 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
       Result := True;
       if edt_NetWorkServer.Text = '' then
       begin
-        lstbox_Issues.Items.Add(SelectServer);
+        mmo_IssuesMemo.Lines.Add(SelectServer);
         jvlstbx_AlaisNames.Items.Clear;
         edt_Alias.Text := '';
         result := False;
@@ -529,7 +529,7 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
       begin
         index := lb_ServerNames.Items.IndexOf(edt_NetWorkServer.Text);
         if index = -1 then begin
-          lstbox_Issues.Items.Add(SelectSerNotInLb);
+          mmo_IssuesMemo.Lines.Add(SelectSerNotInLb);
 
           edt_NetWorkServer.Text := '';
           jvlstbx_AlaisNames.Items.Clear;
@@ -563,6 +563,7 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
       begin
         Result := false;
         jvlstbx_AlaisNames.Items.Clear;
+        edt_Alias.Text := '';
         Exit;
       end;
 
@@ -578,20 +579,20 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
         dm_DataMod.nxsn_SqlTools.GetAliasNames(jvlstbx_AlaisNames.Items);
         if jvlstbx_AlaisNames.Items.Count <1 then
         begin
-          lstbox_Issues.Items.Add(AliasList);
+          mmo_IssuesMemo.Lines.Add(AliasList);
           result := False;
         end;
       except
         on e: EDatabaseError do
           begin
-            lstbox_Issues.Items.Add('Database Error Last Action: Open - ' + s);
-            lstbox_Issues.Items.Add('Error Msg: ' + E.Message);
+            mmo_IssuesMemo.Lines.Add('Database Error Last Action: Open - ' + s);
+            mmo_IssuesMemo.Lines.Add('Error Msg: ' + E.Message);
             result := False;
           end;
 
         on E: Exception do
           begin
-            lstbox_Issues.Items.Add('General Exception Error Msg: ' + E.Message);
+            mmo_IssuesMemo.Lines.Add('General Exception Error Msg: ' + E.Message);
             result := False;
           end;
 
@@ -600,28 +601,28 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
 
     //==================
     function CheckSelectedAlias: Boolean;
-
-      //==================
-      function TestSelectedAliasInLB(aAlias: string): boolean;
-      begin
-        Result := jvlstbx_AlaisNames.items.IndexOf(aAlias) <> -1;
-      end;
-
-     //==================
-
+    var
+      index: integer;
     begin
       Result := True;
-      if edt_Alias.Text <> '' then
+      if edt_Alias.Text = '' then
       begin
-        lstbox_Issues.Items.Add(AliasBlank);
+        mmo_IssuesMemo.Lines.Add(AliasBlank);
         Result := False;
       end
-      else
-        if not TestSelectedAliasInLB(edt_Alias.Text) then
+      else begin
+        index := jvlstbx_AlaisNames.items.IndexOf(edt_Alias.Text);
+        if index <> -1 then
         begin
-          lstbox_Issues.Items.Add(AliasNotFound);
+          jvlstbx_AlaisNames.ItemIndex := index;
+          dm_DataMod.nxdb_SQLBtns.AliasName := edt_Alias.Text;
+        end
+        else
+        begin
+          mmo_IssuesMemo.Lines.Add(AliasNotFound);
           Result := False;
         end;
+      end;
     end;
 
   //==================
@@ -649,12 +650,12 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
 
 begin
   PleaseWait(true);
-  lstbox_Issues.Items.Clear;
+  mmo_IssuesMemo.Lines.Clear;
   frm_SelectProject.Cursor := crHourGlass;
   case jvrdgrp_ServerType.ItemIndex of
     0: begin
       dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxsrvrngn_Local;
-      btn_ConnectDb.Enabled := LocalReady;
+      act_ConnectBtn.Enabled := LocalReady;
     end;
 
     1: begin
@@ -664,7 +665,7 @@ begin
         dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxrse_SqlTools;
         dm_DataMod. nxnmdp_trnsprt.GetServerNames(lb_ServerNames.Items, cNxDbTimeOut);
       end;
-      btn_ConnectDb.Enabled := NetworkReady(dm_DataMod. nxnmdp_trnsprt);
+      act_ConnectBtn.Enabled := NetworkReady(dm_DataMod. nxnmdp_trnsprt);
     end;
 
     2: begin
@@ -674,7 +675,7 @@ begin
         dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxrse_SqlTools;
         dm_DataMod. nxwint_SqlToolsTrans.GetServerNames(lb_ServerNames.Items, cNxDbTimeOut);
       end;
-      btn_ConnectDb.Enabled := NetworkReady(dm_DataMod. nxwint_SqlToolsTrans);
+      act_ConnectBtn.Enabled := NetworkReady(dm_DataMod. nxwint_SqlToolsTrans);
     end;
 
   end;
@@ -684,7 +685,7 @@ end;
 
 procedure Tfrm_SelectProject.SetDialogServerType;
 begin
-  lstbox_Issues.Items.Clear;
+  mmo_IssuesMemo.Lines.Clear;
   lb_ServerNames.Items.Clear;
   jvlstbx_AlaisNames.Items.Clear;
 
@@ -696,8 +697,8 @@ begin
     nxrse_SqlTools.Close;
   end;
 
-  btn_ConnectDb.Enabled                := False;
-  btn_ConnectDb.ImageIndex             := 8;
+  act_ConnectBtn.Enabled                := False;
+  act_ConnectBtn.ImageIndex             := 8;
 
   lbl_CaptionForDBAlais.Enabled        :=  jvrdgrp_ServerType.ItemIndex in [1, 2];
   edt_Alias.enabled                    :=  jvrdgrp_ServerType.ItemIndex in [1, 2];
@@ -1077,7 +1078,6 @@ function Tfrm_SelectProject.CloseDelphiSqlToolsDb(var Status: string): boolean;
 begin
   JvLED1.Status := false;
   SetConnectBtn(false);
-//  btn_ConnectDb.ImageIndex := 6;
 
   try
     Result := True;
@@ -1112,9 +1112,9 @@ procedure Tfrm_SelectProject.SetConnectBtn(aConnected: Boolean);
 begin
   JvLED1.Status := aConnected;
   if aConnected then
-    act_ConnectBtn.ImageIndex := 6
+    act_ConnectBtn.ImageIndex := 9
   else
-    act_ConnectBtn.ImageIndex := 7;
+    act_ConnectBtn.ImageIndex := 8;
 
   if cardpnl_Dialogs.ActiveCard = Card_MostRecentlyUsedPrj then begin
     lstGemMruList1.Enabled := JvLED1.Status;
@@ -1279,38 +1279,43 @@ end;
 
 procedure Tfrm_SelectProject.act_ConnectBtnExecute(Sender: TObject);
 var
-  fStatus: string;
+  s: string;
 begin
-//    if  SetPrjDbServerType(rb_LocalDb.Checked, fStatus) then begin
-//      try
-//        NxDelphiSqlTools_Status.DataSource := dm_DataMod.ds_NxDbSqlToolsPrjs;
-//        JvDBFindEdit1.DataSource := dm_DataMod.ds_NxDbSqlToolsPrjs;
-//        JvDBSearchComboBox1.DataSource := dm_DataMod.ds_NxDbSqlToolsPrjs;
-//        dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
-//{$IFDEF DEBUG}
-//showmessage('msg 868-act_ConnectBtnExecute: '+ ExpandUNCFileName(JvSelectDirectory1.Directory));
-//{$ENDIF}
-//        dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('PrjPath').AsString := ExpandUNCFileName(edit_LocalDbPath.Text);
-////                                 ExpandUNCFileName(JvSelectDirectory1.Directory);
-//        dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
-//
-//        sv_MenuItems.Opened := False;
-//      except
-//        MessageDlg('msg 876-Could NOT open Prjs/SQLBtns database!', mtError, [mbOK], 0);
-//      end;
-//    end
-//    else begin
-//      JvDBFindEdit1.DataSource := nil;
-//      JvDBSearchComboBox1.DataSource := nil;
-//      NxDelphiSqlTools_Status.DataSource := nil;
-//      sv_MenuItems.Opened := true;
-//      if rb_LocalDb.Checked then
-//        MessageDlg('msg 885- Prjs/SQLBtns Db.' +#13+#10+ 'ERROR: ' + fStatus+#13+#10+
-//                   'Try selecting different Folder.', mtError, [mbOK], 0)
-//      else
-//        MessageDlg('msg 888- Prjs/SQLBtns Db.' +#13+#10+ 'ERROR: ' + fStatus+#13+#10+
-//                   'Check or select different sever.', mtError, [mbOK], 0);
-//    end;
+  try
+    with dm_DataMod do
+    begin
+      s := 'Database - nxdb_SQLBtns';
+      nxdb_SQLBtns.Open;
+
+      s := 'Table - NxSqlButtonsDbT';
+      NxSqlButtonsDbT.Open;
+
+      s := 'Table - nxtbl_NxDbSqlToolsPrjs';
+      nxtbl_NxDbSqlToolsPrjs.Open;
+
+      s := 'Table - nxtbl_TransportLUT';
+      nxtbl_TransportLUT.Open;
+    end;
+
+    act_ConnectBtn.ImageIndex := 9;
+  except
+    on e: EDatabaseError do
+      begin
+        mmo_IssuesMemo.Lines.Add('===== EDatabaseError Exception. Openning Projects and SQL Btn Database');
+        mmo_IssuesMemo.Lines.Add('Database Error Last Action before Error: Open - ' + s);
+        mmo_IssuesMemo.Lines.Add('Error Msg: ' + E.Message);
+        act_ConnectBtn.ImageIndex := 8;
+        act_ConnectBtn.Enabled := False;
+      end;
+
+    on E: Exception do
+      begin
+        mmo_IssuesMemo.Lines.Add('===== General Exception. Openning Projects and SQL Btn Database');
+        mmo_IssuesMemo.Lines.Add('Database Error Last Action before Error: Open - ' + s);
+        mmo_IssuesMemo.Lines.Add('General Exception Error Msg: ' + E.Message);
+        act_ConnectBtn.Enabled := False;
+      end;
+  end;
 end;
 
 
