@@ -504,7 +504,6 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
     //==================
     function CheckServerLB: Boolean;
     begin
-
       Result := True;
       if lb_ServerNames.Count < 1 then begin
         lstbox_Issues.Items.Add(ServerLb);
@@ -522,18 +521,37 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
       if edt_NetWorkServer.Text = '' then
       begin
         lstbox_Issues.Items.Add(SelectServer);
+        jvlstbx_AlaisNames.Items.Clear;
+        edt_Alias.Text := '';
         result := False;
       end
       else
       begin
         index := lb_ServerNames.Items.IndexOf(edt_NetWorkServer.Text);
-        if index = -1 then
-          lstbox_Issues.Items.Add(SelectSerNotInLb)
+        if index = -1 then begin
+          lstbox_Issues.Items.Add(SelectSerNotInLb);
+
+          edt_NetWorkServer.Text := '';
+          jvlstbx_AlaisNames.Items.Clear;
+          edt_Alias.Text := '';
+        end
         else
+        begin
           lb_ServerNames.ItemIndex := index;
-
+          if jvrdgrp_ServerType.ItemIndex = 1 then
+          begin
+            dm_DataMod.nxnmdp_trnsprt.Close;
+            dm_DataMod.nxnmdp_trnsprt.ServerName := edt_NetWorkServer.Text;
+            dm_DataMod.nxrse_SqlTools.TransPort := dm_DataMod.nxnmdp_trnsprt;
+          end
+          else
+          begin
+            dm_DataMod.nxwint_SqlToolsTrans.Close;
+            dm_DataMod.nxwint_SqlToolsTrans.ServerName := edt_NetWorkServer.Text;
+            dm_DataMod.nxrse_SqlTools.TransPort := dm_DataMod.nxwint_SqlToolsTrans;
+          end;
+        end;
       end;
-
     end;
 
     //==================
@@ -541,6 +559,13 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
     var
       s: string;
     begin
+      if edt_NetWorkServer.Text = '' then
+      begin
+        Result := false;
+        jvlstbx_AlaisNames.Items.Clear;
+        Exit;
+      end;
+
       Result := True;
       try
         s:= aTrans.Name;
@@ -602,18 +627,29 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
   //==================
 
   begin
-    frm_SelectProject.Cursor := crHourGlass;
-//    RePaint;
     Result := false;
-    if CheckServerLB then
-      if CheckSelectedServer then
-        if CheckAliasLB then
-          if CheckSelectedAlias then
-            result := True;
+
+    if FullNetWorkServerTest then
+    begin
+      Result := CheckServerLB;
+      if Result then
+        Result := CheckSelectedServer;
+      if Result then
+        Result  := CheckAliasLB;
+      if Result then
+        Result := CheckSelectedAlias;
+    end
+    else
+    begin
+      Result  := CheckAliasLB;
+      if Result then
+        Result := CheckSelectedAlias;
+      end;
   end;
 
 begin
   PleaseWait(true);
+  lstbox_Issues.Items.Clear;
   frm_SelectProject.Cursor := crHourGlass;
   case jvrdgrp_ServerType.ItemIndex of
     0: begin
@@ -622,18 +658,22 @@ begin
     end;
 
     1: begin
-      if FullNetWorkServerTest then begin
-
-      dm_DataMod.nxrse_SqlTools.Transport := dm_DataMod. nxnmdp_trnsprt;
-      dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxrse_SqlTools;
-      dm_DataMod. nxnmdp_trnsprt.GetServerNames(lb_ServerNames.Items, cNxDbTimeOut);
+      if FullNetWorkServerTest then
+      begin
+        dm_DataMod.nxrse_SqlTools.Transport := dm_DataMod. nxnmdp_trnsprt;
+        dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxrse_SqlTools;
+        dm_DataMod. nxnmdp_trnsprt.GetServerNames(lb_ServerNames.Items, cNxDbTimeOut);
+      end;
       btn_ConnectDb.Enabled := NetworkReady(dm_DataMod. nxnmdp_trnsprt);
     end;
 
     2: begin
-      dm_DataMod.nxrse_SqlTools.Transport := dm_DataMod. nxwint_SqlToolsTrans;
-      dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxrse_SqlTools;
-      dm_DataMod. nxwint_SqlToolsTrans.GetServerNames(lb_ServerNames.Items, cNxDbTimeOut);
+      if FullNetWorkServerTest then
+      begin
+        dm_DataMod.nxrse_SqlTools.Transport := dm_DataMod. nxwint_SqlToolsTrans;
+        dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxrse_SqlTools;
+        dm_DataMod. nxwint_SqlToolsTrans.GetServerNames(lb_ServerNames.Items, cNxDbTimeOut);
+      end;
       btn_ConnectDb.Enabled := NetworkReady(dm_DataMod. nxwint_SqlToolsTrans);
     end;
 
@@ -1178,7 +1218,7 @@ procedure Tfrm_SelectProject.FormShow(Sender: TObject);
 begin
   IniLoadComponents(PrjSetupCompomentsIni, fComponentIni, false);
   SetDialogServerType;
-  CheckUserServerSelection;
+  CheckUserServerSelection(True);
 end;
 
 
@@ -1205,6 +1245,8 @@ begin
     dm_DataMod.nxdb_SQLBtns.Close;
     edt_Alias.Text := jvlstbx_AlaisNames.Items[jvlstbx_AlaisNames.ItemIndex];
     dm_DataMod.nxdb_SQLBtns.AliasName  := edt_NetWorkServer.Text;
+
+    CheckUserServerSelection;
   end;
 end;
 
@@ -1369,8 +1411,7 @@ begin
         edt_NetWorkServer.Text := lb_ServerNames.Items[lb_ServerNames.ItemIndex];
         dm_DataMod.nxnmdp_trnsprt.ServerNameRuntime := edt_NetWorkServer.Text;
         dm_DataMod.nxnmdp_trnsprt.ServerName := edt_NetWorkServer.Text;
-
-        CheckUserServerSelection;
+        CheckUserServerSelection(True);
       end;
 
       2: begin
@@ -1378,7 +1419,7 @@ begin
         edt_NetWorkServer.Text := lb_ServerNames.Items[lb_ServerNames.ItemIndex];
         dm_DataMod.nxwint_SqlToolsTrans.ServerNameRuntime := edt_NetWorkServer.Text;
         dm_DataMod.nxwint_SqlToolsTrans.ServerName := edt_NetWorkServer.Text;
-        CheckUserServerSelection;
+        CheckUserServerSelection(True);
       end;
     end;
   end;
