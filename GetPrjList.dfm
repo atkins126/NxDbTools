@@ -493,11 +493,11 @@ object frm_SelectProject: Tfrm_SelectProject
         Caption = 'Selected Server:'
       end
       object lbl_CaptionForDBAlais: TLabel
-        Left = 252
+        Left = 256
         Top = 251
-        Width = 125
+        Width = 78
         Height = 13
-        Caption = 'Network Database Alias:'
+        Caption = 'Database Alias:'
       end
       object Shape3: TShape
         Left = 11
@@ -635,6 +635,7 @@ object frm_SelectProject: Tfrm_SelectProject
         StateCaptions.CaptionOn = 'Use Your Alias'
         StateCaptions.CaptionOff = 'Use Default Alias'
         TabOrder = 4
+        Visible = False
         OnClick = ts_DefaultAliasBtnDbClick
       end
       object edt_Alias: TEdit
@@ -781,15 +782,14 @@ object frm_SelectProject: Tfrm_SelectProject
         end
         object lbl_1: TLabel
           Left = 1
-          Top = 3
+          Top = 1
           Width = 91
-          Height = 58
+          Height = 60
           Align = alBottom
           Alignment = taCenter
           Caption = 'Working Hard'
           WordWrap = True
-          ExplicitTop = 152
-          ExplicitWidth = 109
+          ExplicitTop = 3
         end
       end
     end

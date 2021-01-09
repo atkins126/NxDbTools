@@ -237,6 +237,6 @@ object dm_DataMod: Tdm_DataMod
   object nxnmdp_trnsprt: TnxNamedPipeTransport
     DisplayCategory = 'Transports'
     Left = 408
-    Top = 80
+    Top = 72
   end
 end

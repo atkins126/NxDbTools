@@ -40,7 +40,7 @@ type
   tIniComponent = (icTJVRadioGrp, icTEditLocalDbPath, icTEditServer, icTEditAlias,
                    icToggleAliasToUse);
 
-
+  tServerOperation = (soSetSelectServer, soFirstAndCheck, soOpenDb);
 
   Tfrm_SelectProject = class(TForm)
     ActionList1                  : TActionList;
@@ -209,7 +209,7 @@ type
     procedure SetFormSize;
     procedure CheckUserServerSelection;
     function ReadConfigXmlFile(aChildern: tStrings): string;
-    procedure PleaseWait(aOn: Boolean);
+    procedure PleaseWait(aToDo: tServerOperation);
   public
     { Public declarations }
     procedure OpenDefaultPrj;
@@ -602,7 +602,6 @@ procedure Tfrm_SelectProject.CheckUserServerSelection;
   //==================
 
   begin
-    frm_SelectProject.Cursor := crHourGlass;
 //    RePaint;
     Result := false;
     if CheckServerLB then
@@ -613,8 +612,6 @@ procedure Tfrm_SelectProject.CheckUserServerSelection;
   end;
 
 begin
-  PleaseWait(true);
-  frm_SelectProject.Cursor := crHourGlass;
   case jvrdgrp_ServerType.ItemIndex of
     0: begin
       dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxsrvrngn_Local;
@@ -636,7 +633,6 @@ begin
     end;
 
   end;
-  PleaseWait(false);
 end;
 
 
@@ -646,8 +642,13 @@ begin
   lb_ServerNames.Items.Clear;
   jvlstbx_AlaisNames.Items.Clear;
 
-  dm_DataMod.nxwint_SqlToolsTrans.close;
-  dm_DataMod.nxsrvrngn_Local.close;
+  with dm_DataMod do
+  begin
+    nxnmdp_trnsprt.Close;
+    nxwint_SqlToolsTrans.close;
+    nxsrvrngn_Local.close;
+    nxrse_SqlTools.Close;
+  end;
 
   btn_ConnectDb.Enabled                := False;
   btn_ConnectDb.ImageIndex             := 8;
@@ -804,10 +805,35 @@ begin
 end;
 
 
-procedure Tfrm_SelectProject.PleaseWait(aOn: Boolean);
+
+procedure Tfrm_SelectProject.PleaseWait(aToDo: tServerOperation);
+var
+  OldCursor: TCursor;
 begin
-   jvpnl_PleaseWait.Visible := aOn;
-   jvpnl_PleaseWait.Refresh;
+  OldCursor := Screen.Cursor;
+  Screen.Cursor := crHourGlass;
+  try
+    jvpnl_PleaseWait.Visible := true;
+    jvpnl_PleaseWait.Refresh;
+    case aToDo of
+      soSetSelectServer: SetDialogServerType;
+
+      soFirstAndCheck: begin
+        SetDialogServerType;
+        CheckUserServerSelection;
+      end;
+
+      soOpenDb: begin
+        SetDialogServerType;
+        CheckUserServerSelection;
+        //and open server
+      end;
+
+    end;
+  finally
+    jvpnl_PleaseWait.Visible := false;
+    Screen.Cursor := OldCursor;
+  end;
 end;
 
 
@@ -1207,46 +1233,23 @@ begin
     dm_DataMod.nxdb_SQLBtns.Close;
     edt_Alias.Text := jvlstbx_AlaisNames.Items[jvlstbx_AlaisNames.ItemIndex];
     dm_DataMod.nxdb_SQLBtns.AliasName  := edt_NetWorkServer.Text;
+    PleaseWait(soFirstAndCheck);
   end;
 end;
 
 
 procedure Tfrm_SelectProject.jvrdgrp_ServerTypeClick(Sender: TObject);
-
-//  function getParsedString: string;
-//  begin
-//    ExtractValueInXMLFile(PathAndFileAtFormLocSize, '');
-//  end;
-
 begin
-//  getParsedString;
   case jvrdgrp_ServerType.ItemIndex of
-    0: begin
-      dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxsrvrngn_Local;
-//      edit_LocalDbPath.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject', 'edit_DbPath', 'none');
+    0..2:
+    begin
+      PleaseWait(soFirstAndCheck);
     end;
 
-    1: begin
-      dm_DataMod.nxrse_SqlTools.Transport :=  dm_DataMod.nxnmdp_trnsprt;
-      dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxrse_SqlTools;
-//      edt_NetWorkServer.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject' ,'edt_NetWorkServer_Text', 'none');
-
-//      edt_Alias.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject' ,'edt_Alias_Text', 'none');
-    end;
-
-    2: begin
-      dm_DataMod.nxrse_SqlTools.Transport :=  dm_DataMod.nxwint_SqlToolsTrans;
-      dm_DataMod.nxsn_SqlTools.ServerEngine := dm_DataMod.nxrse_SqlTools;
-//      edt_NetWorkServer.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject' ,'edt_NetWorkServer_Text', 'none');
-
-//      edt_Alias.Text := frm_NxToolsMain.jvpxmlflstrg_NxDbToolsPrefs.ReadString('frm_SelectProject' ,'edt_Alias_Text', 'none');
-    end;
-
-    3: begin
+    3:
+    begin
     end;
   end;
-  SetDialogServerType;
-  CheckUserServerSelection;
 end;
 
 
@@ -1361,20 +1364,20 @@ end;
 
 procedure Tfrm_SelectProject.ts_DefaultAliasBtnDbClick(Sender: TObject);
 begin
-  edt_Alias.ReadOnly := ts_DefaultAliasBtnDb.State = tssOff;
-  if ts_DefaultAliasBtnDb.State = tssOff then begin
-    edt_Alias.Text     := cSqlBtnsDbAlias;
-    edt_Alias.Color    := clCream;
-    edt_Alias.readOnly := true;
-
-    lbl_CaptionForDBAlais.Caption := 'Default Database Alias:';
-  end
-  else begin
-    edt_Alias.readOnly := false;
-    edt_Alias.Color    := clWindow;
-
-    lbl_CaptionForDBAlais.Caption := 'User Database Alias:';
-  end;
+//  edt_Alias.ReadOnly := ts_DefaultAliasBtnDb.State = tssOff;
+//  if ts_DefaultAliasBtnDb.State = tssOff then begin
+//    edt_Alias.Text     := cSqlBtnsDbAlias;
+//    edt_Alias.Color    := clCream;
+//    edt_Alias.readOnly := true;
+//
+//    lbl_CaptionForDBAlais.Caption := 'Default Database Alias:';
+//  end
+//  else begin
+//    edt_Alias.readOnly := false;
+//    edt_Alias.Color    := clWindow;
+//
+//    lbl_CaptionForDBAlais.Caption := 'User Database Alias:';
+//  end;
 end;
 
 
@@ -1392,7 +1395,7 @@ begin
         dm_DataMod.nxnmdp_trnsprt.ServerNameRuntime := edt_NetWorkServer.Text;
         dm_DataMod.nxnmdp_trnsprt.ServerName := edt_NetWorkServer.Text;
 
-        CheckUserServerSelection;
+//        CheckUserServerSelection;
       end;
 
       2: begin
@@ -1400,9 +1403,10 @@ begin
         edt_NetWorkServer.Text := lb_ServerNames.Items[lb_ServerNames.ItemIndex];
         dm_DataMod.nxwint_SqlToolsTrans.ServerNameRuntime := edt_NetWorkServer.Text;
         dm_DataMod.nxwint_SqlToolsTrans.ServerName := edt_NetWorkServer.Text;
-        CheckUserServerSelection;
+//        CheckUserServerSelection;
       end;
     end;
+    PleaseWait(soFirstAndCheck);
   end;
 end;
 
