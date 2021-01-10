@@ -26,11 +26,10 @@ object frm_SelectProject: Tfrm_SelectProject
     Width = 949
     Height = 430
     Align = alClient
-    ActiveCard = crd_SetDbServer
+    ActiveCard = Card_MostRecentlyUsedPrj
     Caption = 'cardpnl_Dialogs'
     TabOrder = 0
     OnCardChange = cardpnl_DialogsCardChange
-    ExplicitWidth = 1132
     object Card_CreateSelectPrjDb: TCard
       Left = 1
       Top = 1
@@ -39,7 +38,6 @@ object frm_SelectProject: Tfrm_SelectProject
       Caption = 'CreateSelectPrjDb'
       CardIndex = 0
       TabOrder = 0
-      ExplicitWidth = 1130
       object Label3: TLabel
         Left = 0
         Top = 2
@@ -381,7 +379,6 @@ object frm_SelectProject: Tfrm_SelectProject
       Caption = 'Most Recently Used'
       CardIndex = 1
       TabOrder = 1
-      ExplicitWidth = 1130
       object lbl4: TLabel
         Left = 19
         Top = 29
@@ -432,7 +429,6 @@ object frm_SelectProject: Tfrm_SelectProject
       Caption = 'crd_SetDbServer'
       CardIndex = 2
       TabOrder = 2
-      ExplicitWidth = 1130
       object Label13: TLabel
         Left = 16
         Top = 6
@@ -800,7 +796,6 @@ object frm_SelectProject: Tfrm_SelectProject
       Caption = 'crd_CreateNewDbTables'
       CardIndex = 3
       TabOrder = 3
-      ExplicitWidth = 1130
     end
     object crd_PackRestructureDb: TCard
       Left = 1
@@ -810,7 +805,6 @@ object frm_SelectProject: Tfrm_SelectProject
       Caption = 'crd_PackRestructureDb'
       CardIndex = 4
       TabOrder = 4
-      ExplicitWidth = 1130
     end
   end
   object JvPanel1: TJvPanel
@@ -820,7 +814,6 @@ object frm_SelectProject: Tfrm_SelectProject
     Height = 78
     Align = alTop
     TabOrder = 1
-    ExplicitWidth = 1348
     DesignSize = (
       1165
       78)
@@ -944,7 +937,6 @@ object frm_SelectProject: Tfrm_SelectProject
       end>
     SimplePanel = False
     WordWrap = True
-    ExplicitWidth = 1348
   end
   object sv_MenuItems: TSplitView
     Left = 0

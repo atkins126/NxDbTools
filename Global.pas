@@ -42,8 +42,7 @@ type
   tChangeServer    = procedure(aServer: tStr45) of Object;
   tChangeAlias     = procedure(aAlias: tStr95) of Object;
 
-  TProjectInfo = record
-  private
+  TProjectInfo = class
     fPrjName        : tStr25;
     fPrjPath        : tStr255;
     fTransport      : TTransportUsed;
@@ -64,6 +63,7 @@ type
     fOnChangeServer   : tChangeServer;
     fOnChangeAlias    : tChangeAlias;
 
+  private
     procedure PrjTransportChange(aTransport: TTransportUsed);
     procedure PrjServerChange(aServer: tStr45);
     procedure PrjAliasChange(aAlias: tStr95);
@@ -71,6 +71,10 @@ type
     procedure SetServer(const Value: tstr45);
     procedure SetTransport(const Value: TTransportUsed);
   public
+    constructor Create(aPrjName: string);
+//    constructor Create(aPrjName, aPrjPath, aDBPassWord: string; aTrans: TTransportUsed); overload;
+//    constructor Create(aPrjName, aServer, aAlias, aDBPassWord: string; aTrans: TTransportUsed); overload;
+
     procedure BeginUpdate;
     procedure EndUpdate;
     procedure ClearPrj;
@@ -189,6 +193,8 @@ var
   UpdateInstallPath          : string;
   SqlFontStylesSaveFilePath  : string;
   fPrjPathValidChars         : Boolean;
+  gProjectInfo               : TProjectInfo;
+
 
 const
   WM_SHOWPRJSDIALOG = WM_APP + 321;
@@ -617,6 +623,12 @@ begin
   fActiveServer := '';
   fActiveDb := '';
   fTreeNode := nil;
+end;
+
+
+constructor TProjectInfo.Create(aPrjName: string);
+begin
+  fPrjName := aPrjName;
 end;
 
 end.

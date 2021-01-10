@@ -194,7 +194,7 @@ type
 
   private
     { Private declarations }
-    fPrjInfo     : TProjectInfo;
+//    fPrjInfo     : TProjectInfo;
     fComponentIni: array[0..3] of TObject; //array[tIniComponent] of TObject;
 
     procedure OpenPrjFrom(Sender: TObject; PrjOpenType: tPrjOpenType);
@@ -212,7 +212,7 @@ type
     { Public declarations }
     procedure OpenDefaultPrj;
     Function SavePrjDb(afPrjInfo: TProjectInfo; var fStatus: string): boolean;
-    property PrjInfo: TProjectInfo read fPrjInfo write fPrjInfo;
+//    property PrjInfo: TProjectInfo read fPrjInfo write fPrjInfo;
   end;
 
   tCardList = (cl_CardCreatePrjDb, cl_CardMostRecnt, cl_Server, cl_NewDb, cl_Pack);
@@ -405,12 +405,12 @@ procedure Tfrm_SelectProject.act_DeletePrjExecute(Sender: TObject);
 begin
   if MessageDlg('Delete ' + QuotedStr(dm_DataMod.nxtbl_NxDbSqlToolsPrjsPrjName.AsString) + ' project?',
     mtWarning, [mbOk, mbCancel],0) = mrOk then begin
-    fPrjInfo.BeginUpdate;
-    fPrjInfo.PrjName := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjsPrjName.AsString);
-    fPrjInfo.PrjPath := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjsPrjPath.AsString);
+    gProjectInfo.BeginUpdate;
+    gProjectInfo.PrjName := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjsPrjName.AsString);
+    gProjectInfo.PrjPath := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjsPrjPath.AsString);
     dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Delete;
-    lstGemMruList1.DeleteItem(string(fPrjInfo.PrjName));
-    fPrjInfo.EndUpdate;
+    lstGemMruList1.DeleteItem(string(gProjectInfo.PrjName));
+    gProjectInfo.EndUpdate;
     GetProjectList;
   end;
 end;
@@ -840,9 +840,9 @@ function Tfrm_SelectProject.SavePrjDb(afPrjInfo: TProjectInfo; var fStatus: stri
 begin
   result := True;
   fStatus := '';
-  fPrjInfo.BeginUpdate;
-  if Not ((string(fPrjInfo.PrjName) = AnsiRightStr(cthe_DefaultPrjPath, Length(cthe_DefaultPrjPath) - 1)) or
-     (fPrjInfo.PrjName = '')) then begin
+  gProjectInfo.BeginUpdate;
+  if Not ((string(gProjectInfo.PrjName) = AnsiRightStr(cthe_DefaultPrjPath, Length(cthe_DefaultPrjPath) - 1)) or
+     (gProjectInfo.PrjName = '')) then begin
     try
       dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
         dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('PrjName').AsString := string(afPrjInfo.PrjName);
@@ -863,7 +863,7 @@ showmessage('msg 464-act_ConnectBtnExecute: '+ string(afPrjInfo.PrjPath));
       end;
     end;
   end;
-  fPrjInfo.EndUpdate;
+  gProjectInfo.EndUpdate;
 end;
 
 
@@ -907,33 +907,37 @@ procedure Tfrm_SelectProject.OpenPrjFrom(Sender: TObject; PrjOpenType: tPrjOpenT
   begin
     Result := True;
     try
-      fPrjInfo.BeginUpdate;
+      gProjectInfo.BeginUpdate;
 
-      fPrjInfo.PrjName := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('PrjName').AsString);
-      fPrjInfo.PrjPath := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('PrjPath').AsString);
-      fPrjInfo.Transport := TTransportUsed(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('TransportID').AsInteger);
-      fPrjInfo.Server := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Server').AsString);
-      fPrjInfo.Alias := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Alias').AsString);
-      fPrjInfo.ActiveTrans := fPrjInfo.Transport;
-      fPrjInfo.ActiveServer := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Server').AsString);
-      fPrjInfo.ActiveDb := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Alias').AsString);
-      fPrjInfo.DBPassWord := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('DbPassWord').AsString);
+      gProjectInfo.PrjName := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('PrjName').AsString);
+      gProjectInfo.PrjPath := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('PrjPath').AsString);
+      gProjectInfo.Transport := TTransportUsed(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('TransportID').AsInteger);
+      gProjectInfo.Server := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Server').AsString);
+      gProjectInfo.Alias := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Alias').AsString);
+      gProjectInfo.ActiveTrans := gProjectInfo.Transport;
+      gProjectInfo.ActiveServer := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Server').AsString);
+      gProjectInfo.ActiveDb := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Alias').AsString);
+      gProjectInfo.DBPassWord := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('DbPassWord').AsString);
     except
       result := False;
     end;
-    fPrjInfo.EndUpdate;
+    gProjectInfo.EndUpdate;
   end;
 
 var
   fError  : Boolean;
 begin
   fError := false;
-  fPrjInfo.ClearPrj;
-  fPrjInfo.BeginUpdate;
+  if gProjectInfo = nil then
+    FreeAndNil(gProjectInfo);
+  gProjectInfo := TProjectInfo.create('Default Project');
+  gProjectInfo.ClearPrj;
+  gProjectInfo.BeginUpdate;
 
   case PrjOpenType of
     pot_MRU: begin
       if dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Locate('PrjName', lstGemMruList1.GetName(lstGemMruList1.ItemIndex), []) then  begin
+
         if not SetPrjInfo then begin
           MessageDlg('msg 542-Error Opening Db Projects Db Table.',
                                                     mtError, [mbYes, mbNo], 0);
@@ -950,33 +954,34 @@ begin
       end;
     end;
 
-    pot_PrjGrid: if not SetPrjInfo then begin
+    pot_PrjGrid:
+      if not SetPrjInfo then begin
                     MessageDlg('msg 558-Could not find project from MRU listing. Used the'+#13+#10+
                                'Db grid to select a project.', mtError, [mbOK], 0);
                     fError:= True;
                  end;
 
     pot_Default: begin
-      fPrjInfo.PrjName := ShortString(AnsiRightStr(cthe_DefaultPrjPath, Length(cthe_DefaultPrjPath) - 1));
-      fPrjInfo.PrjPath := ShortString(DefaultPathForPrjsFolder);
+      gProjectInfo.PrjName := ShortString(AnsiRightStr(cthe_DefaultPrjPath, Length(cthe_DefaultPrjPath) - 1));
+      gProjectInfo.PrjPath := ShortString(DefaultPathForPrjsFolder);
     end;
   end;
 
   if not FError then begin
-    if (fPrjInfo.PrjPath<> '') and (not System.SysUtils.DirectoryExists(string(fPrjInfo.PrjPath))) then
+    if (gProjectInfo.PrjPath<> '') and (not System.SysUtils.DirectoryExists(string(gProjectInfo.PrjPath))) then
       if (MessageDlg('msg 571-Prj. Path does not Exist. Create?', mtWarning, [mbYes, mbNo], 0) in [mrYes, mrNone]) then begin
-        if not System.SysUtils.ForceDirectories(String(fPrjInfo.PrjPath)) then begin
-           fPrjInfo.PrjPath := '';
+        if not System.SysUtils.ForceDirectories(String(gProjectInfo.PrjPath)) then begin
+           gProjectInfo.PrjPath := '';
         end;
       end;
-    lstGemMruList1.Add(string(fPrjInfo.PrjName), string(fPrjInfo.PrjPath));
-    fPrjInfo.EndUpdate;
-    frm_NxToolsMain.ProjectInfo := fPrjInfo;
+    lstGemMruList1.Add(string(gProjectInfo.PrjName), string(gProjectInfo.PrjPath));
+    gProjectInfo.EndUpdate;
+//    frm_NxToolsMain.ProjectInfo := gProjectInfo;
     OpenProject(Sender);
   end
   else begin
-    fPrjInfo.EndUpdate;
-    frm_NxToolsMain.ProjectInfo := fPrjInfo;
+    gProjectInfo.EndUpdate;
+//    frm_NxToolsMain.ProjectInfo := gProjectInfo;
   end;
 end;
 
@@ -1088,7 +1093,7 @@ end;
 procedure Tfrm_SelectProject.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 begin
-  if not System.SysUtils.DirectoryExists(string(fPrjInfo.PrjPath)) then
+  if not System.SysUtils.DirectoryExists(string(gProjectInfo.PrjPath)) then
     OpenDefaultPrj;
 
   JvFormStorage1.SaveFormPlacement;
@@ -1104,7 +1109,7 @@ var
   Index: Integer;
 begin
   lstGemMruList1.MruListFile := MRUFile;
-  fprjInfo.ClearPrj;
+  gProjectInfo.ClearPrj;
   JvFormStorage1.RestoreFormPlacement;
 
   fComponentIni[Ord(icTJVRadioGrp)]      := jvrdgrp_ServerType;
@@ -1425,7 +1430,7 @@ end;
 
 procedure Tfrm_SelectProject.btn__CloseClick(Sender: TObject);
 begin
-  fPrjInfo.ClearPrj;
+  gProjectInfo.ClearPrj;
   act_DefaultPrj.Execute;
   Close;
 end;
