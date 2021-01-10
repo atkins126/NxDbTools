@@ -71,6 +71,7 @@ type
     nxsn_SqlTools: TnxSession;
     nxtbl_NxDbSqlToolsPrjsPrjPath: TWideStringField;
     nxnmdp_trnsprt: TnxNamedPipeTransport;
+    NxSqlButtonsDbTAddToEditorFunctionList: TBooleanField;
     procedure NxSqlButtonsDbTAfterDelete(DataSet: TDataSet);
     procedure nxtbl_NxDbSqlToolsPrjsPostError(DataSet: TDataSet;
       E: EDatabaseError; var Action: TDataAction);

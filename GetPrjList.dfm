@@ -4,7 +4,7 @@ object frm_SelectProject: Tfrm_SelectProject
   BorderStyle = bsDialog
   Caption = 'Select Project'
   ClientHeight = 552
-  ClientWidth = 1348
+  ClientWidth = 1165
   Color = clBtnFace
   Constraints.MinHeight = 563
   Font.Charset = ANSI_CHARSET
@@ -23,21 +23,23 @@ object frm_SelectProject: Tfrm_SelectProject
     AlignWithMargins = True
     Left = 213
     Top = 81
-    Width = 1132
+    Width = 949
     Height = 430
     Align = alClient
     ActiveCard = crd_SetDbServer
     Caption = 'cardpnl_Dialogs'
     TabOrder = 0
     OnCardChange = cardpnl_DialogsCardChange
+    ExplicitWidth = 1132
     object Card_CreateSelectPrjDb: TCard
       Left = 1
       Top = 1
-      Width = 1130
+      Width = 947
       Height = 428
       Caption = 'CreateSelectPrjDb'
       CardIndex = 0
       TabOrder = 0
+      ExplicitWidth = 1130
       object Label3: TLabel
         Left = 0
         Top = 2
@@ -374,11 +376,12 @@ object frm_SelectProject: Tfrm_SelectProject
     object Card_MostRecentlyUsedPrj: TCard
       Left = 1
       Top = 1
-      Width = 1130
+      Width = 947
       Height = 428
       Caption = 'Most Recently Used'
       CardIndex = 1
       TabOrder = 1
+      ExplicitWidth = 1130
       object lbl4: TLabel
         Left = 19
         Top = 29
@@ -409,10 +412,10 @@ object frm_SelectProject: Tfrm_SelectProject
         ParentFont = False
       end
       object lstGemMruList1: tGemMruList
-        Left = 24
-        Top = 74
-        Width = 425
-        Height = 317
+        Left = 2
+        Top = 58
+        Width = 447
+        Height = 351
         MaxNumItems = 15
         MruListFile = 'NONE'
         StringListType = uslt_NameValue
@@ -424,11 +427,12 @@ object frm_SelectProject: Tfrm_SelectProject
     object crd_SetDbServer: TCard
       Left = 1
       Top = 1
-      Width = 1130
+      Width = 947
       Height = 428
       Caption = 'crd_SetDbServer'
       CardIndex = 2
       TabOrder = 2
+      ExplicitWidth = 1130
       object Label13: TLabel
         Left = 16
         Top = 6
@@ -615,8 +619,11 @@ object frm_SelectProject: Tfrm_SelectProject
         Top = 94
         Width = 464
         Height = 21
+        Color = 14811134
         Enabled = False
+        ReadOnly = True
         TabOrder = 2
+        OnChange = edit_LocalDbPathChange
       end
       object edt_NetWorkServer: TEdit
         Left = 252
@@ -627,17 +634,6 @@ object frm_SelectProject: Tfrm_SelectProject
         ReadOnly = True
         TabOrder = 3
       end
-      object ts_DefaultAliasBtnDb: TToggleSwitch
-        Left = 52
-        Top = 266
-        Width = 143
-        Height = 20
-        StateCaptions.CaptionOn = 'Use Your Alias'
-        StateCaptions.CaptionOff = 'Use Default Alias'
-        TabOrder = 4
-        Visible = False
-        OnClick = ts_DefaultAliasBtnDbClick
-      end
       object edt_Alias: TEdit
         Left = 256
         Top = 265
@@ -646,7 +642,7 @@ object frm_SelectProject: Tfrm_SelectProject
         Color = clCream
         Enabled = False
         ReadOnly = True
-        TabOrder = 5
+        TabOrder = 4
         Text = 'NxDelphiSqlTools'
       end
       object btn_ConnectDb: TButton
@@ -658,7 +654,7 @@ object frm_SelectProject: Tfrm_SelectProject
         Action = act_ConnectBtn
         ImageAlignment = iaCenter
         Images = il1
-        TabOrder = 6
+        TabOrder = 5
       end
       object btn_CopyDbTables: TButton
         Left = 45
@@ -666,7 +662,7 @@ object frm_SelectProject: Tfrm_SelectProject
         Width = 179
         Height = 38
         Caption = 'Close Program. Can Not continue with out Db Open.'
-        TabOrder = 7
+        TabOrder = 6
         WordWrap = True
         OnClick = btn_CopyDbTablesClick
       end
@@ -683,7 +679,7 @@ object frm_SelectProject: Tfrm_SelectProject
           'Pipe'
           'Tcpip'
           'No Server')
-        TabOrder = 8
+        TabOrder = 7
         OnClick = jvrdgrp_ServerTypeClick
       end
       object jvlstbx_AlaisNames: TJvListBox
@@ -694,7 +690,7 @@ object frm_SelectProject: Tfrm_SelectProject
         ItemHeight = 13
         Background.FillMode = bfmTile
         Background.Visible = False
-        TabOrder = 9
+        TabOrder = 8
         OnClick = jvlstbx_AlaisNamesClick
       end
       object lb_ServerNames: TListBox
@@ -703,7 +699,7 @@ object frm_SelectProject: Tfrm_SelectProject
         Width = 201
         Height = 121
         ItemHeight = 13
-        TabOrder = 10
+        TabOrder = 9
         OnClick = lb_ServerNames1Click
       end
       object jvpnl_PleaseWait: TJvPanel
@@ -724,7 +720,7 @@ object frm_SelectProject: Tfrm_SelectProject
         Font.Style = [fsBold]
         ParentBackground = False
         ParentFont = False
-        TabOrder = 11
+        TabOrder = 10
         Visible = False
         object img_1: TImage
           Left = 1
@@ -793,35 +789,41 @@ object frm_SelectProject: Tfrm_SelectProject
         Lines.Strings = (
           '')
         ScrollBars = ssBoth
-        TabOrder = 12
+        TabOrder = 11
       end
     end
     object crd_CreateNewDbTables: TCard
       Left = 1
       Top = 1
-      Width = 1130
+      Width = 947
       Height = 428
       Caption = 'crd_CreateNewDbTables'
       CardIndex = 3
       TabOrder = 3
+      ExplicitWidth = 1130
     end
     object crd_PackRestructureDb: TCard
       Left = 1
       Top = 1
-      Width = 1130
+      Width = 947
       Height = 428
       Caption = 'crd_PackRestructureDb'
       CardIndex = 4
       TabOrder = 4
+      ExplicitWidth = 1130
     end
   end
   object JvPanel1: TJvPanel
     Left = 0
     Top = 0
-    Width = 1348
+    Width = 1165
     Height = 78
     Align = alTop
     TabOrder = 1
+    ExplicitWidth = 1348
+    DesignSize = (
+      1165
+      78)
     object JvLED1: TJvLED
       Left = 0
       Top = 14
@@ -845,8 +847,9 @@ object frm_SelectProject: Tfrm_SelectProject
     object Shape1: TShape
       Left = 23
       Top = 22
-      Width = 561
-      Height = 4
+      Width = 681
+      Height = 7
+      Anchors = [akLeft, akTop, akRight]
       Brush.Color = clBlue
     end
     object NxDelphiSqlTools_Status: TJvDBStatusLabel
@@ -927,7 +930,7 @@ object frm_SelectProject: Tfrm_SelectProject
   object StatusBarPro: TStatusBarPro
     Left = 0
     Top = 514
-    Width = 1348
+    Width = 1165
     Height = 38
     Panels = <
       item
@@ -941,6 +944,7 @@ object frm_SelectProject: Tfrm_SelectProject
       end>
     SimplePanel = False
     WordWrap = True
+    ExplicitWidth = 1348
   end
   object sv_MenuItems: TSplitView
     Left = 0
@@ -1145,8 +1149,8 @@ object frm_SelectProject: Tfrm_SelectProject
     Top = 200
   end
   object popm_Server: TPopupMenu
-    Left = 1136
-    Top = 412
+    Left = 792
+    Top = 388
     object MenuItem1: TMenuItem
       Caption = 'WinSock'
       OnClick = TransPortClick
@@ -1202,8 +1206,8 @@ object frm_SelectProject: Tfrm_SelectProject
   object il1: TImageList
     Height = 32
     Width = 32
-    Left = 1244
-    Top = 146
+    Left = 748
+    Top = 34
     Bitmap = {
       494C01010C002400040020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000008000000001002000000000000000

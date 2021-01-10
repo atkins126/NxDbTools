@@ -227,6 +227,9 @@ object dm_DataMod: Tdm_DataMod
     object NxSqlButtonsDbTColor: TnxLargeintField
       FieldName = 'Color'
     end
+    object NxSqlButtonsDbTAddToEditorFunctionList: TBooleanField
+      FieldName = 'AddToEditorFunctionList'
+    end
   end
   object nxPascalScriptEngine1: TnxPascalScriptEngine
     Left = 88

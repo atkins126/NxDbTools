@@ -49,7 +49,6 @@ type
     act_CreatePrj                : TAction;
     act_DeletePrj                : TAction;
     act_SetPrjPath               : TAction;
-//    act_ClickLabel             : TAction;
     act_SetNetwodkDbType         : TAction;
     cardpnl_Dialogs              : TCardPanel;
     Card_CreateSelectPrjDb       : TCard;
@@ -105,7 +104,6 @@ type
     popm_Database                : TPopupMenu;
     jvblnhnt_1                   : TJvBalloonHint;
     act_ConnectBtn               : TAction;
-//    XmlDoc                     : TXMLDocument;
     act_PrjEdit                  : TAction;
     crd_SetDbServer              : TCard;
     crd_CreateNewDbTables        : TCard;
@@ -120,7 +118,6 @@ type
     lbl_CaptionForServerLb       : TLabel;
     lbl_CaptionNetServerSelected : TLabel;
     edt_NetWorkServer            : TEdit;
-    ts_DefaultAliasBtnDb         : TToggleSwitch;
     lbl_CaptionForDBAlais        : TLabel;
     edt_Alias                    : TEdit;
     Shape3                       : TShape;
@@ -193,11 +190,12 @@ type
     procedure jvlstbx_AlaisNamesClick(Sender: TObject);
     procedure jvrdgrp_ServerTypeClick(Sender: TObject);
     procedure btn_1Click(Sender: TObject);
+    procedure edit_LocalDbPathChange(Sender: TObject);
 
   private
     { Private declarations }
     fPrjInfo     : TProjectInfo;
-    fComponentIni: array[0..4] of TObject; //array[tIniComponent] of TObject;
+    fComponentIni: array[0..3] of TObject; //array[tIniComponent] of TObject;
 
     procedure OpenPrjFrom(Sender: TObject; PrjOpenType: tPrjOpenType);
     procedure OpenProject(sender: TObject);
@@ -230,10 +228,10 @@ resourcestring
   AliasBlank   = '2. ''Network Database Alias'' box is blank';
   AliasNotFound= '2. Alias not found in Db';
 
-  ButTable     = 'BuNxSqlButtonsDb.nx1';
-  ToolsPrj     = 'NxDbSqlToolsPrjs.nx1';
-  NxSqlBtn     = 'NxSqlButtonsDb.nx1';
-  Trans        = 'TransportLUT.nx1';
+  ButTable     = 'BuNxSqlButtonsDb';
+  ToolsPrj     = 'NxDbSqlToolsPrjs';
+  NxSqlBtn     = 'NxSqlButtonsDb';
+  Trans        = 'TransportLUT';
 
 
 var
@@ -251,7 +249,7 @@ const
   cUseRecent = '(Select Recently Use Project)';
 
   cPrjForm: array[cl_CardCreatePrjDb..cl_Pack, fwd_Width..fwd_Height] of integer =
-                                               (( 965, 580), (683, 565),
+                                               (( 1171, 580), (683, 565),
                                                 ( 730, 575), (479, 565),
                                                 ( 965, 565));
 
@@ -360,7 +358,16 @@ end;
 
 procedure Tfrm_SelectProject.act_CreatePrjExecute(Sender: TObject);
 begin
-  dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Insert;
+  if dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Active then
+    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Insert
+  else
+    MessageDlg('Poject Table was CLOSED!', mtError, [mbOK], 0);
+
+  if dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Active then
+    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Insert
+  else
+    MessageDlg('Poject Database was CLOSED!', mtError, [mbOK], 0);
+           dm_DataMod.nxtbl_NxDbSqlToolsPrjs.close
 end;
 
 
@@ -457,26 +464,54 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
   //==================
 
   function DoFilesExist: Boolean;
+  var
+    fStringList: tStringList;
+    index: Integer;
   begin
-    result := true;
-    if not FileExists(GetCorrectedSlashes(DbPath, ButTable, st_Win)) then begin
-      mmo_IssuesMemo.Lines.Add('Table not found: '+ButTable);
-      Result := False;
-    end;
+    result := false;
+    try
+      dm_DataMod.nxdb_SQLBtns.Open;
+      fStringList := TStringList.Create;
+      try
+        result := true;
+        dm_DataMod.nxdb_SQLBtns.GetTableNames(fStringList);
 
-    if not FileExists(GetCorrectedSlashes(DbPath, ToolsPrj, st_Win)) then begin
-      mmo_IssuesMemo.Lines.Add('Table not found: '+ToolsPrj);
-      Result := False;
-    end;
+        if fStringList.IndexOf(ExtractFileName(ButTable))= -1 then begin
+          mmo_IssuesMemo.Lines.Add('Table not found: '+ ButTable);
+          result := false;
+        end;
 
-    if not FileExists(GetCorrectedSlashes(DbPath, NxSqlBtn, st_Win)) then begin
-      mmo_IssuesMemo.Lines.Add('Table not found: '+NxSqlBtn);
-      Result := False;
-    end;
+        if fStringList.IndexOf(ExtractFileName(NxSqlBtn))= -1 then begin
+          mmo_IssuesMemo.Lines.Add('Table not found: '+ NxSqlBtn);
+          result := false;
+        end;
 
-    if not FileExists(GetCorrectedSlashes(DbPath, Trans, st_Win)) then begin
-      mmo_IssuesMemo.Lines.Add('Table not found: '+Trans);
-      Result := False;
+        if fStringList.IndexOf(ExtractFileName(ToolsPrj))= -1 then begin
+          mmo_IssuesMemo.Lines.Add('Table not found: '+ ToolsPrj);
+          result := false;
+        end;
+
+        if fStringList.IndexOf(ExtractFileName(Trans))= -1 then begin
+          mmo_IssuesMemo.Lines.Add('Table not found: '+ Trans);
+          result := false;
+        end;
+      finally
+        FreeAndNil(fStringList);
+        dm_DataMod.nxdb_SQLBtns.close;
+      end;
+    except
+      on e: EDatabaseError do
+        begin
+          mmo_IssuesMemo.Lines.Add('Database Error Last Action: Open - ' + 'nxdb_SQLBtns');
+          mmo_IssuesMemo.Lines.Add('Error Msg: ' + E.Message);
+          result := False;
+        end;
+
+      on E: Exception do
+        begin
+          mmo_IssuesMemo.Lines.Add('General Exception Error Msg: ' + E.Message);
+          result := False;
+        end;
     end;
   end;
 
@@ -645,7 +680,9 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
       Result  := CheckAliasLB;
       if Result then
         Result := CheckSelectedAlias;
-      end;
+      if Result then
+        Result := DoFilesExist;
+    end;
   end;
 
 begin
@@ -704,7 +741,6 @@ begin
   lb_ServerNames.Enabled               :=  jvrdgrp_ServerType.ItemIndex in [1, 2];
   lbl_CaptionNetServerSelected.Enabled :=  jvrdgrp_ServerType.ItemIndex in [1, 2];
   edt_NetWorkServer.Enabled            :=  jvrdgrp_ServerType.ItemIndex in [1, 2];
-  ts_DefaultAliasBtnDb.Enabled         :=  jvrdgrp_ServerType.ItemIndex in [1, 2];
   case jvrdgrp_ServerType.ItemIndex of
     1: lbl_CaptionForServerLb.Caption := 'Select Named Pipe Server:';
     2: lbl_CaptionForServerLb.Caption := 'Select Tcpip Server:';
@@ -1075,7 +1111,6 @@ begin
   fComponentIni[Ord(icTEditLocalDbPath)] := edit_LocalDbPath;
   fComponentIni[Ord(icTEditServer)]      := edt_NetWorkServer;
   fComponentIni[Ord(icTEditAlias)]       := edt_Alias;
-  fComponentIni[Ord(icToggleAliasToUse)] := ts_DefaultAliasBtnDb;
 end;
 
 
@@ -1110,6 +1145,13 @@ begin
     SetStatusBar('Could NOT close the Database', 1, clRed);
     result := False;
   end;
+end;
+
+
+procedure Tfrm_SelectProject.edit_LocalDbPathChange(Sender: TObject);
+begin
+//  SetDialogServerType;
+  CheckUserServerSelection(True);
 end;
 
 
@@ -1180,12 +1222,6 @@ function Tfrm_SelectProject.SetPrjDbServerType(aLocalServer: Boolean; var Status
       Status := 'nxsn_SqlTools.open(session)';
       dm_DataMod.nxsn_SqlTools.ServerEngine.Open;
 
-      Status := 'nxdb_SQLBtns Set Alias';
-      if ts_DefaultAliasBtnDb.State = tssOff then
-        dm_DataMod.nxdb_SQLBtns.AliasName := cSqlBtnsDbAlias
-      else
-        dm_DataMod.nxdb_SQLBtns.AliasName := edt_Alias.Text;
-
     except
       Result := False;
       MessageDlg('msg 787785-Could not Setup Networked Db.'+#13+#10+ 'ERROR: '+Status, mtError, [mbOK], 0);
@@ -1224,6 +1260,7 @@ begin
   IniLoadComponents(PrjSetupCompomentsIni, fComponentIni, false);
   SetDialogServerType;
   CheckUserServerSelection(True);
+  act_ConnectBtn.Execute;
 end;
 
 
@@ -1256,7 +1293,10 @@ end;
 
 
 procedure Tfrm_SelectProject.jvrdgrp_ServerTypeClick(Sender: TObject);
+var
+  s: string;
 begin
+  CloseDelphiSqlToolsDb(s);
   case jvrdgrp_ServerType.ItemIndex of
     0: begin
       SetDialogServerType;
@@ -1286,6 +1326,13 @@ procedure Tfrm_SelectProject.act_ConnectBtnExecute(Sender: TObject);
 var
   s: string;
 begin
+  if mmo_IssuesMemo.Lines.count > 0  then  begin
+    cardpnl_Dialogs.ActiveCard := crd_SetDbServer;
+    act_ConnectBtn.ImageIndex := 8;
+    JvLED1.Status := False;
+    exit;
+  end;
+
   try
     with dm_DataMod do
     begin
@@ -1303,6 +1350,16 @@ begin
     end;
 
     act_ConnectBtn.ImageIndex := 9;
+    if not dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Active then
+      MessageDlg('act_ConnectBtnExecute -- Poject Tabel was CLOSED!', mtError, [mbOK], 0);
+
+    if lstGemMruList1.Count <1 then
+      cardpnl_Dialogs.ActiveCard := Card_CreateSelectPrjDb
+    else
+      cardpnl_Dialogs.ActiveCard := Card_MostRecentlyUsedPrj;
+
+    JvLED1.Status := true;
+
   except
     on e: EDatabaseError do
       begin
@@ -1311,6 +1368,7 @@ begin
         mmo_IssuesMemo.Lines.Add('Error Msg: ' + E.Message);
         act_ConnectBtn.ImageIndex := 8;
         act_ConnectBtn.Enabled := False;
+        cardpnl_Dialogs.ActiveCard := crd_SetDbServer;
       end;
 
     on E: Exception do
@@ -1319,6 +1377,7 @@ begin
         mmo_IssuesMemo.Lines.Add('Database Error Last Action before Error: Open - ' + s);
         mmo_IssuesMemo.Lines.Add('General Exception Error Msg: ' + E.Message);
         act_ConnectBtn.Enabled := False;
+        cardpnl_Dialogs.ActiveCard := crd_SetDbServer;
       end;
   end;
 end;
