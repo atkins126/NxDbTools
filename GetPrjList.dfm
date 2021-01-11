@@ -919,6 +919,18 @@ object frm_SelectProject: Tfrm_SelectProject
       TabOrder = 2
       OnClick = btn_1Click
     end
+    object dblkcbb_1: TDBLookupComboBox
+      Left = 896
+      Top = 24
+      Width = 145
+      Height = 21
+      DataField = 'TransportID'
+      DataSource = dm_DataMod.ds_NxDbSqlToolsPrjs
+      KeyField = 'TransportID'
+      ListField = 'Name'
+      ListSource = dm_DataMod.ds_nxtbl_TransportLUT
+      TabOrder = 3
+    end
   end
   object StatusBarPro: TStatusBarPro
     Left = 0

@@ -1,7 +1,7 @@
 unit NxToolsMain;
 
 interface
-{.$DEFINE USE_CODESITE}
+{$DEFINE USE_CODESITE}
 {.DEFINE MSWINDOWS}
 uses
   Winapi.Windows, Winapi.Messages, Winapi.psAPI,
@@ -622,10 +622,18 @@ var
   cnt : integer;
   icc : IConfigChanged;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'DoConfigChange' );{$ENDIF}
+
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'DoConfigChange' );{$ENDIF}
+
   for cnt := 0 to -1 + Screen.FormCount do begin
     if Supports(Screen.Forms[cnt], IConfigChanged, icc) then
       icc.ApplyConfigChange(afontStuff);
   end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'DoConfigChange' );{$ENDIF}
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'DoConfigChange' );{$ENDIF}
 end;
 
 
@@ -716,11 +724,15 @@ end;
 
 procedure Tfrm_NxToolsMain.ClearProjectInfo;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'ClearProjectInfo' );{$ENDIF}
+
   gProjectInfo.Transport := tranNone;
   gProjectInfo.ActiveServer := '';
   gProjectInfo.ActiveDb := '';
 
   lst_ServerListBox.Clear;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'ClearProjectInfo' );{$ENDIF}
 end;
 
 
@@ -736,6 +748,8 @@ procedure Tfrm_NxToolsMain.btn_SQLFunctionStatementsClick(Sender: TObject);
 var
   s, se: string;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'btn_SQLFunctionStatementsClick' );{$ENDIF}
+
   s :=  (Sender as tJvPanel).Caption;
   se := (Sender as tJvPanel).ExtraText;
   s := s + se;
@@ -744,6 +758,8 @@ begin
                    (Sender as tJvPanel).SpaceAfterCursor,
                    (Sender as tJvPanel).UseExtendedSQL,
                    (Sender as tJvPanel).SQLExtended);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'btn_SQLFunctionStatementsClick' );{$ENDIF}
 end;
 
 
@@ -753,7 +769,8 @@ var
 
   procedure PlaceButton;
   begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'btn_CreateBtns/PlaceButton' );{$ENDIF}
+    {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'btn_CreateBtns/PlaceButton' );{$ENDIF}
+
     dm_DataMod.NxSqlButtonsDbT.First;
     while not dm_DataMod.NxSqlButtonsDbT.Eof do begin
         SQLBtnsArray[Index] := tJvPanel.Create(nil);
@@ -766,12 +783,15 @@ var
                                             '  Top: '+ IntToStr(SQLBtnsArray[Index].Top));{$ENDIF}
       Inc(Index);
     end;
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'btn_CreateBtns/PlaceButton' );{$ENDIF}
 
+    {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'btn_CreateBtns/PlaceButton' );{$ENDIF}
   end;
 
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'btn_CreateBtns' );{$ENDIF}
+
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'btn_CreateBtns' );{$ENDIF}
+
   try
     FreeBtns;
     dm_DataMod.NxSqlButtonsDbT.Open;
@@ -790,6 +810,9 @@ begin
 
   CheckIntersectPanels(1);
   CheckIntersectPanels(2);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'btn_CreateBtns' );{$ENDIF}
+
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'btn_CreateBtns' );{$ENDIF}
 end;
 
@@ -903,6 +926,8 @@ function Tfrm_NxToolsMain.CheckIntersectPanels(aPanel: integer): Boolean;
 
   function CheckIntersectRect(aRect, bRect: TRect): Boolean;
   begin
+    {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CheckIntersectPanels/CheckIntersectRect' );{$ENDIF}
+
     result := False;
     try
       if (not IsRectEmpty(aRect)) and (not IsRectEmpty(bRect))  then
@@ -913,6 +938,8 @@ function Tfrm_NxToolsMain.CheckIntersectPanels(aPanel: integer): Boolean;
     except on E: Exception do
       ShowMessage('Msg:912-'+E.Message);
     end;
+
+    {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CheckIntersectPanels/CheckIntersectRect' );{$ENDIF}
   end;
 
 
@@ -930,6 +957,8 @@ var
   fIndex, j: integer;
 
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CheckIntersectPanels' );{$ENDIF}
+
   SetBtnsToNoOverLapColor;
   result := false;
   for fIndex := Low(SQLBtnsArray) to High(SQLBtnsArray)-1  do
@@ -940,6 +969,8 @@ begin
           SQLBtnsArray[fIndex].Color := cBtnIntersectColor;
           result := true;
         end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CheckIntersectPanels' );{$ENDIF}
 end;
 
 
@@ -947,34 +978,40 @@ end;
 
 procedure Tfrm_NxToolsMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormClose' );{$ENDIF}
+
   fLocalAliasPaths.Free;
 
 //  IniWriteString(PathAndFileIni, 'DefaultPrj','Path', stsbrpr_StatusBar.Panels[ord(spoDefaultPrjDir)].Text);
   FreeAndNil(fTheProjects);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'FormClose' );{$ENDIF}
 end;
 
 
 function Tfrm_NxToolsMain.SaveProjectToDb: tFunctionReturns3;
 begin
-  result := frTrue;
-  if gProjectInfo.PrjName = '' then begin
-    Result := frFalse1;
-    Exit;
-  end;
-
-  if gProjectInfo.PrjName <> 'DefaultPrj' then
-    with dm_DataMod do
-      if nxtbl_NxDbSqlToolsPrjs.Locate('PrjName', gProjectInfo.PrjName, [loCaseInsensitive]) then begin
-        nxtbl_NxDbSqlToolsPrjs.Edit;
-//          nxtbl_NxDbSqlToolsPrjsPrjPath.AsString := String(gProjectInfo.PrjPath);
-          nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger := Ord(gProjectInfo.Transport);
-          nxtbl_NxDbSqlToolsPrjsServer.AsString := String(gProjectInfo.Server);
-          nxtbl_NxDbSqlToolsPrjsAlias.AsString := String(gProjectInfo.Alias);
-        nxtbl_NxDbSqlToolsPrjs.Post;
-      end
-      else begin
-        Result := frFalse2;
-      end;
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SaveProjectToDb' );{$ENDIF}
+//  result := frTrue;
+//  if gProjectInfo.PrjName = '' then begin
+//    Result := frFalse1;
+//    Exit;
+//  end;
+//
+//  if gProjectInfo.PrjName <> 'DefaultPrj' then
+//    with dm_DataMod do
+//      if nxtbl_NxDbSqlToolsPrjs.Locate('PrjName', gProjectInfo.PrjName, [loCaseInsensitive]) then begin
+//        nxtbl_NxDbSqlToolsPrjs.Edit;
+////          nxtbl_NxDbSqlToolsPrjsPrjPath.AsString := String(gProjectInfo.PrjPath);
+//          nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger := Ord(gProjectInfo.Transport);
+//          nxtbl_NxDbSqlToolsPrjsServer.AsString := String(gProjectInfo.Server);
+//          nxtbl_NxDbSqlToolsPrjsAlias.AsString := String(gProjectInfo.Alias);
+//        nxtbl_NxDbSqlToolsPrjs.Post;
+//      end
+//      else begin
+//        Result := frFalse2;
+//      end;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SaveProjectToDb' );{$ENDIF}
 end;
 
 
@@ -1018,6 +1055,8 @@ procedure Tfrm_NxToolsMain.FormCloseQuery(Sender: TObject;
 var
   index: tSqlFontType;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormCloseQuery' );{$ENDIF}
+
   SaveSqlFormEditors;
   FreeSQLandTableForms;
 
@@ -1036,6 +1075,8 @@ begin
   FreeTreeDataDbs;
   FreeAndNil(tv_AliasAndTables);
   FreeAndNil(tv_TblAndFields);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'FormCloseQuery' );{$ENDIF}
 end;
 
 
@@ -1045,6 +1086,7 @@ procedure Tfrm_NxToolsMain.FormShow(Sender: TObject);
   var
     Index: TStatusPanelOrder;
   begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormShow/SetPanelLengths' );{$ENDIF}
     fPanelLengths[spoAlias]         := 100;
     fPanelLengths[spoMemory]        := 225;
     fPanelLengths[spoCurrenPrj]     := 250;
@@ -1055,28 +1097,34 @@ procedure Tfrm_NxToolsMain.FormShow(Sender: TObject);
     for Index := Low(TStatusPanelOrder) to High(TStatusPanelOrder) do begin
       stsbrpr_StatusBar.Panels[Ord(Index)].Width := fPanelLengths[index];
     end;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'FormShow/SetPanelLengths' );{$ENDIF}
   end;
 
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormShow' );{$ENDIF}
-//  gProjectInfo.ClearPrj;
   sv_Preferences.Opened := False;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'sv_Preferences.Opened := False;' );{$ENDIF}
 
   lst_ServerListBox.Clear;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'lst_ServerListBox.Clear' );{$ENDIF}
 
   fOrgMemoryUsed := 0;
   SetMemoryUsageLabel;
   stsbrpr_StatusBar.Panels[ord(spoDbVer)].Text := 'NexusDb: '+dm_DataMod.nxWinsockTransport.Version;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'stsbrpr_StatusBar' );{$ENDIF}
 
   Recent1.Enabled := True;
   SetPanelLengths;
 
-  gProjectInfo.OnChangeTransport := OnPrjInfoTransportChange;
-  gProjectInfo.OnChangeServer    := OnPrjInfoServerChange;
-  gProjectInfo.OnChangeAlias     := OnPrjInfoAliasChange;
+//  gProjectInfo.OnChangeTransport := OnPrjInfoTransportChange;
+//  gProjectInfo.OnChangeServer    := OnPrjInfoServerChange;
+//  gProjectInfo.OnChangeAlias     := OnPrjInfoAliasChange;
 
   // Allows the main form to be shown while showing another form.
   PostMessage(Self.Handle, WM_SHOWPRJSDIALOG, 0, 0);
+//  gProjectInfo.OnChangeTransport := OnPrjInfoTransportChange;
+//  gProjectInfo.OnChangeServer    := OnPrjInfoServerChange;
+//  gProjectInfo.OnChangeAlias     := OnPrjInfoAliasChange;
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'FormShow' );{$ENDIF}
 end;
 
@@ -1101,12 +1149,14 @@ procedure Tfrm_NxToolsMain.FormCreate(Sender: TObject);
     ctLeft   = 320;
     cSpacing = 51;
   begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormCreate/GetFonts' );{$ENDIF}
     CCItems := TStringList.Create;
     try
       CCItems.Add('Bold');
       CCItems.Add('Italic');
       CCItems.Add('Underline');
       CCItems.Add('Strikeout');
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'CCItems.Add' );{$ENDIF}
 
       fTopIndex := 0;
       for index := Low(tSqlFontType) to High(tSqlFontType) do begin
@@ -1120,13 +1170,17 @@ procedure Tfrm_NxToolsMain.FormCreate(Sender: TObject);
         fFontLabelArray[index].top := fTopIndex + 36;
         inc(fTopIndex, cSpacing);
       end;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'index := Low(tSqlFontType) to High(tSqlFontType)' );{$ENDIF}
     finally
       CCItems.Free;
     end;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'CCItems.Free' );{$ENDIF}
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'FormCreate/GetFonts' );{$ENDIF}
   end;
 
   procedure SetupDocking;
   begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormCreate/SetupDocking' );{$ENDIF}
     DockingFormsInfo.theForm          := nil;
     DockingFormsInfo.ActiveIndex      := -1;
     DockingFormsInfo.ActiveUnDocked   := false;
@@ -1134,22 +1188,26 @@ procedure Tfrm_NxToolsMain.FormCreate(Sender: TObject);
     DockingFormsInfo.NumTblForms      := -1;
     DockingFormsInfo.SqlformNumbering := -1;
     DockingFormsInfo.TblformNumbering := -1;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'FormCreate/SetupDocking' );{$ENDIF}
   end;
 
 var
   indexL     : tSqlFontType;
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormCreate' );{$ENDIF}
+
   fFormShowing := true;
 
   fTheProjects := TStringList.Create;
   SetProgramPaths;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part A' );{$ENDIF}
 
   GEMAppUpdater.UpdaterApplicationLocName := ExtractFileDir(ParamStr(0)) + '\SRSDAppUpdater.exe';
   GEMAppUpdater.LocalInstallPath := UpdateInstallPath;
   GEMAppUpdater.IconFileLocation := ExtractFileDir(ParamStr(0)) + '\NxDbSQLTableViewer_Icon.ico';
 
   jvpxmlflstrg_NxDbToolsPrefs.FileName := PathAndFileAtFormLocSize;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part B' );{$ENDIF}
 
   spltvw_ToolsCommands.Opened := False;
   sv_ProjectInfo.Opened := False;
@@ -1158,30 +1216,38 @@ begin
   pgc_ToolsChange(Sender);
 
   SetupDocking;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part C' );{$ENDIF}
 
   for indexL := Low(tSqlFontType) to High(tSqlFontType) do
     fFontLabelArray[indexL] := FindComponent(FontLabelArray[indexL]) as TLabel;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part D' );{$ENDIF}
 
   GetFonts;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part E' );{$ENDIF}
 
   frm_NxToolsMain.Caption := 'Nexus SQL and Table Delphi Workshop: ' + GetAppVersionStr;
 
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part F' );{$ENDIF}
   for var cnt: integer := 1 to numCatPanels do begin
     ctgrypnl_Array[cnt] := FindComponent(mCatPanelsComponents[cnt]) as TCategoryPanel;
     ctgrypnl_Array[cnt].Collapsed := true;
     ctgrypnl_Array[cnt].tag := cnt;
   end;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part G' );{$ENDIF}
 
   for var index: integer := 1 to NumBtns do
     fTransBtnsArray[index] := FindComponent(TransBtnsArray[index]) as TSpeedButton;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part H' );{$ENDIF}
 
   pgc_ToolsCommands.ActivePage := ts_DatabaseTools;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part I' );{$ENDIF}
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'FormCreate' );{$ENDIF}
 end;
 
 
 procedure Tfrm_NxToolsMain.FormDestroy(Sender: TObject);
 begin
+  FreeAndNil(gProjectInfo);
   DestroyFromMenuItems;
 end;
 
@@ -1336,19 +1402,18 @@ var
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'GetProject' );{$ENDIF}
   if OpenPrjManWin then begin
-//    frm_SelectProject.PrjInfo := gProjectInfo;
-    case SaveProjectToDb of
-      frFalse1:; // MessageDlg('msg 1316-Project NOT saved, No PrjName!', mtWarning, [mbOK], 0);
-
-      frFalse2: MessageDlg('msg 1341-Could NOT save any changes to project:'+#13+#10+String(gProjectInfo.PrjName),
-                          mtWarning, [mbOK], 0);
-    end;
+//    case SaveProjectToDb of
+//      frFalse1:; // MessageDlg('msg 1316-Project NOT saved, No PrjName!', mtWarning, [mbOK], 0);
+//
+//      frFalse2: MessageDlg('msg 1341-Could NOT save any changes to project:'+#13+#10+String(gProjectInfo.PrjName),
+//                          mtWarning, [mbOK], 0);
+//    end;
     frm_SelectProject.ShowModal;
-
-//    gProjectInfo := frm_SelectProject.PrjInfo;
   end;
 
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'before gProjectInfo.BeginUpdate' );{$ENDIF}
   gProjectInfo.BeginUpdate;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'after gProjectInfo.BeginUpdate' );{$ENDIF}
   try
     s := String(gProjectInfo.ActiveServer) + #0;
 
@@ -3417,3 +3482,8 @@ begin
 end;
 
 end.
+
+
+
+
+

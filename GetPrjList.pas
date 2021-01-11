@@ -1,7 +1,7 @@
 unit GetPrjList;
 
 interface
-{.$DEFINE USE_CODESITE}
+{$DEFINE USE_CODESITE}
 
 uses
   Winapi.Windows, Winapi.Messages,
@@ -145,6 +145,7 @@ type
     img_1: TImage;
     lbl_1: TLabel;
     mmo_IssuesMemo: TMemo;
+    dblkcbb_1: TDBLookupComboBox;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -211,7 +212,7 @@ type
   public
     { Public declarations }
     procedure OpenDefaultPrj;
-    Function SavePrjDb(afPrjInfo: TProjectInfo; var fStatus: string): boolean;
+//    Function SavePrjDb(afPrjInfo: TProjectInfo; var fStatus: string): boolean;
 //    property PrjInfo: TProjectInfo read fPrjInfo write fPrjInfo;
   end;
 
@@ -262,12 +263,14 @@ const
 
 function Tfrm_SelectProject. ReadConfigXmlFile(aChildern: tStrings): string;
 var
-  XmlFile : TXMLDocument;
+//  XmlFile : TXMLDocument;
   MainNode, ChildNode : IXMLNode;
   i : Integer;
   XMLPath : string;
   fCild: string;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'ReadConfigXmlFile' );{$ENDIF}
+
 //LB_FINDSTRING
 //  XMLPath := PathAndFileAtFormLocSize;
 //  XmlFile := TXMLDocument.Create(Application);
@@ -288,13 +291,19 @@ begin
 //  finally
 //    FreeAndNil(XmlFile);
 //  end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'ReadConfigXmlFile' );{$ENDIF}
 end;
 
 procedure Tfrm_SelectProject.SetStatusBar(aMsg: string; aPanel: Byte; aColor: TColor);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetStatusBar' );{$ENDIF}
+
   StatusBarPro.Panels[aPanel].Color := aColor;
   StatusBarPro.Panels[aPanel].Font.Color := GetFontColorFromBackGroundColor(aColor);
   StatusBarPro.Panels[aPanel].Text := aMsg;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetStatusBar' );{$ENDIF}
 end;
 
 
@@ -352,28 +361,40 @@ end;
 procedure Tfrm_SelectProject.lstGemMruList1Click(Sender: TObject;
   aIndexItem: Integer; aName, aValue: string);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'lstGemMruList1Click' );{$ENDIF}
+
   OpenPrjFrom(Sender, pot_MRU);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'lstGemMruList1Click' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.act_CreatePrjExecute(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'act_CreatePrjExecute' );{$ENDIF}
+
   if dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Active then
     dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Insert
   else
     MessageDlg('Poject Table was CLOSED!', mtError, [mbOK], 0);
 
-  if dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Active then
-    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Insert
-  else
-    MessageDlg('Poject Database was CLOSED!', mtError, [mbOK], 0);
-           dm_DataMod.nxtbl_NxDbSqlToolsPrjs.close
+//  if dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Active then
+//    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Insert
+//  else
+//    MessageDlg('Poject Database was CLOSED!', mtError, [mbOK], 0);
+//           dm_DataMod.nxtbl_NxDbSqlToolsPrjs.close
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'act_CreatePrjExecute' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.OpenDefaultPrj;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'OpenDefaultPrj' );{$ENDIF}
+
   act_DefaultPrj.Execute;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'OpenDefaultPrj' );{$ENDIF}
 end;
 
 
@@ -381,6 +402,8 @@ procedure Tfrm_SelectProject.RemoveFolder(const Dir: string);
 var
   Result: TSearchRec;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'RemoveFolder' );{$ENDIF}
+
   if FindFirst(Dir + '\*', faAnyFile, Result) = 0 then begin
     Try
       repeat
@@ -398,11 +421,15 @@ begin
   end;
   if not RemoveDir(Dir) then
     RaiseLastOSError;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'RemoveFolder' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.act_DeletePrjExecute(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'act_DeletePrjExecute' );{$ENDIF}
+
   if MessageDlg('Delete ' + QuotedStr(dm_DataMod.nxtbl_NxDbSqlToolsPrjsPrjName.AsString) + ' project?',
     mtWarning, [mbOk, mbCancel],0) = mrOk then begin
     gProjectInfo.BeginUpdate;
@@ -413,6 +440,8 @@ begin
     gProjectInfo.EndUpdate;
     GetProjectList;
   end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'act_DeletePrjExecute' );{$ENDIF}
 end;
 
 
@@ -424,15 +453,23 @@ end;
 
 procedure Tfrm_SelectProject.SharedMem2Click(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SharedMem2Click' );{$ENDIF}
+
   dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
     dm_DataMod.nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger := SharedMem2.tag;
   dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SharedMem2Click' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.sv_MenuItemsClosed(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'sv_MenuItemsClosed' );{$ENDIF}
+
   SetFormSize;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'sv_MenuItemsClosed' );{$ENDIF}
 end;
 
 
@@ -453,9 +490,13 @@ procedure Tfrm_SelectProject.act_PrjEditExecute(Sender: TObject);
 var
   Status: string;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'act_PrjEditExecute' );{$ENDIF}
+
   CloseDelphiSqlToolsDb(Status);
   SetDialogServerType;
   SetConnectBtn(false);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'act_PrjEditExecute' );{$ENDIF}
 end;
 
 
@@ -468,6 +509,8 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
     fStringList: tStringList;
     index: Integer;
   begin
+    {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CheckUserServerSelection/DoFilesExist' );{$ENDIF}
+
     result := false;
     try
       dm_DataMod.nxdb_SQLBtns.Open;
@@ -513,12 +556,16 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
           result := False;
         end;
     end;
+
+    {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CheckUserServerSelection/DoFilesExist' );{$ENDIF}
   end;
 
   //==================
 
   function LocalReady: Boolean;
   begin
+    {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CheckUserServerSelection/LocalReady' );{$ENDIF}
+
     result := false;
     if not DirectoryExists(edit_LocalDbPath.Text) then
     begin
@@ -530,6 +577,8 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
       dm_DataMod.nxdb_SQLBtns.AliasPath := edit_LocalDbPath.Text;
       Result := DoFilesExist;
     end;
+
+    {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CheckUserServerSelection/LocalReady' );{$ENDIF}
   end;
 
   //==================
@@ -539,11 +588,15 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
     //==================
     function CheckServerLB: Boolean;
     begin
+      {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CheckUserServerSelection/NetworkReady/CheckServerLB' );{$ENDIF}
+
       Result := True;
       if lb_ServerNames.Count < 1 then begin
         mmo_IssuesMemo.Lines.Add(ServerLb);
         result := False;
-      end
+      end;
+
+      {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CheckUserServerSelection/NetworkReady/CheckServerLB' );{$ENDIF}
     end;
 
     //==================
@@ -552,6 +605,8 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
     var
       index: Integer;
     begin
+      {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CheckUserServerSelection/NetworkReady/CheckSelectedServer' );{$ENDIF}
+
       Result := True;
       if edt_NetWorkServer.Text = '' then
       begin
@@ -587,6 +642,8 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
           end;
         end;
       end;
+
+      {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CheckUserServerSelection/NetworkReady/CheckSelectedServer' );{$ENDIF}
     end;
 
     //==================
@@ -594,6 +651,8 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
     var
       s: string;
     begin
+      {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CheckUserServerSelection/NetworkReady/CheckAliasLB' );{$ENDIF}
+
       if edt_NetWorkServer.Text = '' then
       begin
         Result := false;
@@ -632,6 +691,8 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
           end;
 
       end;
+
+      {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CheckUserServerSelection/NetworkReady/CheckAliasLB' );{$ENDIF}
     end;
 
     //==================
@@ -639,6 +700,8 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
     var
       index: integer;
     begin
+      {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CheckUserServerSelection/NetworkReady/CheckSelectedAlias' );{$ENDIF}
+
       Result := True;
       if edt_Alias.Text = '' then
       begin
@@ -658,11 +721,15 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
           Result := False;
         end;
       end;
+
+      {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CheckUserServerSelection/NetworkReady/CheckSelectedAlias' );{$ENDIF}
     end;
 
   //==================
 
   begin
+    {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CheckUserServerSelection/NetworkReady' );{$ENDIF}
+
     Result := false;
 
     if FullNetWorkServerTest then
@@ -683,9 +750,13 @@ procedure Tfrm_SelectProject.CheckUserServerSelection(FullNetWorkServerTest: Boo
       if Result then
         Result := DoFilesExist;
     end;
+
+    {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CheckUserServerSelection/NetworkReady' );{$ENDIF}
   end;
 
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CheckUserServerSelection' );{$ENDIF}
+
   PleaseWait(true);
   mmo_IssuesMemo.Lines.Clear;
   case jvrdgrp_ServerType.ItemIndex of
@@ -715,11 +786,15 @@ begin
     end;
   end;
   PleaseWait(false);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CheckUserServerSelection' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.SetDialogServerType;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetDialogServerType' );{$ENDIF}
+
   mmo_IssuesMemo.Lines.Clear;
   lb_ServerNames.Items.Clear;
   jvlstbx_AlaisNames.Items.Clear;
@@ -753,6 +828,8 @@ begin
   lbl_CaptionForLocalDbPath.Enabled    :=  jvrdgrp_ServerType.ItemIndex = 0;
   edit_LocalDbPath.Enabled             :=  jvrdgrp_ServerType.ItemIndex = 0;
   jvxpbtn_GetLocalPath.Enabled         :=  jvrdgrp_ServerType.ItemIndex = 0;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetDialogServerType' );{$ENDIF}
 end;
 
 
@@ -760,34 +837,50 @@ procedure Tfrm_SelectProject.SetFormSize;
 var
   fOffSet: Integer;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetFormSize' );{$ENDIF}
+
   if sv_MenuItems.Opened then
     fOffSet := 0
   else
     fOffSet := cCompactMenuOffset;
   frm_SelectProject.Width  := cPrjForm[tCardList(cardpnl_Dialogs.ActiveCardIndex), fwd_Width] - fOffSet;
   frm_SelectProject.Height := cPrjForm[tCardList(cardpnl_Dialogs.ActiveCardIndex), fwd_Height];
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetFormSize' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.sv_MenuItemsOpened(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'sv_MenuItemsOpened' );{$ENDIF}
+
   SetFormSize;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'sv_MenuItemsOpened' );{$ENDIF}
 end;
 
 procedure Tfrm_SelectProject.sv_MenuItemsOpening(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'sv_MenuItemsOpening' );{$ENDIF}
+
 //  frm_SelectProject.Height := cSplitVFormH;
 //  frm_SelectProject.Width  := cSplitVFormW;
   if not ((dm_DataMod.nxtbl_NxDbSqlToolsPrjs.EOF) or (dm_DataMod.nxtbl_NxDbSqlToolsPrjs.BOF)) then
     edit_LocalDbPath.Text := dm_DataMod.nxtbl_NxDbSqlToolsPrjsPrjPath.AsString;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'sv_MenuItemsOpening' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.timer_SearchTimerBlankTimer(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'timer_SearchTimerBlankTimer' );{$ENDIF}
+
   JvDBFindEdit1.Text := '';
   JvDBSearchComboBox1.Text := '';
   timer_SearchTimerBlank.Enabled := False;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'timer_SearchTimerBlankTimer' );{$ENDIF}
 end;
 
 
@@ -795,33 +888,51 @@ procedure Tfrm_SelectProject.TransPortClick(Sender: TObject);
 
   procedure WinSock;
   begin
+    {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TransPortClick/WinSock' );{$ENDIF}
+
     dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
       dm_DataMod.nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger := WinSock2.tag;
     dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
+
+    {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TransPortClick/WinSock' );{$ENDIF}
   end;
 
   procedure NamePipe;
   begin
+    {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TransPortClick/NamePipe' );{$ENDIF}
+
     dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
       dm_DataMod.nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger := NamePipe2.tag;
     dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
+
+    {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TransPortClick/NamePipe' );{$ENDIF}
   end;
 
   procedure LocalServer;
   begin
+    {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TransPortClick/LocalServer' );{$ENDIF}
+
     dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
       dm_DataMod.nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger := LocalServer2.tag;
     dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
+
+    {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TransPortClick/LocalServer' );{$ENDIF}
   end;
 
   procedure None;
   begin
+    {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TransPortClick/None' );{$ENDIF}
+
     dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
       dm_DataMod.nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger := None2.tag;
     dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
+
+    {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TransPortClick/None' );{$ENDIF}
   end;
 
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TransPortClick' );{$ENDIF}
+
   case (Sender as TMenuItem).tag of
     0: WinSock;
 
@@ -833,38 +944,40 @@ begin
 
     4: None;
   end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TransPortClick' );{$ENDIF}
 end;
 
 
-function Tfrm_SelectProject.SavePrjDb(afPrjInfo: TProjectInfo; var fStatus: string): boolean;
-begin
-  result := True;
-  fStatus := '';
-  gProjectInfo.BeginUpdate;
-  if Not ((string(gProjectInfo.PrjName) = AnsiRightStr(cthe_DefaultPrjPath, Length(cthe_DefaultPrjPath) - 1)) or
-     (gProjectInfo.PrjName = '')) then begin
-    try
-      dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
-        dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('PrjName').AsString := string(afPrjInfo.PrjName);
-{$IFDEF DEBUG}
-showmessage('msg 464-act_ConnectBtnExecute: '+ string(afPrjInfo.PrjPath));
-{$ENDIF}
-
-        dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('PrjPath').AsString := string(afPrjInfo.PrjPath);
-        dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('TransportID').AsInteger := Ord(afPrjInfo.Transport);
-        dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Server').AsString := string(afPrjInfo.Server);
-        dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Alias').AsString := string(afPrjInfo.Alias);
-        dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('DbPassWord').AsString := string(afPrjInfo.DBPassWord);
-      dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
-    except
-      on E: Exception do begin
-        Result := false;
-        fStatus := 'msg 470-Exception class name = '+E.ClassName + #13 + #10 + 'Exception message = '+E.Message;
-      end;
-    end;
-  end;
-  gProjectInfo.EndUpdate;
-end;
+//function Tfrm_SelectProject.SavePrjDb(afPrjInfo: TProjectInfo; var fStatus: string): boolean;
+//begin
+//  result := True;
+//  fStatus := '';
+//  gProjectInfo.BeginUpdate;
+//  if Not ((string(gProjectInfo.PrjName) = AnsiRightStr(cthe_DefaultPrjPath, Length(cthe_DefaultPrjPath) - 1)) or
+//     (gProjectInfo.PrjName = '')) then begin
+//    try
+//      dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
+//        dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('PrjName').AsString := string(afPrjInfo.PrjName);
+//{$IFDEF DEBUG}
+//showmessage('msg 464-act_ConnectBtnExecute: '+ string(afPrjInfo.PrjPath));
+//{$ENDIF}
+//
+//        dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('PrjPath').AsString := string(afPrjInfo.PrjPath);
+//        dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('TransportID').AsInteger := Ord(afPrjInfo.Transport);
+//        dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Server').AsString := string(afPrjInfo.Server);
+//        dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Alias').AsString := string(afPrjInfo.Alias);
+//        dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('DbPassWord').AsString := string(afPrjInfo.DBPassWord);
+//      dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
+//    except
+//      on E: Exception do begin
+//        Result := false;
+//        fStatus := 'msg 470-Exception class name = '+E.ClassName + #13 + #10 + 'Exception message = '+E.Message;
+//      end;
+//    end;
+//  end;
+//  gProjectInfo.EndUpdate;
+//end;
 
 
 //============= ways to open a project
@@ -873,22 +986,28 @@ procedure Tfrm_SelectProject.OpenProject(sender: TObject);  //fix
 var
   fTransport: TTransportUsed;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'OpenProject' );{$ENDIF}
+
   try
     if dm_DataMod.nxtbl_NxDbSqlToolsPrjs.RecordCount > 0 then
       fTransport := TTransPortUsed(dm_DataMod.nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger)
     else
       fTransport := tranNone;
   except
-    MessageDlg('msg 490-Could NOT open project due to Db table error.', mtError, [mbOK], 0);
+    MessageDlg('msg 882-Could NOT open project due to Db table error.', mtError, [mbOK], 0);
     Exit;
   end;
   Close;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'OpenProject' );{$ENDIF}
 end;
 
 
 
 procedure Tfrm_SelectProject.PleaseWait(aToDo: Boolean);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'PleaseWait' );{$ENDIF}
+
   jvpnl_PleaseWait.Visible := aToDo;
   if aToDo then
   begin
@@ -897,69 +1016,69 @@ begin
   end
   else
     Screen.Cursor := crDefault;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'PleaseWait' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.OpenPrjFrom(Sender: TObject; PrjOpenType: tPrjOpenType);
 // open project from click on mru project list
 
-  function SetPrjInfo: boolean;
-  begin
-    Result := True;
-    try
-      gProjectInfo.BeginUpdate;
-
-      gProjectInfo.PrjName := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('PrjName').AsString);
-      gProjectInfo.PrjPath := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('PrjPath').AsString);
-      gProjectInfo.Transport := TTransportUsed(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('TransportID').AsInteger);
-      gProjectInfo.Server := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Server').AsString);
-      gProjectInfo.Alias := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Alias').AsString);
-      gProjectInfo.ActiveTrans := gProjectInfo.Transport;
-      gProjectInfo.ActiveServer := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Server').AsString);
-      gProjectInfo.ActiveDb := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Alias').AsString);
-      gProjectInfo.DBPassWord := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('DbPassWord').AsString);
-    except
-      result := False;
-    end;
-    gProjectInfo.EndUpdate;
-  end;
+//  function SetPrjInfo: boolean;
+//  begin
+//    Result := True;
+//    try
+//      gProjectInfo.BeginUpdate;
+//
+//      gProjectInfo.PrjName := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('PrjName').AsString);
+//      gProjectInfo.PrjPath := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('PrjPath').AsString);
+//      gProjectInfo.Transport := TTransportUsed(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('TransportID').AsInteger);
+//      gProjectInfo.Server := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Server').AsString);
+//      gProjectInfo.Alias := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Alias').AsString);
+//      gProjectInfo.ActiveTrans := gProjectInfo.Transport;
+//      gProjectInfo.ActiveServer := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Server').AsString);
+//      gProjectInfo.ActiveDb := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Alias').AsString);
+//      gProjectInfo.DBPassWord := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('DbPassWord').AsString);
+//    except
+//      result := False;
+//    end;
+//    gProjectInfo.EndUpdate;
+//  end;
 
 var
   fError  : Boolean;
+  fMsg: string;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'OpenPrjFrom' );{$ENDIF}
+
   fError := false;
-  if gProjectInfo = nil then
+  if gProjectInfo <> nil then
     FreeAndNil(gProjectInfo);
-  gProjectInfo := TProjectInfo.create('Default Project');
+  gProjectInfo := TProjectInfo.create('Default Project', dm_DataMod.nxtbl_NxDbSqlToolsPrjs);
   gProjectInfo.ClearPrj;
   gProjectInfo.BeginUpdate;
-
   case PrjOpenType of
     pot_MRU: begin
-      if dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Locate('PrjName', lstGemMruList1.GetName(lstGemMruList1.ItemIndex), []) then  begin
-
-        if not SetPrjInfo then begin
-          MessageDlg('msg 542-Error Opening Db Projects Db Table.',
-                                                    mtError, [mbYes, mbNo], 0);
-          fError := True;
-        end;
-      end
-      else begin
-        MessageDlg('msg 548-Could not find project from MRU listing. Select '+#13+#10+
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'before' );{$ENDIF}
+      if not gProjectInfo.LoadPropertiesFromTable(fMsg, lstGemMruList1.GetName(lstGemMruList1.ItemIndex)) then
+      begin
+        MessageDlg('msg 1065-Could not find project from MRU listing. Select '+#13+#10+
                    'another project from then MRU list or use the'+#13+#10+
                    'Db grid to select/create a project.', mtError, [mbOK], 0);
         if (MessageDlg('Remove item from MRU list?', mtWarning, [mbYes, mbNo], 0) = mrYes) then
           lstGemMruList1.Items.Delete(lstGemMruList1.ItemIndex);
         fError:= True;
       end;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'after' );{$ENDIF}
     end;
 
     pot_PrjGrid:
-      if not SetPrjInfo then begin
-                    MessageDlg('msg 558-Could not find project from MRU listing. Used the'+#13+#10+
-                               'Db grid to select a project.', mtError, [mbOK], 0);
-                    fError:= True;
-                 end;
+       if Not gProjectInfo.LoadPropertiesFromTable(fMsg) then
+       begin
+        MessageDlg('msg 1078-Could not find project from MRU listing. Used the'+#13+#10+
+                   'Db grid to select a project.', mtError, [mbOK], 0);
+        fError:= True;
+       end;
 
     pot_Default: begin
       gProjectInfo.PrjName := ShortString(AnsiRightStr(cthe_DefaultPrjPath, Length(cthe_DefaultPrjPath) - 1));
@@ -976,25 +1095,33 @@ begin
       end;
     lstGemMruList1.Add(string(gProjectInfo.PrjName), string(gProjectInfo.PrjPath));
     gProjectInfo.EndUpdate;
-//    frm_NxToolsMain.ProjectInfo := gProjectInfo;
     OpenProject(Sender);
   end
   else begin
     gProjectInfo.EndUpdate;
-//    frm_NxToolsMain.ProjectInfo := gProjectInfo;
   end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'OpenPrjFrom' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.act_OpenPrjExecute(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'act_OpenPrjExecute' );{$ENDIF}
+
   OpenPrjFrom(Sender, pot_PrjGrid);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'act_OpenPrjExecute' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.act_DefaultPrjExecute(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'act_DefaultPrjExecute' );{$ENDIF}
+
   OpenPrjFrom(Sender, pot_Default);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'act_DefaultPrjExecute' );{$ENDIF}
 end;
 
 
@@ -1025,36 +1152,56 @@ end;
 
 procedure Tfrm_SelectProject.act_RecentPrjsExecute(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'act_RecentPrjsExecute' );{$ENDIF}
+
   cardpnl_Dialogs.ActiveCard := Card_MostRecentlyUsedPrj;
   SetFormSize;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'act_RecentPrjsExecute' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.act_CreateEditPrjsExecute(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'act_CreateEditPrjsExecute' );{$ENDIF}
+
   cardpnl_Dialogs.ActiveCard := Card_CreateSelectPrjDb;
   SetFormSize;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'act_CreateEditPrjsExecute' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.act_CreateUpdateDbExecute(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'act_CreateUpdateDbExecute' );{$ENDIF}
+
   cardpnl_Dialogs.ActiveCard := crd_CreateNewDbTables;
   SetFormSize;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'act_CreateUpdateDbExecute' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.act_ChangeDbServersExecute(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'act_ChangeDbServersExecute' );{$ENDIF}
+
   cardpnl_Dialogs.ActiveCard := crd_SetDbServer;
   SetFormSize;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'act_ChangeDbServersExecute' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.act_PackRestDbExecute(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'act_PackRestDbExecute' );{$ENDIF}
+
   cardpnl_Dialogs.ActiveCard := crd_PackRestructureDb;
   SetFormSize;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'act_PackRestDbExecute' );{$ENDIF}
 end;
 
 
@@ -1062,17 +1209,23 @@ procedure Tfrm_SelectProject.act_SetNetwodkDbTypeExecute(Sender: TObject);
 var
   fStatus: string;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'act_SetNetwodkDbTypeExecute' );{$ENDIF}
+
   SetDialogServerType;
 
 
 
 //  if not SetPrjDbServerType(false, fStatus) then
 //    MessageDlg('msg 627-Error in Setup of Networked Database.', mtError, [mbOK], 0);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'act_SetNetwodkDbTypeExecute' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.act_SetPrjPathExecute(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'act_SetPrjPathExecute' );{$ENDIF}
+
   if JvSelectDirectory1.Execute then begin
     if not (dm_DataMod.nxtbl_NxDbSqlToolsPrjs.state in [dsEdit, dsInsert]) then
        dm_DataMod.nxtbl_NxDbSqlToolsPrjs.edit
@@ -1087,12 +1240,16 @@ showmessage('msg 641-'+ExpandUNCFileName(JvSelectDirectory1.Directory));
     dm_DataMod.nxtbl_NxDbSqlToolsPrjsPrjPath.AsString := ExpandUNCFileName(JvSelectDirectory1.Directory);
     dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
   end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'act_SetPrjPathExecute' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormCloseQuery' );{$ENDIF}
+
   if not System.SysUtils.DirectoryExists(string(gProjectInfo.PrjPath)) then
     OpenDefaultPrj;
 
@@ -1101,6 +1258,8 @@ begin
 
   CanClose := JvLED1.Status;
   IniSaveComponents(PrjSetupCompomentsIni, fComponentIni);//, Ext_Section:String='', false);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'FormCloseQuery' );{$ENDIF}
 end;
 
 
@@ -1108,19 +1267,28 @@ procedure Tfrm_SelectProject.FormCreate(Sender: TObject);
 var
   Index: Integer;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormCreate' );{$ENDIF}
+
   lstGemMruList1.MruListFile := MRUFile;
-  gProjectInfo.ClearPrj;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'FormCreate A' );{$ENDIF}
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'FormCreate B' );{$ENDIF}
   JvFormStorage1.RestoreFormPlacement;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'FormCreate C' );{$ENDIF}
 
   fComponentIni[Ord(icTJVRadioGrp)]      := jvrdgrp_ServerType;
   fComponentIni[Ord(icTEditLocalDbPath)] := edit_LocalDbPath;
   fComponentIni[Ord(icTEditServer)]      := edt_NetWorkServer;
   fComponentIni[Ord(icTEditAlias)]       := edt_Alias;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'FormCreate D' );{$ENDIF}
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'FormCreate' );{$ENDIF}
 end;
 
 
 function Tfrm_SelectProject.CloseDelphiSqlToolsDb(var Status: string): boolean;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CloseDelphiSqlToolsDb' );{$ENDIF}
+
   JvLED1.Status := false;
   SetConnectBtn(false);
 
@@ -1150,18 +1318,26 @@ begin
     SetStatusBar('Could NOT close the Database', 1, clRed);
     result := False;
   end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CloseDelphiSqlToolsDb' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.edit_LocalDbPathChange(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'edit_LocalDbPathChange' );{$ENDIF}
+
 //  SetDialogServerType;
   CheckUserServerSelection(True);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'edit_LocalDbPathChange' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.SetConnectBtn(aConnected: Boolean);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetConnectBtn' );{$ENDIF}
+
   JvLED1.Status := aConnected;
   if aConnected then
     act_ConnectBtn.ImageIndex := 9
@@ -1179,6 +1355,8 @@ begin
       lbl4.Caption := 'Prj Db is NOT open. Click the hamburger btn to set a new Db or Click the ''Select, Cr...'' Btn.';
     end;
   end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetConnectBtn' );{$ENDIF}
 end;
 
 
@@ -1186,6 +1364,8 @@ function Tfrm_SelectProject.SetPrjDbServerType(aLocalServer: Boolean; var Status
 
   function SetEmbedded: Boolean;
   begin
+    {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetPrjDbServerType/SetEmbedded' );{$ENDIF}
+
     try
       Result := True;
 
@@ -1208,10 +1388,14 @@ function Tfrm_SelectProject.SetPrjDbServerType(aLocalServer: Boolean; var Status
       SetStatusBar('msg 755-Could not Setup Embedded Db.' +#13+#10+'ERROR: '+'Status', 1, clRed);
 //      MessageDlg('Could not Setup Embedded Db. ERROR: '+#13+#10+Status, mtError, [mbOK], 0);
     end;
+
+    {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetPrjDbServerType/SetEmbedded' );{$ENDIF}
   end;
 
   function SetNetwork: Boolean;
   begin
+    {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetPrjDbServerType/SetNetwork' );{$ENDIF}
+
     result := True;
     try
       Status := 'nxwint_SqlToolsTrans.open(transport)';
@@ -1232,9 +1416,13 @@ function Tfrm_SelectProject.SetPrjDbServerType(aLocalServer: Boolean; var Status
       MessageDlg('msg 787785-Could not Setup Networked Db.'+#13+#10+ 'ERROR: '+Status, mtError, [mbOK], 0);
       SetStatusBar('Could not Setup Networked Db.' +#13+#10+'ERROR: '+'Status', 1, clRed);
     end;
+
+    {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetPrjDbServerType/SetNetwork' );{$ENDIF}
   end;
 
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetPrjDbServerType' );{$ENDIF}
+
   Status := 'Not Set';
   CloseDelphiSqlToolsDb(status);
   if aLocalServer then
@@ -1257,33 +1445,49 @@ begin
       Result := False;
     end;
   SetConnectBtn(result);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetPrjDbServerType' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.FormShow(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormShow' );{$ENDIF}
+
   IniLoadComponents(PrjSetupCompomentsIni, fComponentIni, false);
   SetDialogServerType;
   CheckUserServerSelection(True);
   act_ConnectBtn.Execute;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'FormShow' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.JvDBFindEdit1Change(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'JvDBFindEdit1Change' );{$ENDIF}
+
   timer_SearchTimerBlank.Enabled := true;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'JvDBFindEdit1Change' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.jvxpbtn_HaltProgramClick(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'jvxpbtn_HaltProgramClick' );{$ENDIF}
+
   if (MessageDlg('mmsg 945-Do want to Halt the program?', mtWarning, [mbYes, mbNo], 0) in [mrYes, mrNone]) then
     Halt(9);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'jvxpbtn_HaltProgramClick' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.jvlstbx_AlaisNamesClick(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'jvlstbx_AlaisNamesClick' );{$ENDIF}
+
   if (jvlstbx_AlaisNames.Count < 1) or (jvlstbx_AlaisNames.ItemIndex < 0) then
     MessageDlg('mag 948-Either there are no items in the list or a selection was'+#13+#10+
                'made not on an item in the list.', mtError, [mbOK], 0)
@@ -1294,6 +1498,8 @@ begin
     dm_DataMod.nxdb_SQLBtns.AliasName  := edt_NetWorkServer.Text;
     CheckUserServerSelection;
   end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'jvlstbx_AlaisNamesClick' );{$ENDIF}
 end;
 
 
@@ -1301,6 +1507,8 @@ procedure Tfrm_SelectProject.jvrdgrp_ServerTypeClick(Sender: TObject);
 var
   s: string;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'jvrdgrp_ServerTypeClick' );{$ENDIF}
+
   CloseDelphiSqlToolsDb(s);
   case jvrdgrp_ServerType.ItemIndex of
     0: begin
@@ -1317,13 +1525,19 @@ begin
     begin
     end;
   end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'jvrdgrp_ServerTypeClick' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.jvxpbtn_GetLocalPathClick(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'jvxpbtn_GetLocalPathClick' );{$ENDIF}
+
   if JvSelectDirectory1.Execute then
     edit_LocalDbPath.Text := ExpandUNCFileName(JvSelectDirectory1.Directory);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'jvxpbtn_GetLocalPathClick' );{$ENDIF}
 end;
 
 
@@ -1331,6 +1545,8 @@ procedure Tfrm_SelectProject.act_ConnectBtnExecute(Sender: TObject);
 var
   s: string;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'act_ConnectBtnExecute' );{$ENDIF}
+
   if mmo_IssuesMemo.Lines.count > 0  then  begin
     cardpnl_Dialogs.ActiveCard := crd_SetDbServer;
     act_ConnectBtn.ImageIndex := 8;
@@ -1385,6 +1601,8 @@ begin
         cardpnl_Dialogs.ActiveCard := crd_SetDbServer;
       end;
   end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'act_ConnectBtnExecute' );{$ENDIF}
 end;
 
 
@@ -1412,49 +1630,75 @@ end;
 
 procedure Tfrm_SelectProject.btn_1Click(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'btn_1Click' );{$ENDIF}
+
   Close;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'btn_1Click' );{$ENDIF}
 end;
 
 procedure Tfrm_SelectProject.btn_CopyDbTablesClick(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'btn_CopyDbTablesClick' );{$ENDIF}
+
   if (MessageDlg('msg 1295-Continue with closing program?', mtWarning, [mbYes, mbNo], 0) = mrYes) then
     Halt(9);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'btn_CopyDbTablesClick' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.btn_ResetLocalDbPathClick(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'btn_ResetLocalDbPathClick' );{$ENDIF}
+
   edit_LocalDbPath.Text := DelphiDbDefaultPath;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'btn_ResetLocalDbPathClick' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.btn__CloseClick(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'btn__CloseClick' );{$ENDIF}
+
   gProjectInfo.ClearPrj;
   act_DefaultPrj.Execute;
   Close;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'btn__CloseClick' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.btn__SplitViewOpenCloseClick(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'btn__SplitViewOpenCloseClick' );{$ENDIF}
+
   if sv_MenuItems.Opened then
     sv_MenuItems.Close
   else
     sv_MenuItems.Open;
 //  sv_MenuItems.Opened := not sv_MenuItems.Opened;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'btn__SplitViewOpenCloseClick' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.cardpnl_DialogsCardChange(Sender: TObject; PrevCard,
   NextCard: TCard);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'cardpnl_DialogsCardChange' );{$ENDIF}
+
 //  sv_MenuItems(sender);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'cardpnl_DialogsCardChange' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.ts_DefaultAliasBtnDbClick(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'ts_DefaultAliasBtnDbClick' );{$ENDIF}
+
 //  edt_Alias.ReadOnly := ts_DefaultAliasBtnDb.State = tssOff;
 //  if ts_DefaultAliasBtnDb.State = tssOff then begin
 //    edt_Alias.Text     := cSqlBtnsDbAlias;
@@ -1469,11 +1713,15 @@ begin
 //
 //    lbl_CaptionForDBAlais.Caption := 'User Database Alias:';
 //  end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'ts_DefaultAliasBtnDbClick' );{$ENDIF}
 end;
 
 
 procedure Tfrm_SelectProject.lb_ServerNames1Click(Sender: TObject);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'lb_ServerNames1Click' );{$ENDIF}
+
   if (lb_ServerNames.Count < 1) or (lb_ServerNames.ItemIndex < 0) then
     MessageDlg('mag 948-Either there are no items in the list or a selection was'+#13+#10+
                'made not on an item in the list.', mtError, [mbOK], 0)
@@ -1499,10 +1747,14 @@ begin
       end;
     end;
   end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'lb_ServerNames1Click' );{$ENDIF}
 end;
 
 
 end.
+
+
 
 
 

@@ -1,5 +1,7 @@
 unit Global;
 
+{$DEFINE USE_CODESITE}
+
 interface
 uses
   Winapi.Winsock, Winapi.Messages,
@@ -14,9 +16,9 @@ uses
 
   MSspecialFolders, GemINI,
 
-  JvPanel,
+  JvPanel, JvDataSource,
 
-  SynHighlighterSQL;
+  SynHighlighterSQL {$IFDEF USE_CODESITE }, CodeSiteLogging  {$ENDIF};
 
 type
   TStatusPanelOrder = (spoMemory, spoAlias, spoDefaultPrjDir, spoDbStatus, spoDbVer, spoCurrenPrj);
@@ -43,26 +45,23 @@ type
   tChangeAlias     = procedure(aAlias: tStr95) of Object;
 
   TProjectInfo = class
-    fPrjName        : tStr25;
-    fPrjPath        : tStr255;
-    fTransport      : TTransportUsed;
-    fServer         : tStr45;
-    fAlias          : tStr95;
-    fPasFileSaveLoc : tStr255;
-    fDBPassWord     : tStr255;
-    fTableName      : tStr25;
-
-    fTreeNode       : TTreeNode;
-    fActiveTransport: TTransportUsed;
-    fActiveServer   : tStr45;
-    fActiveDb       : tStr95;
-
-    fUpdate         : Boolean;
-
-    fOnChangeTransport: TChangeTransport;
-    fOnChangeServer   : tChangeServer;
-    fOnChangeAlias    : tChangeAlias;
-
+    fPrjName           : tStr25;
+    fPrjPath           : tStr255;
+    fTransport         : TTransportUsed;
+    fServer            : tStr45;
+    fAlias             : tStr95;
+    fPasFileSaveLoc    : tStr255;
+    fDBPassWord        : tStr255;
+    fTableName         : tStr25;
+    fTreeNode          : TTreeNode;
+    fActiveTransport   : TTransportUsed;
+    fActiveServer      : tStr45;
+    fActiveDb          : tStr95;
+    fUpdate            : Boolean;
+    fOnChangeTransport : TChangeTransport;
+    fOnChangeServer    : tChangeServer;
+    fOnChangeAlias     : tChangeAlias;
+    fDataSource        : TJvDataSource;
   private
     procedure PrjTransportChange(aTransport: TTransportUsed);
     procedure PrjServerChange(aServer: tStr45);
@@ -70,34 +69,41 @@ type
     procedure SetAlias(const Value: tstr95);
     procedure SetServer(const Value: tstr45);
     procedure SetTransport(const Value: TTransportUsed);
+    procedure SetDataSource(const Value: TJvDataSource);
   public
-    constructor Create(aPrjName: string);
-//    constructor Create(aPrjName, aPrjPath, aDBPassWord: string; aTrans: TTransportUsed); overload;
-//    constructor Create(aPrjName, aServer, aAlias, aDBPassWord: string; aTrans: TTransportUsed); overload;
-
+    constructor Create(aPrjName: string; aDataSet: TDataSet);
+    destructor Destory;
     procedure BeginUpdate;
     procedure EndUpdate;
     procedure ClearPrj;
 
+    function LoadPropertiesFromTable(var Msg: string; aPrjName: string): Boolean; overload;
+    function LoadPropertiesFromTable(var Msg: string): Boolean; overload;
+
+    function SavePropertiesToTable(var Msg: string; aPrjName: string): Boolean;
+    function InsertPrjIntoDb(var Msg: string): Boolean;
+    function DeletePrj(var Msg: string; aPrjName: string): Boolean;
+
+    property DataSource: TJvDataSource read fDataSource write SetDataSource;
     property PrjName: tStr25 read fPrjName write fPrjName;
     property PrjPath: tStr255 read fPrjPath write fPrjPath;
     property PasFileSaveLoc: tStr255 read fPasFileSaveLoc write fPasFileSaveLoc;
     property DBPassWord: tStr255 read fDBPassWord write fDBPassWord;
 
-    property Transport   : TTransportUsed read fTransport write SetTransport;
-    property Server      : tstr45 read fServer write SetServer;
-    property Alias       : tstr95 read fAlias write SetAlias;
+    property Transport         : TTransportUsed read fTransport write SetTransport;
+    property Server            : tstr45 read fServer write SetServer;
+    property Alias             : tstr95 read fAlias write SetAlias;
 
-    property ActiveTrans : TTransportUsed read fActiveTransport write fActiveTransport;
-    property ActiveServer: tstr45 read fActiveServer write fActiveServer;
-    property ActiveDb    : tstr95 read fActiveDb write fActiveDb;
+    property ActiveTrans       : TTransportUsed read fActiveTransport write fActiveTransport;
+    property ActiveServer      : tstr45 read fActiveServer write fActiveServer;
+    property ActiveDb          : tstr95 read fActiveDb write fActiveDb;
 
-    property Table       : tStr25 read fTableName write fTableName;
-    property Node        : tTreeNode read fTreeNode write fTreeNode;
+    property Table             : tStr25 read fTableName write fTableName;
+    property Node              : tTreeNode read fTreeNode write fTreeNode;
 
-    property OnChangeTransport: TChangeTransport read fOnChangeTransport write fOnChangeTransport;
-    property OnChangeServer   : tChangeServer read fOnChangeServer write fOnChangeServer;
-    property OnChangeAlias    : tChangeAlias read fOnChangeAlias write fOnChangeAlias;
+    property OnChangeTransport : TChangeTransport read fOnChangeTransport write fOnChangeTransport;
+    property OnChangeServer    : tChangeServer read fOnChangeServer write fOnChangeServer;
+    property OnChangeAlias     : tChangeAlias read fOnChangeAlias write fOnChangeAlias;
   end;
 
   TSQLBtnsDefaults = record
@@ -574,6 +580,140 @@ begin
   end;
 end;
 
+
+function TProjectInfo.SavePropertiesToTable(var Msg: string; aPrjName: string): Boolean;
+begin
+  result := False;
+  if fDataSource.DataSet = nil then
+  begin
+    Msg := 'Data Source not Assigned';
+    Exit;
+  end;
+  if DataSource.DataSet.Locate('PrjName', aPrjName, [loCaseInsensitive]) then
+  begin
+    DataSource.DataSet.Edit;
+    DataSource.DataSet.FieldByName('PrjName').AsString      := fPrjName;
+    DataSource.DataSet.FieldByName('PrjPath').AsString      := fPrjPath;
+    DataSource.DataSet.FieldByName('TransportID').AsInteger := Ord(fTransport);
+    DataSource.DataSet.FieldByName('Server').AsString       := fServer;
+    DataSource.DataSet.FieldByName('Alias').AsString        := fAlias;
+    DataSource.DataSet.FieldByName('DbPassWord').AsString   := fDBPassWord;
+    DataSource.DataSet.Post;
+    result := True;
+  end
+  else
+    Msg := 'Could Not Locate Project';
+end;
+
+
+function TProjectInfo.LoadPropertiesFromTable(var Msg: string): Boolean;
+var
+  s: string;
+begin
+  result := False;
+  if fDataSource.DataSet = nil then
+  begin
+    Msg := 'Data Source not Assigned';
+    Exit;
+  end;
+  try
+    s := 'Reading fPrjName';
+    fPrjName   := ShortString(DataSource.DataSet.FieldByName('PrjName').AsString);
+    s := 'Reading fPrjName';
+    fPrjPath   := ShortString(DataSource.DataSet.FieldByName('PrjPath').AsString);
+    s := 'Reading fPrjPath';
+    fTransport := TTransportUsed(DataSource.DataSet.FieldByName('TransportID').AsInteger);
+    s := 'Reading fTransport';
+    fServer    := ShortString(DataSource.DataSet.FieldByName('Server').AsString);
+    s := 'Reading fPrjName';
+    fAlias     := ShortString(DataSource.DataSet.FieldByName('Alias').AsString);
+    s := 'Reading fPrjName';
+    fDBPassWord:= ShortString(DataSource.DataSet.FieldByName('DbPassWord').AsString);
+    result := True;
+  except
+    on e: EDatabaseError do
+      begin
+        ShowMessage('Database Error Last Action: Open - '+s);
+        ShowMessage('Error Msg: ' + E.Message);
+        result := False;
+      end;
+
+    on E: Exception do
+      begin
+        ShowMessage('General Exception Error Msg: ' + E.Message);
+        result := False;
+      end;
+  end;
+end;
+
+
+function TProjectInfo.LoadPropertiesFromTable(var Msg: string; aPrjName: string): Boolean;
+begin
+
+  result := False;
+  if fDataSource.DataSet = nil then
+  begin
+    Msg := 'Data Source not Assigned';
+    Exit;
+  end;
+
+  ShowMessage('PrjName' + '-- '+ aPrjName);
+  if DataSource.DataSet.Locate('PrjName', aPrjName, [loCaseInsensitive]) then
+  begin
+    fPrjName   := ShortString(DataSource.DataSet.FieldByName('PrjName').AsString);
+    fPrjPath   := ShortString(DataSource.DataSet.FieldByName('PrjPath').AsString);
+    fTransport := TTransportUsed(DataSource.DataSet.FieldByName('TransportID').AsInteger);
+    fServer    := ShortString(DataSource.DataSet.FieldByName('Server').AsString);
+    fAlias     := ShortString(DataSource.DataSet.FieldByName('Alias').AsString);
+    fDBPassWord:= ShortString(DataSource.DataSet.FieldByName('DbPassWord').AsString);
+    Result := True;
+  end
+  else
+    Msg := 'Could Not Locate Project: '+ aPrjName;
+end;
+
+
+function TProjectInfo.InsertPrjIntoDb(var Msg: string): Boolean;
+begin
+  result := False;
+  if fDataSource.DataSet = nil then
+  begin
+    Msg := 'Data Source not Assigned';
+    Exit;
+  end;
+  try
+    DataSource.DataSet.Insert;
+    DataSource.DataSet.FieldByName('PrjName').AsString      := fPrjName;
+    DataSource.DataSet.FieldByName('PrjPath').AsString      := fPrjPath;
+    DataSource.DataSet.FieldByName('TransportID').AsInteger := Ord(fTransport);
+    DataSource.DataSet.FieldByName('Server').AsString       := fServer;
+    DataSource.DataSet.FieldByName('Alias').AsString        := fAlias;
+    DataSource.DataSet.FieldByName('DbPassWord').AsString   := fDBPassWord;
+    DataSource.DataSet.Post;
+    Result := True;
+  except
+    Msg := 'Error creating new project';
+  end;
+end;
+
+function TProjectInfo.DeletePrj(var Msg: string; aPrjName: string): Boolean;
+begin
+  result := False;
+  if fDataSource.DataSet = nil then
+  begin
+    Msg := 'Data Source not Assigned';
+    Exit;
+  end;
+  if DataSource.DataSet.Locate(PrjName, aPrjName, [loCaseInsensitive]) then
+  begin
+    DataSource.DataSet.Delete;
+    Result := true
+  end
+  else
+    result := false;
+end;
+
+
 procedure TProjectInfo.SetAlias(const Value: tstr95);
 begin
   if Value <> fAlias then begin
@@ -581,6 +721,11 @@ begin
     if not fUpdate then
       PrjAliasChange(fAlias);
   end;
+end;
+
+procedure TProjectInfo.SetDataSource(const Value: TJvDataSource);
+begin
+  fDataSource := Value;
 end;
 
 procedure TProjectInfo.PrjTransportChange(aTransport: TTransportUsed);
@@ -613,22 +758,32 @@ end;
 
 procedure TProjectInfo.ClearPrj;
 begin
-  fPrjName := '';
-  fPrjPath := '';
-//  fTransport := tranNone;
-  fServer := '';
-  fAlias := '';
+  fPrjName        := '';
+  fPrjPath        := '';
+  fTransport      := tranNone;
+  fServer         := '';
+  fAlias          := '';
   fPasFileSaveLoc := '';
-  fDBPassWord := '';
-  fActiveServer := '';
-  fActiveDb := '';
-  fTreeNode := nil;
+  fDBPassWord     := '';
+  fActiveServer   := '';
+  fActiveDb       := '';
+  fTreeNode       := nil;
 end;
 
 
-constructor TProjectInfo.Create(aPrjName: string);
+constructor TProjectInfo.Create(aPrjName: string; aDataSet: TDataSet);
 begin
-  fPrjName := aPrjName;
+  fDataSource := tJvDataSource.Create(Nil);
+  fPrjName := ShortString(aPrjName);
+  fDataSource.DataSet := aDataSet;
 end;
+
+destructor TProjectInfo.Destory;
+begin
+  FreeAndNil(fDataSource);
+end;
+
 
 end.
+
+
