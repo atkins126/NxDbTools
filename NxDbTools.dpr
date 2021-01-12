@@ -23,7 +23,8 @@ uses
   SQLChildFormChangeInterface in 'SQLChildFormChangeInterface.pas',
   FontStuffTest in 'FontStuffTest.pas' {Form1},
   NxDbToolsDbEvolution_1 in 'NxDbToolsDbEvolution_1.pas',
-  CardHelper in 'CardHelper.pas';
+  CardHelper in 'CardHelper.pas',
+  SelectServerAlias in 'SelectServerAlias.pas' {Form2};
 
 {$R *.res}
 
@@ -40,6 +41,7 @@ begin
   Application.CreateForm(Tfrm_MoveResizeComponents, frm_MoveResizeComponents);
   Application.CreateForm(TForm1, Form1);
   Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TForm2, Form2);
   Application.Run;
 end.
 

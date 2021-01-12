@@ -69,7 +69,6 @@ type
     rzdbed_PrjName               : TRzDBEdit;
     RzDBEdit1                    : TRzDBEdit;
     RzDBEdit2                    : TRzDBEdit;
-    RzDBEdit3                    : TRzDBEdit;
     RzDBEdit4                    : TRzDBEdit;
     RzDBEdit5                    : TRzDBEdit;
     RzDBMemo1                    : TRzDBMemo;
@@ -145,7 +144,7 @@ type
     img_1: TImage;
     lbl_1: TLabel;
     mmo_IssuesMemo: TMemo;
-    dblkcbb_1: TDBLookupComboBox;
+    RzDBEdit3: TRzDBEdit;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -192,6 +191,7 @@ type
     procedure jvrdgrp_ServerTypeClick(Sender: TObject);
     procedure btn_1Click(Sender: TObject);
     procedure edit_LocalDbPathChange(Sender: TObject);
+    procedure RzDBEdit3Click(Sender: TObject);
 
   private
     { Private declarations }
@@ -423,6 +423,12 @@ begin
     RaiseLastOSError;
 
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'RemoveFolder' );{$ENDIF}
+end;
+
+
+procedure Tfrm_SelectProject.RzDBEdit3Click(Sender: TObject);
+begin
+  popm_Transport.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
 end;
 
 
@@ -894,6 +900,8 @@ procedure Tfrm_SelectProject.TransPortClick(Sender: TObject);
       dm_DataMod.nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger := WinSock2.tag;
     dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
 
+    dm_DataMod.nxRemoteServerEngine.Transport := dm_DataMod.nxWinsockTransport;
+
     {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TransPortClick/WinSock' );{$ENDIF}
   end;
 
@@ -1321,6 +1329,26 @@ begin
 
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CloseDelphiSqlToolsDb' );{$ENDIF}
 end;
+
+
+//procedure TForm1.ListBox1MouseMove (Sender: TObject; Shift: TShiftState; X, Y: Integer) ;
+//var lstIndex : Integer ;
+//begin
+//  with ListBox1 do
+//  begin
+//   lstIndex:=SendMessage(Handle, LB_ITEMFROMPOINT, 0, MakeLParam(x,y)) ;
+//
+//   // this should do the trick..
+//   if fOldIndex <> lstIndex then
+//     Application.CancelHint;
+//   fOldIndex := lstIndex;
+//
+//   if (lstIndex >= 0) and (lstIndex <= Items.Count) then
+//     Hint := Items[lstIndex]
+//   else
+//     Hint := ''
+//   end;
+//end;
 
 
 procedure Tfrm_SelectProject.edit_LocalDbPathChange(Sender: TObject);

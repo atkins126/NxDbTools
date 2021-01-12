@@ -8,13 +8,12 @@ object dm_DataMod: Tdm_DataMod
   end
   object nxWinsockTransport: TnxWinsockTransport
     DisplayCategory = 'Transports'
-    ServerNameDesigntime = 'SRSDServer@10.0.0.150'
     Left = 46
     Top = 72
   end
   object nxNamedPipeTransport: TnxNamedPipeTransport
     DisplayCategory = 'Transports'
-    Left = 166
+    Left = 182
     Top = 72
   end
   object nxRemoteServerEngine: TnxRemoteServerEngine

@@ -26,7 +26,7 @@ object frm_SelectProject: Tfrm_SelectProject
     Width = 949
     Height = 430
     Align = alClient
-    ActiveCard = Card_MostRecentlyUsedPrj
+    ActiveCard = Card_CreateSelectPrjDb
     Caption = 'cardpnl_Dialogs'
     TabOrder = 0
     OnCardChange = cardpnl_DialogsCardChange
@@ -196,6 +196,7 @@ object frm_SelectProject: Tfrm_SelectProject
           Width = 52
           Height = 13
           Caption = 'Transport:'
+          Enabled = False
         end
         object Label10: TLabel
           Left = 184
@@ -238,16 +239,6 @@ object frm_SelectProject: Tfrm_SelectProject
           DataField = 'DbPassWord'
           TabOrder = 2
         end
-        object RzDBEdit3: TRzDBEdit
-          Left = 58
-          Top = 58
-          Width = 121
-          Height = 21
-          DataSource = dm_DataMod.ds_NxDbSqlToolsPrjs
-          DataField = 'Transport'
-          PopupMenu = popm_Transport
-          TabOrder = 3
-        end
         object RzDBEdit4: TRzDBEdit
           Left = 222
           Top = 58
@@ -262,7 +253,7 @@ object frm_SelectProject: Tfrm_SelectProject
           Color = clInfoBk
           ParentShowHint = False
           ShowHint = True
-          TabOrder = 4
+          TabOrder = 3
         end
         object RzDBEdit5: TRzDBEdit
           Left = 400
@@ -278,7 +269,7 @@ object frm_SelectProject: Tfrm_SelectProject
           Color = clInfoBk
           ParentShowHint = False
           ShowHint = True
-          TabOrder = 5
+          TabOrder = 4
         end
         object RzDBMemo1: TRzDBMemo
           Left = 523
@@ -288,7 +279,25 @@ object frm_SelectProject: Tfrm_SelectProject
           DataField = 'Memo'
           DataSource = dm_DataMod.ds_NxDbSqlToolsPrjs
           ScrollBars = ssVertical
+          TabOrder = 5
+        end
+        object RzDBEdit3: TRzDBEdit
+          Left = 62
+          Top = 58
+          Width = 121
+          Height = 21
+          Hint = 
+            'Can select on the main form|Set Your projects Sever in the main ' +
+            'progam by selecting a server.'
+          DataSource = dm_DataMod.ds_NxDbSqlToolsPrjs
+          DataField = 'Transport'
+          ReadOnly = True
+          Enabled = False
+          ParentShowHint = False
+          PopupMenu = popm_Transport
+          ShowHint = True
           TabOrder = 6
+          OnClick = RzDBEdit3Click
         end
       end
       object RzDBNavigator1: TRzDBNavigator
@@ -919,18 +928,6 @@ object frm_SelectProject: Tfrm_SelectProject
       TabOrder = 2
       OnClick = btn_1Click
     end
-    object dblkcbb_1: TDBLookupComboBox
-      Left = 896
-      Top = 24
-      Width = 145
-      Height = 21
-      DataField = 'TransportID'
-      DataSource = dm_DataMod.ds_NxDbSqlToolsPrjs
-      KeyField = 'TransportID'
-      ListField = 'Name'
-      ListSource = dm_DataMod.ds_nxtbl_TransportLUT
-      TabOrder = 3
-    end
   end
   object StatusBarPro: TStatusBarPro
     Left = 0
@@ -1117,8 +1114,8 @@ object frm_SelectProject: Tfrm_SelectProject
     Top = 24
   end
   object popm_Transport: TPopupMenu
-    Left = 1008
-    Top = 348
+    Left = 1000
+    Top = 388
     object WinSock2: TMenuItem
       Caption = 'WinSock'
       OnClick = TransPortClick
@@ -1149,8 +1146,8 @@ object frm_SelectProject: Tfrm_SelectProject
     Enabled = False
     Interval = 2000
     OnTimer = timer_SearchTimerBlankTimer
-    Left = 792
-    Top = 200
+    Left = 808
+    Top = 288
   end
   object popm_Server: TPopupMenu
     Left = 792
@@ -1178,8 +1175,8 @@ object frm_SelectProject: Tfrm_SelectProject
     end
   end
   object popm_Database: TPopupMenu
-    Left = 1088
-    Top = 308
+    Left = 888
+    Top = 388
     object MenuItem6: TMenuItem
       Caption = 'WinSock'
       OnClick = TransPortClick
@@ -1210,8 +1207,8 @@ object frm_SelectProject: Tfrm_SelectProject
   object il1: TImageList
     Height = 32
     Width = 32
-    Left = 748
-    Top = 34
+    Left = 1036
+    Top = 18
     Bitmap = {
       494C01010C002400040020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000008000000001002000000000000000
