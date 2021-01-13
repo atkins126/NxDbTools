@@ -72,6 +72,7 @@ type
     nxtbl_NxDbSqlToolsPrjsPrjPath: TWideStringField;
     nxnmdp_trnsprt: TnxNamedPipeTransport;
     NxSqlButtonsDbTAddToEditorFunctionList: TBooleanField;
+    nxtbl_NxDbSqlToolsPrjsLocalServerDbPath: TWideStringField;
     procedure NxSqlButtonsDbTAfterDelete(DataSet: TDataSet);
     procedure nxtbl_NxDbSqlToolsPrjsPostError(DataSet: TDataSet;
       E: EDatabaseError; var Action: TDataAction);

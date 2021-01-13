@@ -1,10 +1,11 @@
 object frm_SelectProject: Tfrm_SelectProject
   Left = 0
   Top = 0
+  Anchors = [akLeft, akRight]
   BorderStyle = bsDialog
   Caption = 'Select Project'
-  ClientHeight = 552
-  ClientWidth = 1165
+  ClientHeight = 704
+  ClientWidth = 1183
   Color = clBtnFace
   Constraints.MinHeight = 563
   Font.Charset = ANSI_CHARSET
@@ -23,8 +24,8 @@ object frm_SelectProject: Tfrm_SelectProject
     AlignWithMargins = True
     Left = 213
     Top = 81
-    Width = 949
-    Height = 430
+    Width = 967
+    Height = 582
     Align = alClient
     ActiveCard = Card_CreateSelectPrjDb
     Caption = 'cardpnl_Dialogs'
@@ -33,18 +34,18 @@ object frm_SelectProject: Tfrm_SelectProject
     object Card_CreateSelectPrjDb: TCard
       Left = 1
       Top = 1
-      Width = 947
-      Height = 428
+      Width = 965
+      Height = 580
       Caption = 'CreateSelectPrjDb'
       CardIndex = 0
       TabOrder = 0
       object Label3: TLabel
         Left = 0
         Top = 2
-        Width = 285
+        Width = 95
         Height = 23
         Alignment = taCenter
-        Caption = 'Create, Edit, Remove Projects'
+        Caption = ' Difinition'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -19
@@ -159,12 +160,12 @@ object frm_SelectProject: Tfrm_SelectProject
         OnClick = btn__CloseClick
       end
       object DBCtrlGrid1: TDBCtrlGrid
-        Left = 171
-        Top = 48
+        Left = 173
+        Top = 42
         Width = 754
-        Height = 328
+        Height = 444
         DataSource = dm_DataMod.ds_NxDbSqlToolsPrjs
-        PanelHeight = 82
+        PanelHeight = 111
         PanelWidth = 737
         TabOrder = 5
         RowCount = 4
@@ -196,7 +197,6 @@ object frm_SelectProject: Tfrm_SelectProject
           Width = 52
           Height = 13
           Caption = 'Transport:'
-          Enabled = False
         end
         object Label10: TLabel
           Left = 184
@@ -211,6 +211,13 @@ object frm_SelectProject: Tfrm_SelectProject
           Width = 27
           Height = 13
           Caption = 'Alias:'
+        end
+        object lbl_DbLocalDbPath: TLabel
+          Left = 8
+          Top = 88
+          Width = 107
+          Height = 13
+          Caption = 'Local Server Db Path:'
         end
         object rzdbed_PrjName: TRzDBEdit
           Left = 82
@@ -254,6 +261,7 @@ object frm_SelectProject: Tfrm_SelectProject
           ParentShowHint = False
           ShowHint = True
           TabOrder = 3
+          OnClick = RzDBEdit4Click
         end
         object RzDBEdit5: TRzDBEdit
           Left = 400
@@ -270,6 +278,7 @@ object frm_SelectProject: Tfrm_SelectProject
           ParentShowHint = False
           ShowHint = True
           TabOrder = 4
+          OnClick = RzDBEdit4Click
         end
         object RzDBMemo1: TRzDBMemo
           Left = 523
@@ -292,17 +301,32 @@ object frm_SelectProject: Tfrm_SelectProject
           DataSource = dm_DataMod.ds_NxDbSqlToolsPrjs
           DataField = 'Transport'
           ReadOnly = True
-          Enabled = False
+          Color = clInfoBk
+          DisabledColor = clInactiveCaption
           ParentShowHint = False
-          PopupMenu = popm_Transport
           ShowHint = True
           TabOrder = 6
-          OnClick = RzDBEdit3Click
+          OnClick = RzDBEdit4Click
+        end
+        object edt_LocalServerDb_1: TJvDBMaskEdit
+          Left = 121
+          Top = 85
+          Width = 608
+          Height = 21
+          DotNetHighlighting = True
+          Color = clInfoBk
+          DataField = 'LocalServerDbPath'
+          DataSource = dm_DataMod.ds_NxDbSqlToolsPrjs
+          DisabledColor = clGray
+          DisabledTextColor = clInactiveCaptionText
+          Enabled = False
+          TabOrder = 7
+          EditMask = ''
         end
       end
       object RzDBNavigator1: TRzDBNavigator
-        Left = 171
-        Top = 384
+        Left = 163
+        Top = 536
         Width = 280
         Height = 25
         DataSource = dm_DataMod.ds_NxDbSqlToolsPrjs
@@ -349,8 +373,8 @@ object frm_SelectProject: Tfrm_SelectProject
           5E32C60000000049454E44AE426082}
       end
       object JvDBSearchComboBox1: TJvDBSearchComboBox
-        Left = 472
-        Top = 7
+        Left = 640
+        Top = 2
         Width = 145
         Height = 21
         DataField = 'PrjName'
@@ -360,8 +384,8 @@ object frm_SelectProject: Tfrm_SelectProject
         OnChange = JvDBFindEdit1Change
       end
       object JvDBFindEdit1: TJvDBFindEdit
-        Left = 336
-        Top = 7
+        Left = 505
+        Top = 2
         Width = 121
         Height = 21
         TabOrder = 9
@@ -383,8 +407,8 @@ object frm_SelectProject: Tfrm_SelectProject
     object Card_MostRecentlyUsedPrj: TCard
       Left = 1
       Top = 1
-      Width = 947
-      Height = 428
+      Width = 965
+      Height = 580
       Caption = 'Most Recently Used'
       CardIndex = 1
       TabOrder = 1
@@ -433,8 +457,8 @@ object frm_SelectProject: Tfrm_SelectProject
     object crd_SetDbServer: TCard
       Left = 1
       Top = 1
-      Width = 947
-      Height = 428
+      Width = 965
+      Height = 580
       Caption = 'crd_SetDbServer'
       CardIndex = 2
       TabOrder = 2
@@ -800,8 +824,8 @@ object frm_SelectProject: Tfrm_SelectProject
     object crd_CreateNewDbTables: TCard
       Left = 1
       Top = 1
-      Width = 947
-      Height = 428
+      Width = 965
+      Height = 580
       Caption = 'crd_CreateNewDbTables'
       CardIndex = 3
       TabOrder = 3
@@ -809,8 +833,8 @@ object frm_SelectProject: Tfrm_SelectProject
     object crd_PackRestructureDb: TCard
       Left = 1
       Top = 1
-      Width = 947
-      Height = 428
+      Width = 965
+      Height = 580
       Caption = 'crd_PackRestructureDb'
       CardIndex = 4
       TabOrder = 4
@@ -819,12 +843,12 @@ object frm_SelectProject: Tfrm_SelectProject
   object JvPanel1: TJvPanel
     Left = 0
     Top = 0
-    Width = 1165
+    Width = 1183
     Height = 78
     Align = alTop
     TabOrder = 1
     DesignSize = (
-      1165
+      1183
       78)
     object JvLED1: TJvLED
       Left = 0
@@ -836,9 +860,9 @@ object frm_SelectProject: Tfrm_SelectProject
     object Label1: TLabel
       Left = 23
       Top = 2
-      Width = 218
+      Width = 270
       Height = 19
-      Caption = 'Manage Projects Database'
+      Caption = 'Manage Projects Setup Database'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -16
@@ -849,10 +873,11 @@ object frm_SelectProject: Tfrm_SelectProject
     object Shape1: TShape
       Left = 23
       Top = 22
-      Width = 681
+      Width = 1084
       Height = 7
       Anchors = [akLeft, akTop, akRight]
       Brush.Color = clBlue
+      ExplicitWidth = 1053
     end
     object NxDelphiSqlTools_Status: TJvDBStatusLabel
       Left = 271
@@ -919,20 +944,102 @@ object frm_SelectProject: Tfrm_SelectProject
       TabOrder = 1
       OnClick = jvxpbtn_HaltProgramClick
     end
-    object btn_1: TButton
-      Left = 480
-      Top = 32
-      Width = 75
-      Height = 25
-      Caption = 'btn_1'
+    object gmcpnlbtn_HelpBtn_1: TgemCapPanelBtn
+      AlignWithMargins = True
+      Left = 1107
+      Top = 9
+      Width = 64
+      Height = 66
+      ClicksDisabled = False
+      Image_AutoSize = False
+      Image_Center = True
+      Image_Picture.Data = {
+        0954506E67496D61676589504E470D0A1A0A0000000D49484452000000400000
+        00400806000000AA6971DE00000006624B474400FF00FF00FFA0BDA793000007
+        5F4944415478DAED9A6B6C544514C7EFF6C162ABA0054A04098A052156128282
+        4124FA41628DA0581BFAA26962D92214518A5244433F402C06049487945809DD
+        160AF82051AAE8072381A8203EC223548C4120F2B015281BA4DB6EFD0DDCADB3
+        D72D9DBB7B776F2B3DC964EE3D77E69C33FF993973EECC38B41B9C1C761B6037
+        750360B70176533700761B6037750360B70176535400C8CBCBEBE3F3F91E218D
+        73381CA9B046906E3614BB443AD2DADA7A907C8FD7EBFD6ADBB66D0D5D1680EC
+        ECECDBC83269702EF983A41893227CD4DD4BEE8E8B8BABD9B871E3F92E01406E
+        6EEEEDF4F43C8C2FE435D122B18DC85B0F10CB01E274A704203F3FBF67737373
+        0943F8155E6FB2D248892E03C49B005106107F771A00E8F514B2AD347E543B45
+        7CA4FD18FF3565F6F37C98FCA45C80F741313131C2373C409A401AADB53F6DBE
+        07ECA9353535BFDA0E008D9F8CF1953CF60AF2F924DF56D363EE4D9B369D3223
+        372727E70E219E54441A18A4C80500CD71BBDD9FDA06008ECE85116B798C357C
+        6A80BFA8BEBE7E436D6DED957074E853AB10204B79BDD5F0B919FE8CEAEAEAF7
+        A20E008D7F5E6FBC91B636353515B1849D0BA7E146CACACAEA8FBE35A474C3A7
+        561D84F2A801C0F09C4A56AD05CE512FC6CD6648AEB7B2E14174CF245B498A97
+        D82DE89E8AEE0F220EC0B469D346B0CCEDD30297380FBD904E2F7C1EC9C6FB09
+        BFF338FAB61B6CB8141B1B3B1A5F531731003232327A40C28BDF27B145CF4F06
+        FDCFA2D1783F31059F40EF0E1EE324F68F89898963CACBCBBD110180E15742F6
+        86CCA32766D2F3EBA2D978C99ED9646F1BD8F3AAAAAA965B0E406666E6008698
+        185EF2B0AB4159A619A39942A94CA1E7787C8CD45F679F06C85DA48ACD9B371F
+        32238F91B0DDE0181BE3E3E387A9468CCA0080F66AB25912EB2C060FA7F7FF52
+        A92F96337E7084F39AAEB51FE0B490D6328C8B558731D33289697984C7643F0F
+        BB5661D78B960180927E2839AE0586B8B3E8FDB52AF5F5B5FC0B0C1BAF84B6A6
+        ED62299DC452DAA45298CE9941264F430FA375300EB1DE120050504CB64C621D
+        A79786AAF612F5C51A3D5DB1F1D70C7338D6E15867AA9475B95CF11E8FE7171E
+        074BEC97E8A0959600C0B273C010E72F4078994A5D7DCEFFA4050EFB83347061
+        4B4B8BF8DDD5F80778986C2969A854464C8791E839AC08F242B2C512EB3BEA8E
+        0D1B003D263F21B1BC346810CEEA8C8A6138A99534768EC43ACAF01ECBF0BE60
+        2827F60FBEA1ECB036E31C8E158C82B92A7A7427FDBBF66F58DE8A331CD09133
+        5401209BAC4A62ED05D987548CD2EB0B0735DCFFCE487A1A07B5A39DB253C83E
+        945887D0956A42D7B7646324004574B8355C005691BD20B19660D46B268C6AD4
+        A4ED2FA7D3D9ABA2A2A23158599C6D6F9CADBCF373115DBD55753155CB0078BE
+        0440872348050011DE4E94844E41E8C7AA4699217E78FAE20FE49FA83F01A09F
+        0900D2F510D94FB5D47F222C00107A0CA177FBDF99FFA966831555C20FE403F0
+        FB126B370D98A05A9FCE1221FACFFE77ECAE63BADD13160008156B6992FF1D07
+        D62712BBB538B1513831F13F912CB1CB006081AA8C5046900A006243A3870480
+        53354051347A3CBD3E9D249CADFC63E3A131432A2B2BCFAACA4A4B4B73262525
+        B5ED153202AE30027A5A0A0001500F337F5BED110E2F9665EA5D1A5E10EC3BC6
+        BF8CF1CBCCC88C1400119902CCF7F9343E683085E1AF63F862B3328D5300F9E7
+        70D8C9D7AB639B130480A372D0A3D301ED5A94B92B14999172823BC9D2DA2A38
+        1CCF86B2F51444AE98466D731EB91391FBA5B03B5499809A811C39F0F9043027
+        850B405881D075E406341499616FD123536CD694B435CE8A40882990C550AA96
+        58A642E1280310100A4319C8DD7EBD3A1D2AE56F2E99797F5A2AEBE32FEECE2D
+        5BB69CE8A86E3489E13F841E3F26D9D9C22AD3B7A34355D5FD80006419112538
+        97A576375A2646EAABD8B54462EDA1F73BDC805105406C4CAC915867580EEF62
+        39BC1CAAC1564E0197CB95E0F1787ED302B7C50A550E4B9494EAEBABD8124B90
+        D84518BD46A57EA4014096D8FF5B21B1ACDD12D39588A8AC58625D64CE0DC7CB
+        FE61270079797903F14962CFE196B646391C4BB1AB44A57ED4B7C5AD06003922
+        2679466245665B5C57D6A90E46707C73D06FDCF88CCCC188207134E6743AF7A1
+        74A4C4EE344763BCFF9090903036624763BAE2A12812E783F2850871C32B3DD4
+        18DE2CB573387ABEB9B9F97EB3B746429D774F927DA405FEBF7B31AA28D4737A
+        13BA831D8F8B8B124FA17BA75979212F3DF442014A3704F914F50B12A402465F
+        452872C38ABFE90D71DA231CA0F18A8C382F5CD4D0D0506EC51519AFD72B8EBE
+        166941AEC8900A436D7CD80008A267261124B9B5E097A44E314ADEA1D7B0B1EA
+        A419B92CBBE2D658B6B875A275D64B527E52BD2647DA4D12B74BAE5E93F39F2C
+        8B53A12E7B4DCE4FA5A5A53175757505E22223AFCA871926A91EF973535252DC
+        E8F35921D0F2ABB22262A4278B31D4A5FDF74274A874F5AA2CF95BA186DE5103
+        C04F37EC65E96024AECBF3C3F2280D1AC75CBF57BB765D5E7874FF0F8C382B14
+        0DFCFF5C97EF2AD40D80DD06D84DDD00D86D80DDD40D80DD06D84D373C00FF00
+        3DB4826EDA8FE2C30000000049454E44AE426082}
+      Image_Proportional = True
+      Image_Stretch = True
+      Image_Visible = True
+      Image_Height = 27
+      ButtonOverColor = clMedGray
+      ButtonDownColor = clBlack
+      ButtonUpColor = clSilver
+      ButtonUseOverDarken = True
+      ButtonDarkenAmount = 0
+      Caption = 'Help'
+      CaptionPosition = dpBottom
+      CaptionFont.Charset = DEFAULT_CHARSET
+      CaptionFont.Color = clWhite
+      CaptionFont.Height = -13
+      CaptionFont.Name = 'Tahoma'
+      CaptionFont.Style = [fsBold]
+      CaptionHeight = 0
       TabOrder = 2
-      OnClick = btn_1Click
     end
   end
   object StatusBarPro: TStatusBarPro
     Left = 0
-    Top = 514
-    Width = 1165
+    Top = 666
+    Width = 1183
     Height = 38
     Panels = <
       item
@@ -951,7 +1058,7 @@ object frm_SelectProject: Tfrm_SelectProject
     Left = 0
     Top = 78
     Width = 210
-    Height = 436
+    Height = 588
     CloseStyle = svcCompact
     Color = clBtnText
     DockSite = True
@@ -1110,37 +1217,8 @@ object frm_SelectProject: Tfrm_SelectProject
     Top = 8
   end
   object JvSelectDirectory1: TJvSelectDirectory
-    Left = 576
-    Top = 24
-  end
-  object popm_Transport: TPopupMenu
-    Left = 1000
-    Top = 388
-    object WinSock2: TMenuItem
-      Caption = 'WinSock'
-      OnClick = TransPortClick
-    end
-    object NamePipe2: TMenuItem
-      Tag = 1
-      Caption = 'NamePipe'
-      OnClick = TransPortClick
-    end
-    object LocalServer2: TMenuItem
-      Tag = 2
-      Caption = 'Local Server'
-      OnClick = TransPortClick
-    end
-    object SharedMem2: TMenuItem
-      Tag = 3
-      Caption = 'Shared Mem'
-      Enabled = False
-      OnClick = TransPortClick
-    end
-    object None2: TMenuItem
-      Tag = 4
-      Caption = 'None'
-      OnClick = TransPortClick
-    end
+    Left = 736
+    Top = 16
   end
   object timer_SearchTimerBlank: TTimer
     Enabled = False
@@ -1148,56 +1226,6 @@ object frm_SelectProject: Tfrm_SelectProject
     OnTimer = timer_SearchTimerBlankTimer
     Left = 808
     Top = 288
-  end
-  object popm_Server: TPopupMenu
-    Left = 792
-    Top = 388
-    object MenuItem1: TMenuItem
-      Caption = 'WinSock'
-      OnClick = TransPortClick
-    end
-    object MenuItem2: TMenuItem
-      Tag = 1
-      Caption = 'NamePipe'
-    end
-    object MenuItem3: TMenuItem
-      Tag = 2
-      Caption = 'Local Server'
-    end
-    object MenuItem4: TMenuItem
-      Tag = 3
-      Caption = 'Shared Mem'
-      OnClick = SharedMem2Click
-    end
-    object MenuItem5: TMenuItem
-      Tag = 4
-      Caption = 'None'
-    end
-  end
-  object popm_Database: TPopupMenu
-    Left = 888
-    Top = 388
-    object MenuItem6: TMenuItem
-      Caption = 'WinSock'
-      OnClick = TransPortClick
-    end
-    object MenuItem7: TMenuItem
-      Tag = 1
-      Caption = 'NamePipe'
-    end
-    object MenuItem8: TMenuItem
-      Tag = 2
-      Caption = 'Local Server'
-    end
-    object MenuItem9: TMenuItem
-      Tag = 3
-      Caption = 'Shared Mem'
-      OnClick = SharedMem2Click
-    end
-    object MenuItem10: TMenuItem
-      Tag = 4
-      Caption = 'None'
-    end
   end
   object jvblnhnt_1: TJvBalloonHint
     UseBalloonAsApplicationHint = True
@@ -1207,8 +1235,8 @@ object frm_SelectProject: Tfrm_SelectProject
   object il1: TImageList
     Height = 32
     Width = 32
-    Left = 1036
-    Top = 18
+    Left = 988
+    Top = 34
     Bitmap = {
       494C01010C002400040020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000008000000001002000000000000000

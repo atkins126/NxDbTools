@@ -1,7 +1,7 @@
 unit GetPrjList;
 
 interface
-{$DEFINE USE_CODESITE}
+{.$DEFINE USE_CODESITE}
 
 uses
   Winapi.Windows, Winapi.Messages,
@@ -27,7 +27,7 @@ uses
   JvXPCore, JvXPButtons, JvImage, JvImageList, JvSpeedButton, JvBehaviorLabel,
   JvComboListBox, JvBalloonHint, JvRadioGroup,
 
-  PngSpeedButton, JvAnimatedImage
+  PngSpeedButton, JvAnimatedImage, gemCapPanelBtn
 
   {$IFDEF  USE_CODESITE}, CodeSiteLogging {$ENDIF};
 
@@ -75,11 +75,6 @@ type
     RzDBNavigator1               : TRzDBNavigator;
     NxDelphiSqlTools_Status      : TJvDBStatusLabel;
     JvSelectDirectory1           : TJvSelectDirectory;
-    WinSock2                     : TMenuItem;
-    NamePipe2                    : TMenuItem;
-    LocalServer2                 : TMenuItem;
-    SharedMem2                   : TMenuItem;
-    None2                        : TMenuItem;
     StatusBarPro                 : TStatusBarPro;
     sv_MenuItems                 : TSplitView;
     Shape1                       : TShape;
@@ -98,9 +93,6 @@ type
     JvDBSearchComboBox1          : TJvDBSearchComboBox;
     JvDBFindEdit1                : TJvDBFindEdit;
     timer_SearchTimerBlank       : TTimer;
-    popm_Transport               : TPopupMenu;
-    popm_Server                  : TPopupMenu;
-    popm_Database                : TPopupMenu;
     jvblnhnt_1                   : TJvBalloonHint;
     act_ConnectBtn               : TAction;
     act_PrjEdit                  : TAction;
@@ -138,13 +130,15 @@ type
     jvrdgrp_ServerType           : TJvRadioGroup;
     jvlstbx_AlaisNames           : TJvListBox;
     lbl_CaptionAliasLB           : TLabel;
-    btn_1: TButton;
     lb_ServerNames: TListBox;
     jvpnl_PleaseWait: TJvPanel;
     img_1: TImage;
     lbl_1: TLabel;
     mmo_IssuesMemo: TMemo;
     RzDBEdit3: TRzDBEdit;
+    gmcpnlbtn_HelpBtn_1: TgemCapPanelBtn;
+    lbl_DbLocalDbPath: TLabel;
+    edt_LocalServerDb_1: TJvDBMaskEdit;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -189,9 +183,8 @@ type
     procedure sv_MenuItemsOpened(Sender: TObject);
     procedure jvlstbx_AlaisNamesClick(Sender: TObject);
     procedure jvrdgrp_ServerTypeClick(Sender: TObject);
-    procedure btn_1Click(Sender: TObject);
     procedure edit_LocalDbPathChange(Sender: TObject);
-    procedure RzDBEdit3Click(Sender: TObject);
+    procedure RzDBEdit4Click(Sender: TObject);
 
   private
     { Private declarations }
@@ -240,7 +233,7 @@ var
 
 implementation
 uses
-  NxToolsMain, nxllTransport, GEMUseFullRoutines, DataMod, XMLDoc, XMLIntf;
+  NxToolsMain, nxllTransport, GEMUseFullRoutines, DataMod, SelectServerAlias;
 {$R *.dfm}
 {.$R Moreimages.res}
 
@@ -264,7 +257,6 @@ const
 function Tfrm_SelectProject. ReadConfigXmlFile(aChildern: tStrings): string;
 var
 //  XmlFile : TXMLDocument;
-  MainNode, ChildNode : IXMLNode;
   i : Integer;
   XMLPath : string;
   fCild: string;
@@ -426,9 +418,17 @@ begin
 end;
 
 
-procedure Tfrm_SelectProject.RzDBEdit3Click(Sender: TObject);
+procedure Tfrm_SelectProject.RzDBEdit4Click(Sender: TObject);
 begin
-  popm_Transport.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
+  if GetServersAlias.Execute then
+  begin
+    if dm_DataMod.nxtbl_NxDbSqlToolsPrjs.State in [dsBrowse] then
+      dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
+    dm_DataMod.nxtbl_NxDbSqlToolsPrjsServer.AsString := GetServersAlias.ServerName;
+    dm_DataMod.nxtbl_NxDbSqlToolsPrjsAlias.AsString := GetServersAlias.AliasName;
+    dm_DataMod.nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger := ord(GetServersAlias.Transport);
+    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
+  end;
 end;
 
 
@@ -459,13 +459,13 @@ end;
 
 procedure Tfrm_SelectProject.SharedMem2Click(Sender: TObject);
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SharedMem2Click' );{$ENDIF}
-
-  dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
-    dm_DataMod.nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger := SharedMem2.tag;
-  dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
-
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SharedMem2Click' );{$ENDIF}
+//  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SharedMem2Click' );{$ENDIF}
+//
+//  dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
+//    dm_DataMod.nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger := SharedMem2.tag;
+//  dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
+//
+//  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SharedMem2Click' );{$ENDIF}
 end;
 
 
@@ -894,66 +894,66 @@ procedure Tfrm_SelectProject.TransPortClick(Sender: TObject);
 
   procedure WinSock;
   begin
-    {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TransPortClick/WinSock' );{$ENDIF}
-
-    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
-      dm_DataMod.nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger := WinSock2.tag;
-    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
-
-    dm_DataMod.nxRemoteServerEngine.Transport := dm_DataMod.nxWinsockTransport;
-
-    {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TransPortClick/WinSock' );{$ENDIF}
+//    {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TransPortClick/WinSock' );{$ENDIF}
+//
+//    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
+//      dm_DataMod.nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger := WinSock2.tag;
+//    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
+//
+//    dm_DataMod.nxRemoteServerEngine.Transport := dm_DataMod.nxWinsockTransport;
+//
+//    {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TransPortClick/WinSock' );{$ENDIF}
   end;
 
   procedure NamePipe;
   begin
-    {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TransPortClick/NamePipe' );{$ENDIF}
-
-    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
-      dm_DataMod.nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger := NamePipe2.tag;
-    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
-
-    {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TransPortClick/NamePipe' );{$ENDIF}
+//    {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TransPortClick/NamePipe' );{$ENDIF}
+//
+//    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
+//      dm_DataMod.nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger := NamePipe2.tag;
+//    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
+//
+//    {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TransPortClick/NamePipe' );{$ENDIF}
   end;
 
   procedure LocalServer;
   begin
-    {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TransPortClick/LocalServer' );{$ENDIF}
-
-    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
-      dm_DataMod.nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger := LocalServer2.tag;
-    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
-
-    {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TransPortClick/LocalServer' );{$ENDIF}
+//    {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TransPortClick/LocalServer' );{$ENDIF}
+//
+//    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
+//      dm_DataMod.nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger := LocalServer2.tag;
+//    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
+//
+//    {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TransPortClick/LocalServer' );{$ENDIF}
   end;
 
   procedure None;
   begin
-    {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TransPortClick/None' );{$ENDIF}
-
-    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
-      dm_DataMod.nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger := None2.tag;
-    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
-
-    {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TransPortClick/None' );{$ENDIF}
+//    {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TransPortClick/None' );{$ENDIF}
+//
+//    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Edit;
+//      dm_DataMod.nxtbl_NxDbSqlToolsPrjsTransportID.AsInteger := None2.tag;
+//    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
+//
+//    {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TransPortClick/None' );{$ENDIF}
   end;
 
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TransPortClick' );{$ENDIF}
-
-  case (Sender as TMenuItem).tag of
-    0: WinSock;
-
-    1: NamePipe;
-
-    2: LocalServer;
-
-    3: ;
-
-    4: None;
-  end;
-
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TransPortClick' );{$ENDIF}
+//  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TransPortClick' );{$ENDIF}
+//
+//  case (Sender as TMenuItem).tag of
+//    0: WinSock;
+//
+//    1: NamePipe;
+//
+//    2: LocalServer;
+//
+//    3: ;
+//
+//    4: None;
+//  end;
+//
+//  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TransPortClick' );{$ENDIF}
 end;
 
 
@@ -1232,8 +1232,6 @@ end;
 
 procedure Tfrm_SelectProject.act_SetPrjPathExecute(Sender: TObject);
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'act_SetPrjPathExecute' );{$ENDIF}
-
   if JvSelectDirectory1.Execute then begin
     if not (dm_DataMod.nxtbl_NxDbSqlToolsPrjs.state in [dsEdit, dsInsert]) then
        dm_DataMod.nxtbl_NxDbSqlToolsPrjs.edit
@@ -1242,14 +1240,9 @@ begin
         exit
       else
        dm_DataMod.nxtbl_NxDbSqlToolsPrjs.edit;
-{$IFDEF DEBUG}
-showmessage('msg 641-'+ExpandUNCFileName(JvSelectDirectory1.Directory));
-{$ENDIF}
     dm_DataMod.nxtbl_NxDbSqlToolsPrjsPrjPath.AsString := ExpandUNCFileName(JvSelectDirectory1.Directory);
     dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Post;
   end;
-
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'act_SetPrjPathExecute' );{$ENDIF}
 end;
 
 
@@ -1655,15 +1648,6 @@ begin
 //  act_ConnectBtn.enabled := aResult;
 end;
 
-
-procedure Tfrm_SelectProject.btn_1Click(Sender: TObject);
-begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'btn_1Click' );{$ENDIF}
-
-  Close;
-
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'btn_1Click' );{$ENDIF}
-end;
 
 procedure Tfrm_SelectProject.btn_CopyDbTablesClick(Sender: TObject);
 begin

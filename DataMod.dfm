@@ -147,6 +147,10 @@ object dm_DataMod: Tdm_DataMod
       Size = 15
       Lookup = True
     end
+    object nxtbl_NxDbSqlToolsPrjsLocalServerDbPath: TWideStringField
+      FieldName = 'LocalServerDbPath'
+      Size = 255
+    end
   end
   object nxtbl_TransportLUT: TnxTable
     ActiveDesigntime = True

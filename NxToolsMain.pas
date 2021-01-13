@@ -1,7 +1,7 @@
 unit NxToolsMain;
 
 interface
-{$DEFINE USE_CODESITE}
+{.$DEFINE USE_CODESITE}
 {.DEFINE MSWINDOWS}
 uses
   Winapi.Windows, Winapi.Messages, Winapi.psAPI,
