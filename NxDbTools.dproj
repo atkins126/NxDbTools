@@ -186,13 +186,13 @@
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=5.0.0.334;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=5.0.0;Comments=;LastCompiledTime=2021/01/13 14:34:03</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=5.0.0.343;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=5.0.0;Comments=;LastCompiledTime=2021/01/16 09:29:49</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <UWP_DelphiLogo44>Gylphs\44NexusDBTableViewer.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>Gylphs\150NexysDBTableViewer.png</UWP_DelphiLogo150>
         <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
         <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
-        <VerInfo_Build>334</VerInfo_Build>
+        <VerInfo_Build>343</VerInfo_Build>
         <VerInfo_MajorVer>5</VerInfo_MajorVer>
         <DCC_Define>NXSQLTOOLS;$(DCC_Define)</DCC_Define>
         <Icon_MainIcon>NxDbTools_Icon2.ico</Icon_MainIcon>

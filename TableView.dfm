@@ -147,6 +147,7 @@ object frm_TableView: Tfrm_TableView
       Height = 25
       DataSource = ds_TableDS
       BorderOuter = fsNone
+      Color = 15987699
       TabOrder = 6
     end
     object btn_TableFilters: TEsMenuButton
@@ -252,7 +253,6 @@ object frm_TableView: Tfrm_TableView
             Caption = 'Required'
           end>
         GridLines = True
-        Items.ItemData = {}
         ReadOnly = True
         TabOrder = 0
         ViewStyle = vsReport
@@ -282,7 +282,6 @@ object frm_TableView: Tfrm_TableView
             Caption = 'Description'
           end>
         GridLines = True
-        Items.ItemData = {}
         ParentShowHint = False
         ReadOnly = True
         ShowHint = False
@@ -298,8 +297,8 @@ object frm_TableView: Tfrm_TableView
   end
   object ds_TableDS: TJvDataSource
     DataSet = nxTable
-    Left = 240
-    Top = 120
+    Left = 232
+    Top = 128
   end
   object adpmr_TableFilters: TadpMRU
     GroupIndex = 0

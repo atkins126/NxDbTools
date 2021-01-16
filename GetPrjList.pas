@@ -139,6 +139,10 @@ type
     gmcpnlbtn_HelpBtn_1: TgemCapPanelBtn;
     lbl_DbLocalDbPath: TLabel;
     edt_LocalServerDb_1: TJvDBMaskEdit;
+    lbl_HelpOpenAppDb: TLabel;
+    crd_Introduction: TCard;
+    act_IntroductionHelp: TAction;
+    mmo_1: TRzMemo;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -185,6 +189,8 @@ type
     procedure jvrdgrp_ServerTypeClick(Sender: TObject);
     procedure edit_LocalDbPathChange(Sender: TObject);
     procedure RzDBEdit4Click(Sender: TObject);
+    procedure RzDBEdit1MouseEnter(Sender: TObject);
+    procedure act_IntroductionHelpExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -243,8 +249,8 @@ const
   cUseRecent = '(Select Recently Use Project)';
 
   cPrjForm: array[cl_CardCreatePrjDb..cl_Pack, fwd_Width..fwd_Height] of integer =
-                                               (( 1171, 580), (683, 565),
-                                                ( 730, 575), (479, 565),
+                                               (( 1171, 697), (683, 565),
+                                                ( 730, 651), (479, 565),
                                                 ( 965, 565));
 
   cBtnHintMRU  = 'Select project from a MRU Listing';
@@ -365,17 +371,9 @@ procedure Tfrm_SelectProject.act_CreatePrjExecute(Sender: TObject);
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'act_CreatePrjExecute' );{$ENDIF}
 
-  if dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Active then
-    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Insert
-  else
-    MessageDlg('Poject Table was CLOSED!', mtError, [mbOK], 0);
-
-//  if dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Active then
-//    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Insert
-//  else
-//    MessageDlg('Poject Database was CLOSED!', mtError, [mbOK], 0);
-//           dm_DataMod.nxtbl_NxDbSqlToolsPrjs.close
-
+  if not dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Active then
+    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Open;
+  dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Insert
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'act_CreatePrjExecute' );{$ENDIF}
 end;
 
@@ -418,6 +416,12 @@ begin
 end;
 
 
+procedure Tfrm_SelectProject.RzDBEdit1MouseEnter(Sender: TObject);
+begin
+  RzDBEdit1.Hint := RzDBEdit1.Text;
+end;
+
+
 procedure Tfrm_SelectProject.RzDBEdit4Click(Sender: TObject);
 begin
   if GetServersAlias.Execute then
@@ -456,6 +460,11 @@ begin
   act_DeletePrj.Enabled := (JvLED1.Status) and (dm_DataMod.nxtbl_NxDbSqlToolsPrjs.RecordCount > 0);
 end;
 
+
+procedure Tfrm_SelectProject.act_IntroductionHelpExecute(Sender: TObject);
+begin
+//
+end;
 
 procedure Tfrm_SelectProject.SharedMem2Click(Sender: TObject);
 begin

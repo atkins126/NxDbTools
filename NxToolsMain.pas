@@ -2850,6 +2850,7 @@ begin
   jvpmn_TreeViewDbTables.CloseMenu;
 end;
 
+
 procedure Tfrm_NxToolsMain.OnFontStuffChange(aFontStuff: tFontStuff);
 begin
   DoConfigChange(aFontStuff) ;
