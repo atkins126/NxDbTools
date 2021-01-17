@@ -1,7 +1,7 @@
 unit NxToolsMain;
 
 interface
-{.$DEFINE USE_CODESITE}
+{$DEFINE USE_CODESITE}
 {.DEFINE MSWINDOWS}
 uses
   Winapi.Windows, Winapi.Messages, Winapi.psAPI,
@@ -469,7 +469,7 @@ type
                                 aExtendedText: TStrings);
     procedure SetMemoryUsageLabel;
     procedure AddFormsToWindowsMenu;
-    procedure DestroyFromMenuItems;
+    procedure DestroyFormMenuItems;
 
     procedure FreeBtns;
     procedure GetProject(OpenPrjManWin: boolean);
@@ -683,7 +683,7 @@ begin
       SQLBtnsArray[aIndex].parent := ts_SQLFunctions;
     end
     else
-      MessageDlg('msg 682-No Parent set!', mtError, [mbOK], 0);
+      MessageDlg('msg 686-No Parent set!', mtError, [mbOK], 0);
   end;
 
   SQLBtnsArray[aIndex].Tag         := aIndex;
@@ -726,9 +726,9 @@ procedure Tfrm_NxToolsMain.ClearProjectInfo;
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'ClearProjectInfo' );{$ENDIF}
 
-  gProjectInfo.Transport := tranNone;
-  gProjectInfo.ActiveServer := '';
-  gProjectInfo.ActiveDb := '';
+  gProjectInfo.PrjTransport := tranNone;
+  gProjectInfo.PrjServer := '';
+  gProjectInfo.PrjAlias := '';
 
   lst_ServerListBox.Clear;
 
@@ -802,7 +802,7 @@ begin
   except
     on E : Exception do
       begin
-        ShowMessage('Msg 783-Error creating SQL buttons'+#10+#13+E.Message);
+        ShowMessage('Msg 805-Error creating SQL buttons'+#10+#13+E.Message);
         {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Msg 770-'+ E.Message);{$ENDIF}
 
       end;
@@ -908,7 +908,7 @@ begin
     else
       fTblArrayDockForm[index].Close;
   except
-    showmessage('msg 886-Error ColorToString(SQLView Window');
+    showmessage('msg 911-Error ColorToString(SQLView Window');
   end;
 
   SetMemoryUsageLabel;
@@ -936,7 +936,7 @@ function Tfrm_NxToolsMain.CheckIntersectPanels(aPanel: integer): Boolean;
         Result := False;
 
     except on E: Exception do
-      ShowMessage('Msg:912-'+E.Message);
+      ShowMessage('Msg:939-'+E.Message);
     end;
 
     {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CheckIntersectPanels/CheckIntersectRect' );{$ENDIF}
@@ -1021,12 +1021,12 @@ var
 begin
   for index :=  Low(fSQLArrayDockForm) to High(fSQLArrayDockForm) do begin
     if not fSQLArrayDockForm[index].SQLSaved then
-      if MessageDlg('msg 991-'+QuotedStr(fSQLArrayDockForm[index].caption) +
+      if MessageDlg('msg 1024-'+QuotedStr(fSQLArrayDockForm[index].caption) +
             ': Save SQL code to File?', mtWarning, [mbYes, mbNo],0)  = mrYes then
         fSQLArrayDockForm[index].SaveEditorFileAs(edtSQL);
 
     if not fSQLArrayDockForm[index].DelphiSaved then
-      if MessageDlg('msg 996-'+QuotedStr(fSQLArrayDockForm[index].caption) +
+      if MessageDlg('msg 1029-'+QuotedStr(fSQLArrayDockForm[index].caption) +
             ': Save Delphi code to File?', mtWarning, [mbYes, mbNo],0)  = mrYes then
         fSQLArrayDockForm[index].SaveEditorFileAs(edtDelphi);
   end;
@@ -1066,9 +1066,9 @@ begin
   end;
 
   case SaveProjectToDb of
-    frFalse1: MessageDlg('msg 1035-Project NOT saved, No PrjName!', mtWarning, [mbOK], 0);
+    frFalse1: MessageDlg('msg 1069-Project NOT saved, No PrjName!', mtWarning, [mbOK], 0);
 
-    frFalse2: MessageDlg('msg 1037-Could NOT save any changes to project:'+#13+#10+String(gProjectInfo.PrjName),
+    frFalse2: MessageDlg('msg 1071-Could NOT save any changes to project:'+#13+#10+String(gProjectInfo.PrjName),
                         mtWarning, [mbOK], 0);
   end;
 
@@ -1257,7 +1257,7 @@ begin
   AddFormsToWindowsMenu;
 end;
 
-procedure Tfrm_NxToolsMain.DestroyFromMenuItems;
+procedure Tfrm_NxToolsMain.DestroyFormMenuItems;
 begin
   // Count down, not up!
   if mm_MainMenu.Items[1].Count - 1 > -1 then
@@ -1349,7 +1349,7 @@ begin
   result := False;
   tn := GetRootNodeByText(aTreeView, aValue, true);
   if tn = nil then
-    MessageDlg('msg 1263-Could not find project Db: ' + QuotedStr(aValue) + '.', mtError, [mbOK], 0)
+    MessageDlg('msg 1352-Could not find project Db: ' + QuotedStr(aValue) + '.', mtError, [mbOK], 0)
 //    ShowMessage('msg 1264-Could not find project Db.')
   else begin
     aTreeView.SetFocus;
@@ -1385,15 +1385,19 @@ var
   s: string;
   index: Integer;
 
-  function SetServer: boolean;
+  function SetPrjServer: boolean;
   begin
     result := true;
-    index := lst_ServerListBox.Perform(LB_FINDSTRING, $FFFFFFFF, PWideChar(s));
+{$IFDEF DEBUG}
+  showmessage('serach for: '+s);
+{$ENDIF}
+    index := lst_ServerListBox.Items.IndexOf(s);
     if index > -1 then  begin
       lst_ServerListBox.ItemIndex := index;
+      gProjectInfo.ActiveServer := lst_ServerListBox.Items[Index];
     end
     else begin
-      MessageDlg('msg 1306-Could NOT find project server: '+#13+#10+String(gProjectInfo.ActiveServer),
+      MessageDlg('msg 1400-Could NOT find project server: '+#13+#10+String(gProjectInfo.PrjServer),
                   mtWarning, [mbOK], 0);
       result := false;
     end;
@@ -1411,18 +1415,16 @@ begin
     frm_SelectProject.ShowModal;
   end;
 
-  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'before gProjectInfo.BeginUpdate' );{$ENDIF}
   gProjectInfo.BeginUpdate;
-  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'after gProjectInfo.BeginUpdate' );{$ENDIF}
   try
-    s := String(gProjectInfo.ActiveServer) + #0;
+    s := String(gProjectInfo.PrjServer) + #0;
 
-    case gProjectInfo.ActiveTrans of
+    case gProjectInfo.PrjTransport of
       tranWinSock: begin
         act_NxDbTcpIpTrans.Execute;
-        if SetServer then begin
+        if SetPrjServer then begin
           lst_ServerListBox1Click(self);
-          if SetDb(tv_AliasAndTables, String(gProjectInfo.ActiveDb)) then begin
+          if SetDb(tv_AliasAndTables, String(gProjectInfo.PrjAlias)) then begin
 //            SetAlias;
         end;
         end;
@@ -1430,9 +1432,9 @@ begin
 
       tranNamePipe: begin
         act_NxDbNamedPipeTrans.Execute;
-        SetServer;
+        SetPrjServer;
         lst_ServerListBox1Click(self);
-        if SetDb(tv_AliasAndTables, String(gProjectInfo.ActiveDb)) then begin
+        if SetDb(tv_AliasAndTables, String(gProjectInfo.PrjAlias)) then begin
 //          SetAlias;
         end;
       end;
@@ -2005,7 +2007,7 @@ procedure Tfrm_NxToolsMain.CreateSQLWindow(aNode: tTreeNode);
       end;
     except
       on E : Exception do  begin
-        MessageDlg('msg 1890-Could NOT open Database.'+#13+#10+E.Message, mtWarning, [mbOK], 0);
+        MessageDlg('msg 2010-Could NOT open Database.'+#13+#10+E.Message, mtWarning, [mbOK], 0);
       end;
     end;
   end;
@@ -2057,7 +2059,7 @@ procedure Tfrm_NxToolsMain.CreateSQLWindow(aNode: tTreeNode);
 
 begin
 {$IFDEF DEBUG}
-  showmessage('msg 1943-b. InSQL: ' + aNode.Text);
+  showmessage('msg 2062-b. InSQL: ' + aNode.Text);
 {$ENDIF}
   inc(DockingFormsInfo.NumSqlForms);
   SetLength(fSQLArrayDockForm, DockingFormsInfo.NumSqlForms+1);
@@ -2099,7 +2101,7 @@ begin
   if rNode.Level = 1 then
     rNode := rNode.Parent;
 {$IFDEF DEBUG}
-  showmessage('msg 1985-a. In Create SQL: '+rNode.text);
+  showmessage('msg 25104-a. In Create SQL: '+rNode.text);
 {$ENDIF}
   CreateSQLWindow(rNode);
   SetupTreeViewTableFields(rNode);
@@ -2144,9 +2146,9 @@ begin
   act_SetServerDefault.Execute;
   aSelNode := tv_AliasAndTables.selected;
   if aSelNode <> nil then
-    gProjectInfo.Alias := tstr95(aSelNode.Text)
+    gProjectInfo.PrjAlias := tstr95(aSelNode.Text)
   else
-    MessageDlg('msg 2047-Could NOT find Database from the Database tree!', mtWarning, [mbOK], 0);
+    MessageDlg('msg 2151-Could NOT find Database from the Database tree!', mtWarning, [mbOK], 0);
 end;
 
 procedure Tfrm_NxToolsMain.act_SetDbDefualtUpdate(Sender: TObject);
@@ -2158,10 +2160,10 @@ procedure Tfrm_NxToolsMain.act_SetServerDefaultExecute(Sender: TObject);
 begin
   if lst_ServerListBox.ItemIndex > -1 then begin
     act_SetTransDefault.Execute;
-    gProjectInfo.Server := tstr45(lst_ServerListBox.Items[lst_ServerListBox.ItemIndex]);
+    gProjectInfo.PrjServer := tstr45(lst_ServerListBox.Items[lst_ServerListBox.ItemIndex]);
   end
   else
-    MessageDlg('msg 2061-Could NOT Select server Due to no Server Being Selected.', mtWarning, [mbOK], 0);
+    MessageDlg('msg 2166-Could NOT Select server Due to no Server Being Selected.', mtWarning, [mbOK], 0);
 end;
 
 
@@ -2172,15 +2174,15 @@ end;
 
 procedure Tfrm_NxToolsMain.act_SetToDefaultPrjExecute(Sender: TObject);
 begin
-  gProjectInfo.ActiveTrans := gProjectInfo.Transport;
-  gProjectInfo.ActiveServer := gProjectInfo.Server;
-  gProjectInfo.ActiveDb := gProjectInfo.Alias;
+  gProjectInfo.ActiveTrans  := gProjectInfo.PrjTransport;
+  gProjectInfo.ActiveServer := gProjectInfo.PrjServer;
+  gProjectInfo.ActiveAlias  := gProjectInfo.PrjAlias;
   GetProject(false);
 end;
 
 procedure Tfrm_NxToolsMain.act_SetTransDefaultExecute(Sender: TObject);
 begin
-  gProjectInfo.Transport := tranWinSock;
+  gProjectInfo.PrjTransport := tranWinSock;
 end;
 
 
@@ -2204,11 +2206,11 @@ begin
     fPrompt := aPromptUnchecked;
 
   if inputQuery('Database Password', fPrompt, fPassword) then begin
-    gProjectInfo.DBPassWord := ShortString(lblwfsh1.EncryptString(string(fPassword)));
+    gProjectInfo.PrjDBPassWord := ShortString(lblwfsh1.EncryptString(string(fPassword)));
 //    WriteProjectSetup(gProjectInfo);
   end
   else
-    gProjectInfo.DBPassWord := '';
+    gProjectInfo.PrjDBPassWord := '';
 end;
 
 
@@ -2242,14 +2244,14 @@ function Tfrm_NxToolsMain.SetServerTransport: TTransportUsed;
   procedure ifWinSock;
   begin
     try
-      dm_DataMod.nxWinsockTransport.ServerNameRuntime := lst_ServerListBox.Items[lst_ServerListBox.ItemIndex];
-      dm_DataMod.nxWinsockTransport.ServerName := lst_ServerListBox.Items[lst_ServerListBox.ItemIndex];
+      dm_DataMod.nxWinsockTransport.ServerNameRuntime := gProjectInfo.ActiveServer;//lst_ServerListBox.Items[lst_ServerListBox.ItemIndex];
+      dm_DataMod.nxWinsockTransport.ServerName := gProjectInfo.ActiveServer;//lst_ServerListBox.Items[lst_ServerListBox.ItemIndex];
       dm_DataMod.nxWinsockTransport.Open;
       result := tranWinSock;
     except
       on E : Exception do
         begin
-          ShowMessage('Msg:2150-Error Setting WinSock Transport'+#10+#13+E.Message);
+          ShowMessage('Msg:2254-Error Setting WinSock Transport'+#10+#13+E.Message);
         end;
     end;
   end;
@@ -2257,14 +2259,14 @@ function Tfrm_NxToolsMain.SetServerTransport: TTransportUsed;
   procedure ifNamedPipe;
   begin
     try
-      dm_DataMod.nxNamedPipeTransport.ServerNameRuntime := lst_ServerListBox.Items[lst_ServerListBox.ItemIndex];
-      dm_DataMod.nxNamedPipeTransport.ServerName := lst_ServerListBox.Items[lst_ServerListBox.ItemIndex];
+      dm_DataMod.nxNamedPipeTransport.ServerNameRuntime := gProjectInfo.ActiveServer;//lst_ServerListBox.Items[lst_ServerListBox.ItemIndex];
+      dm_DataMod.nxNamedPipeTransport.ServerName := gProjectInfo.ActiveServer;//lst_ServerListBox.Items[lst_ServerListBox.ItemIndex];
       dm_DataMod.nxNamedPipeTransport.Open;
       result := tranNamePipe;
     except
       on E : Exception do
         begin
-          ShowMessage('Msg:2165-Error Setting Named Pipe Transport'+#10+#13+E.Message);
+          ShowMessage('Msg:2269-Error Setting Named Pipe Transport'+#10+#13+E.Message);
         end;
     end;
   end;
@@ -2300,7 +2302,7 @@ begin
       ifLocalServer;
   except
     result := tranError;
-    MessageDlg('Msg 2201-Error Setting up Transport!', mtError, [mbOK], 0);
+    MessageDlg('Msg 2305-Error Setting up Transport!', mtError, [mbOK], 0);
   end;
   setEnableTransportBtns(true);
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetServerTransport' );{$ENDIF}
@@ -2313,36 +2315,37 @@ var
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetAlias' );{$ENDIF}
 
-
     aDatabase.Close;
     aDatabase.AliasName := '';
     aDatabase.AliasPath := '';
 
-    if gProjectInfo.Transport = tranLocalServer then begin
-      if ExtractAliasAndPath(String(gProjectInfo.ActiveDb), aAlias, aPath) then
-        MessageDlg('msg 2221-Could NOT extract Alias and Path', mtError, [mbOK],0);
+    if gProjectInfo.ActiveTrans = tranLocalServer then begin
+      if ExtractAliasAndPath(String(gProjectInfo.ActiveAlias), aAlias, aPath) then
+        MessageDlg('msg 2324-Could NOT extract Alias and Path', mtError, [mbOK],0);
       aDatabase.AliasPath := aPath;
       aDatabase.Session := dm_DataMod.nxsn_SqlTools;
     end
     else begin
-      aDatabase.AliasName := String(gProjectInfo.Alias);  //stsbrpr_StatusBar.Panels[Ord(spoAlias)].Text;
+      aDatabase.AliasName := String(gProjectInfo.ActiveAlias);  //stsbrpr_StatusBar.Panels[Ord(spoAlias)].Text;
       aDatabase.Session := dm_DataMod.nxSession;
     end;
 
     try
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'A SetAlias-- aDatabase.Open + ActiveAlias= '+gProjectInfo.ActiveAlias);{$ENDIF}
       aDatabase.Open;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'B SetAlias--+aDatabase.Open');{$ENDIF}
       stsbrpr_StatusBar.Panels[ord(spoDbStatus)].Color := clGreen;
       stsbrpr_StatusBar.Panels[ord(spoDbStatus)].Text := 'Database Opened';
 
-      if gProjectInfo.Transport <> tranLocalServer then
-        gProjectInfo.ActiveDb := ShortString(aDatabase.AliasName)
+      if gProjectInfo.ActiveTrans <> tranLocalServer then
+        gProjectInfo.ActiveAlias := ShortString(aDatabase.AliasName)
       else
-        gProjectInfo.ActiveDb := ShortString(aDatabase.AliasPath);
+        gProjectInfo.ActiveAlias := ShortString(aDatabase.AliasPath);
 
     except
       on E : Exception do
         begin
-          ShowMessage('Msg 2243-Could not Open Db:'+#10+#13+ 'Exception message = '+E.Message);
+          ShowMessage('Msg 2348-Could not Open Db:'+#10+#13+ 'Exception message = '+E.Message);
           stsbrpr_StatusBar.Panels[Ord(spoDbStatus)].Color := clRed;
           stsbrpr_StatusBar.Panels[Ord(spoDbStatus)].Text := 'Error Openning Database';
           exit;
@@ -2359,14 +2362,14 @@ begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetServer' );{$ENDIF}
   tranResult := SetServerTransport;
   if tranResult in [tranError, tranNone] then begin
-    gProjectInfo.Transport := tranResult;
-    MessageDlg('msg 2261-Could NOT open a transport!', mtError, [mbOK], 0);
+    gProjectInfo.ActiveTrans := tranResult;
+    MessageDlg('msg 2366-Could NOT open a transport!', mtError, [mbOK], 0);
     Exit;
   end;
   try
 //    gProjectInfo.Alias := '';
 
-    case gProjectInfo.Transport of
+    case gProjectInfo.ActiveTrans of
       tranWinSock,
       tranNamePipe: begin
         dm_DataMod.nxRemoteServerEngine.Open;
@@ -2390,7 +2393,7 @@ begin
   except
     on E : Exception do
       begin
-        ShowMessage('Msg 2291-Could not Open Server engine:' + #13+#10+ E.Message);
+        ShowMessage('Msg 2396-Could not Open Server engine:' + #13+#10+ E.Message);
       end;
   end;
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetServer' );{$ENDIF}
@@ -2400,7 +2403,7 @@ end;
 procedure Tfrm_NxToolsMain.lst_ServerListBox1Click(Sender: TObject);
 begin
   if (length(fSQLArrayDockForm) > 0) or (length(fTblArrayDockForm) > 0) then
-    if (MessageDlg('Changing Servers will close all opened sql and table forms.'+#13+#10+
+    if (MessageDlg('2406-Changing Servers will close all opened sql and table forms.'+#13+#10+
                    'Continue?', mtWarning, [mbYes, mbNo], 0) in [mrYes, mrNone]) then begin
       SaveSqlFormEditors;
       FreeSQLandTableForms;
@@ -2438,9 +2441,9 @@ begin
         fLocalAliasPaths.LoadFromFile(LocalServerAliasesPath)
       end
       else
-        MessageDlg('msg 2381-The local db path file does not exist.', mtWarning, [mbOK], 0);
+        MessageDlg('msg 2444-The local db path file does not exist.', mtWarning, [mbOK], 0);
     except
-      MessageDlg('msg 2383-No Saved Local Db''s to open.'+#13+'Add a local Db using the File Menu', mtError, [mbOk],0);
+      MessageDlg('msg 2446-No Saved Local Db''s to open.'+#13+'Add a local Db using the File Menu', mtError, [mbOk],0);
     end;
   finally
     btn_LocalServer.Down := True;
@@ -2453,12 +2456,12 @@ end;
 
 procedure Tfrm_NxToolsMain.act_LocalServerUpdate(Sender: TObject);  //fix
 begin
-  act_AddAliasPath.Enabled := gProjectInfo.Transport = tranLocalServer;   // menu item
+  act_AddAliasPath.Enabled := gProjectInfo.ActiveTrans = tranLocalServer;   // menu item
 //  act_RemoveAliasPath.Enabled := (gProjectInfo.Transport = tranLocalServer) and  // menu item
 //                                 (lst_AliasListBox.Count > 0);
 
 //  act_LocalServer.Enabled := gProjectInfo.PrjName <> '';
-  lst_ServerListBox.Enabled := gProjectInfo.Transport <> tranLocalServer;
+  lst_ServerListBox.Enabled := gProjectInfo.ActiveTrans <> tranLocalServer;
 
 //  lbl_AliasPath.caption := CaptionBaseBoolean('Select Alias (right click for options):',
 //                                              'Select Alias  Path (right click for options):',
@@ -2496,7 +2499,6 @@ begin
     dm_DataMod.nxRemoteServerEngine.Transport :=  dm_DataMod.nxWinsockTransport;
     dm_DataMod.nxWinsockTransport.GetServerNames(lst_ServerListBox.Items, cNxDbTimeOut);
     dm_DataMod.nxSession.ServerEngine := dm_DataMod.nxRemoteServerEngine;
-
     setEnableTransportBtns(true);
 
     SetMemoryUsageLabel;
@@ -2569,14 +2571,14 @@ begin
 //  if True then
 
 
-  if gProjectInfo.Transport <> tranLocalServer then begin
+  if gProjectInfo.ActiveTrans <> tranLocalServer then begin
     try
       if not dm_DataMod.nxSession.Active then
         dm_DataMod.nxSession.Open;
 
       dm_DataMod.nxSession.GetAliasNames(fAlias);
     except
-      MessageDlg('msg 2474-Could NOT Open Db Session!', mtError, [mbOK], 0);
+      MessageDlg('msg 2581-Could NOT Open Db Session!', mtError, [mbOK], 0);
       Exit;
     end;
   end
@@ -2591,7 +2593,7 @@ begin
         rNodeObjectPtr^.DataBase := TnxDatabase.Create(nil);
 
         rNodeObjectPtr^.DataBase.Session := dm_DataMod.nxSession;
-        if gProjectInfo.Transport = tranLocalServer then begin
+        if gProjectInfo.ActiveTrans = tranLocalServer then begin
           rNodeObjectPtr^.DataBase.AliasPath := GetJustPathAlias(fAlias[Aindex]);
         end
         else
@@ -2608,8 +2610,8 @@ begin
         end;
 
         rNode := tv_AliasAndTables.Items.AddObject(nil, fAlias[Aindex], rNodeObjectPtr);
-        if (fAlias[Aindex] = String(gProjectInfo.Alias)) and
-           (gProjectInfo.ActiveServer = gProjectInfo.Server) then begin
+        if (fAlias[Aindex] = String(gProjectInfo.PrjAlias)) and
+           (gProjectInfo.ActiveServer = gProjectInfo.PrjServer) then begin
           rNode.ImageIndex    := 19;//now you can change any  property of the node
           rNode.SelectedIndex := 19;//now you can change any  property of the node
           rNode.StateIndex    := -1;//now you can change any  property of the node
@@ -2637,7 +2639,7 @@ begin
   except
     on E : Exception do
       begin
-        ShowMessage('Msg 2534-Could NOT open Alias and Tables:'+#13+#10+
+        ShowMessage('Msg 2642-Could NOT open Alias and Tables:'+#13+#10+
                     fAlias[AAIndex] +#10+#13+E.Message);
         ClearTree;
       end;
@@ -2695,7 +2697,7 @@ var
             end
             else begin
               Result := pscGiveUp;
-              ShowMessage('Msg 2593-Exception message = '+E.Message);
+              ShowMessage('Msg 2700-Exception message = '+E.Message);
             end;
           end;
       end;
@@ -2710,7 +2712,7 @@ var
 
 begin
   if aNode  = nil then begin
-    MessageDlg('msg 2610-No Database Selected.  Select Db and try again.', mtWarning, [mbOK], 0);
+    MessageDlg('msg 2715-No Database Selected.  Select Db and try again.', mtWarning, [mbOK], 0);
     Exit;
   end;
 
@@ -2739,7 +2741,7 @@ begin
           dm_DataMod.nxTable.Close;
         end
         else begin
-          MessageDlg('Msg 2639-Errror Openning db table: '+ QuotedStr(fTables[Tindex]) +' Tables and Fields are not ready.',
+          MessageDlg('Msg 2744-Errror Openning db table: '+ QuotedStr(fTables[Tindex]) +' Tables and Fields are not ready.',
                      mtWarning, [mbOK], 0);
           Break;
         end;
@@ -2751,7 +2753,7 @@ begin
   except
     on E : Exception do
       begin
-        ShowMessage('Msg 2651-Could NOT open tables for Tables and Field Tab'+#10+#13+E.Message);
+        ShowMessage('Msg 2756-Could NOT open tables for Tables and Field Tab'+#10+#13+E.Message);
         ClearTree;
       end;
   end;
@@ -2762,8 +2764,8 @@ end;
 procedure Tfrm_NxToolsMain.spltvw_ToolsCommandsOpening(Sender: TObject);
 begin
   if not fFormShowing then
-    if not SetDb(tv_AliasAndTables, String(gProjectInfo.Alias)) then
-      MessageDlg('msg 2641-Database NOT found in Database tree!', mtWarning, [mbOK], 0);
+    if not SetDb(tv_AliasAndTables, String(gProjectInfo.ActiveAlias)) then
+      MessageDlg('msg 2768-Database NOT found in Database tree!', mtWarning, [mbOK], 0);
   fFormShowing := false;
 end;
 
@@ -2773,7 +2775,7 @@ end;
 { ListBox Form stuff ===}
 
 procedure Tfrm_NxToolsMain.tv_AliasAndTablesMouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+                       Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
   HT : THitTests;
   rNode: TTreeNode;
@@ -2782,7 +2784,7 @@ var
   procedure SetIcon(aNode: TTreeNode);
   begin
 
-    if aNode.text = String(gProjectInfo.Alias) then
+    if aNode.text = String(gProjectInfo.ActiveAlias) then
       aNode.ImageIndex := 19//now you can change any  property of the node
     Else
       aNode.ImageIndex := 0;//now you can change any  property of the node
@@ -2796,7 +2798,7 @@ begin
     rNode := tv_AliasAndTables.GetNodeAt(x,y);
     if rNode.Level = 1 then begin
       pNode := rNode.parent;
-      gProjectInfo.ActiveDb := tStr95(pNode.Text);
+      gProjectInfo.ActiveAlias := tStr95(pNode.Text);
       gProjectInfo.Table := tStr25(rNode.Text);
       gProjectInfo.Node := pNode;
 
@@ -2806,7 +2808,7 @@ begin
       Create_TablesView(pNode, rNode.Text);
     end
     else begin
-      gProjectInfo.ActiveDb := tStr95(rNode.text);
+      gProjectInfo.ActiveAlias := tStr95(rNode.text);
       gProjectInfo.Node := rNode;
     end;
   end;
@@ -2837,14 +2839,6 @@ begin
 end;
 
 
-//procedure Tfrm_NxToolsMain.lst_TablesLB1MouseDown(Sender: TObject;
-//  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-//begin
-////  if Button = mbRight then
-////    lst_TablesLB.BeginDrag(false);
-//end;
-//
-
 procedure Tfrm_NxToolsMain.mniSetTransportserverthendb1Click(Sender: TObject);
 begin
   jvpmn_TreeViewDbTables.CloseMenu;
@@ -2869,7 +2863,7 @@ begin
   act_CreateSQLWindow.Enabled := False;
 
   gProjectInfo.ActiveServer := '';
-  gProjectInfo.ActiveDb := '';
+  gProjectInfo.ActiveAlias  := '';
 
   dm_DataMod.nxNamedPipeTransport.Close;
   dm_DataMod.nxWinsockTransport.Close;
@@ -2951,9 +2945,9 @@ begin
                                               tRootNodeDb(aNode.Data^).DataBase;
 
   try
-    if gProjectInfo.DBPassWord <> '' then
+    if gProjectInfo.PrjDBPassWord <> '' then
       fTblArrayDockForm[DockingFormsInfo.NumTblForms].nxTable.Password :=
-                        lblwfsh1.DecryptString(string(gProjectInfo.DBPassWord));
+                        lblwfsh1.DecryptString(gProjectInfo.PrjDBPassWord);
   except
     fTblArrayDockForm[DockingFormsInfo.NumTblForms].nxTable.Password := '';
   end;
@@ -2974,7 +2968,7 @@ begin
   except
     on E : Exception do
       begin
-        ShowMessage('Msg 2873-Could NOT open table to get fields.'+#10+#13+E.Message);
+        ShowMessage('Msg 2971-Could NOT open table to get fields.'+#10+#13+E.Message);
         {$IFDEF USE_CODESITE}CodeSite.SendMsg('Msg 2874-'+ E.Message );{$ENDIF}
       end;
   end;
@@ -3102,7 +3096,7 @@ begin
     end;
   end
   else
-    MessageDlg('msg 3001-Either there is no SQL window or a SQL window is NOT active.', mtError, [mbOK], 0);
+    MessageDlg('msg 2099-Either there is no SQL window or a SQL window is NOT active.', mtError, [mbOK], 0);
 end;
 
 
@@ -3154,12 +3148,12 @@ begin
     except
       on E : Exception do
         begin
-          ShowMessage('Msg 3053-Could NOT set Master Source relation.'+#13+#10+E.Message);
+          ShowMessage('Msg 3151-Could NOT set Master Source relation.'+#13+#10+E.Message);
         end;
     end;
   end
   else
-    MessageDlg('msg 3058-Either there is no SQL window or a SQL window is NOT active.', mtError, [mbOK], 0);
+    MessageDlg('msg 3156-Either there is no SQL window or a SQL window is NOT active.', mtError, [mbOK], 0);
 end;
 
 
@@ -3173,7 +3167,7 @@ end;
 
 procedure Tfrm_NxToolsMain.stsbrpr_StatusBarPanels3Click(Sender: TObject);
 begin
-  MessageDlg('msg 3072-Project path: '+#13+stsbrpr_StatusBar.Panels[ord(spoDefaultPrjDir)].Text, mtInformation, [mbOk], 0);
+  MessageDlg('msg 3170-Project path: '+#13+stsbrpr_StatusBar.Panels[ord(spoDefaultPrjDir)].Text, mtInformation, [mbOk], 0);
 end;
 
 
@@ -3183,14 +3177,14 @@ begin
   mem_ProjectStats.Lines.Clear;
   mem_ProjectStats.Lines.Add('Project: '+QuotedStr(String(gProjectInfo.PrjName)));
   mem_ProjectStats.Lines.Add('  Project Path To save SQL files: '+ QuotedStr(String(gProjectInfo.PrjPath)));
-  mem_ProjectStats.Lines.Add('  Project Transport: '+ QuotedStr(cTransportTypes[gProjectInfo.Transport]));
-  mem_ProjectStats.Lines.Add('  Project Server: '+ QuotedStr(String(gProjectInfo.Server)));
-  mem_ProjectStats.Lines.Add('  Project Database: '+ QuotedStr(String(gProjectInfo.Alias)));
-  mem_ProjectStats.Lines.Add('  Active Transport: '+ QuotedStr(cTransportTypes[gProjectInfo.Transport]));
+  mem_ProjectStats.Lines.Add('  Project Transport: '+ QuotedStr(cTransportTypes[gProjectInfo.PrjTransport]));
+  mem_ProjectStats.Lines.Add('  Project Server: '+ QuotedStr(String(gProjectInfo.PrjServer)));
+  mem_ProjectStats.Lines.Add('  Project Database: '+ QuotedStr(String(gProjectInfo.PrjAlias)));
+  mem_ProjectStats.Lines.Add('  Active Transport: '+ QuotedStr(cTransportTypes[gProjectInfo.ActiveTrans]));
   mem_ProjectStats.Lines.Add('  Active Server: '+ QuotedStr(String(gProjectInfo.ActiveServer)));
-  mem_ProjectStats.Lines.Add('  Active Database: '+ QuotedStr(String(gProjectInfo.ActiveDb)));
+  mem_ProjectStats.Lines.Add('  Active Database: '+ QuotedStr(String(gProjectInfo.ActiveAlias)));
   mem_ProjectStats.Lines.Add('  Delphi File Save Location: '+ QuotedStr(String(gProjectInfo.PasFileSaveLoc)));
-  mem_ProjectStats.Lines.Add('  Db Password: '+ QuotedStr(String(gProjectInfo.DBPassWord)));
+  mem_ProjectStats.Lines.Add('  Db Password: '+ QuotedStr(String(gProjectInfo.PrjDBPassWord)));
 end;
 
 { TSqlFontParams }
@@ -3282,12 +3276,12 @@ begin
   fFontStuff.BackColor := fBackground.ColorValue;
   SetFontStyles;
 {$IFDEF DEBUG}
-  ShowmessageInt('msg 3181-SQLBgColorChange before Font num: ', ord(fFontStuff.TypeFontItem));
+  ShowmessageInt('msg 3279-SQLBgColorChange before Font num: ', ord(fFontStuff.TypeFontItem));
 {$ENDIF}
 
   FontStuffChange(fFontStuff);
 {$IFDEF DEBUG}
-  ShowmessageInt('Msg 3186-SQLBgColorChange after Font num: ', ord(fFontStuff.TypeFontItem));
+  ShowmessageInt('Msg 3284-SQLBgColorChange after Font num: ', ord(fFontStuff.TypeFontItem));
 {$ENDIF}
 end;
 
@@ -3381,7 +3375,7 @@ begin
       CloseFile(fFile);
     end;
   except
-    MessageDlg('msg 3321-Font Settigns Not Saved', mtError, [mbok], 0);
+    MessageDlg('msg 3378-Font Settigns Not Saved', mtError, [mbok], 0);
     result := False;
   end;
 end;

@@ -40,36 +40,41 @@ type
   tStr25  = string[25];
   tStr255 = string[255];
 
-  TChangeTransport = procedure(aTransport: TTransportUsed) of Object;
-  tChangeServer    = procedure(aServer: tStr45) of Object;
-  tChangeAlias     = procedure(aAlias: tStr95) of Object;
+  TChangeTransport   = procedure(aTransport: TTransportUsed) of Object;
+  tChangeServer      = procedure(aServer: tStr45) of Object;
+  tChangeAlias       = procedure(aAlias: tStr95) of Object;
+  tChangeFileSaveLoc = procedure(aPath: string) of object;
 
   TProjectInfo = class
-    fPrjName           : tStr25;
-    fPrjPath           : tStr255;
-    fTransport         : TTransportUsed;
-    fServer            : tStr45;
-    fAlias             : tStr95;
-    fPasFileSaveLoc    : tStr255;
-    fDBPassWord        : tStr255;
-    fTableName         : tStr25;
-    fTreeNode          : TTreeNode;
-    fActiveTransport   : TTransportUsed;
-    fActiveServer      : tStr45;
-    fActiveDb          : tStr95;
-    fUpdate            : Boolean;
-    fOnChangeTransport : TChangeTransport;
-    fOnChangeServer    : tChangeServer;
-    fOnChangeAlias     : tChangeAlias;
-    fDataSource        : TJvDataSource;
+    fPrjName             : tStr25;
+    fPrjPath             : tStr255;
+    fTransport           : TTransportUsed;
+    fServer              : tStr45;
+    fAlias               : tStr95;
+    fPasFileSaveLoc      : tStr255;
+    fDBPassWord          : tStr255;
+    fTableName           : tStr25;
+    fTreeNode            : TTreeNode;
+    fActiveTransport     : TTransportUsed;
+    fActiveServer        : tStr45;
+    fActiveAlias         : tStr95;
+    fUpdate              : Boolean;
+    fOnChangeTransport   : TChangeTransport;
+    fOnChangeServer      : tChangeServer;
+    fOnChangeAlias       : tChangeAlias;
+    fOnChangeFileSaveLoc : tChangeFIleSaveLoc;
+    fDataSource          : TJvDataSource;
+    fIniPathFile         : string;
   private
     procedure PrjTransportChange(aTransport: TTransportUsed);
     procedure PrjServerChange(aServer: tStr45);
     procedure PrjAliasChange(aAlias: tStr95);
+    procedure PrjFileSaveLocChange(aFilePath: string);
     procedure SetAlias(const Value: tstr95);
     procedure SetServer(const Value: tstr45);
     procedure SetTransport(const Value: TTransportUsed);
     procedure SetDataSource(const Value: TJvDataSource);
+    procedure SetIniPathFile(const Value: string);
   public
     constructor Create(aPrjName: string; aDataSet: TDataSet);
     destructor Destory;
@@ -80,6 +85,8 @@ type
     function LoadPropertiesFromTable(var Msg: string; aPrjName: string): Boolean; overload;
     function LoadPropertiesFromTable(var Msg: string): Boolean; overload;
 
+    procedure PrjPropertiesToActive;
+
     function SavePropertiesToTable(var Msg: string; aPrjName: string): Boolean;
     function InsertPrjIntoDb(var Msg: string): Boolean;
     function DeletePrj(var Msg: string; aPrjName: string): Boolean;
@@ -88,15 +95,17 @@ type
     property PrjName: tStr25 read fPrjName write fPrjName;
     property PrjPath: tStr255 read fPrjPath write fPrjPath;
     property PasFileSaveLoc: tStr255 read fPasFileSaveLoc write fPasFileSaveLoc;
-    property DBPassWord: tStr255 read fDBPassWord write fDBPassWord;
+    property PrjDBPassWord: tStr255 read fDBPassWord write fDBPassWord;
 
-    property Transport         : TTransportUsed read fTransport write SetTransport;
-    property Server            : tstr45 read fServer write SetServer;
-    property Alias             : tstr95 read fAlias write SetAlias;
+    property IniPathFile      :string read fIniPathFile write SetIniPathFile;
+
+    property PrjTransport     : TTransportUsed read fTransport write SetTransport;
+    property PrjServer        : tstr45 read fServer write SetServer;
+    property PrjAlias         : tstr95 read fAlias write SetAlias;
 
     property ActiveTrans       : TTransportUsed read fActiveTransport write fActiveTransport;
     property ActiveServer      : tstr45 read fActiveServer write fActiveServer;
-    property ActiveDb          : tstr95 read fActiveDb write fActiveDb;
+    property ActiveAlias       : tstr95 read fActiveAlias write fActiveAlias;
 
     property Table             : tStr25 read fTableName write fTableName;
     property Node              : tTreeNode read fTreeNode write fTreeNode;
@@ -104,6 +113,7 @@ type
     property OnChangeTransport : TChangeTransport read fOnChangeTransport write fOnChangeTransport;
     property OnChangeServer    : tChangeServer read fOnChangeServer write fOnChangeServer;
     property OnChangeAlias     : tChangeAlias read fOnChangeAlias write fOnChangeAlias;
+    property OnChangeFileSaveLoc: tChangeFileSaveLoc read fOnChangeFileSaveLoc write fOnChangeFileSaveLoc;
   end;
 
   TSQLBtnsDefaults = record
@@ -223,7 +233,7 @@ const
   cSqlBtnsDbAlias    = 'NxDelphiSqlTools'; // ok
   cSqlFontFileName   = '\EditorFonts.bin'; // ok
 
-  cNxDbTimeOut = 5000;
+  cNxDbTimeOut = 3000;
 
 
   cTransportTypes: array[TTransportUsed] of string = ('Win Sock', 'Named Pipe',
@@ -278,7 +288,8 @@ procedure GetProjectList;//(Out aResults: TStrings);
 //===================================
 
 implementation
-
+uses
+  GEMUseFullRoutines;
 
 procedure GetProjectList;//(Out aResults: TStrings);
 var
@@ -657,7 +668,9 @@ begin
     Exit;
   end;
 
+{$IFDEF DEBUG}
   ShowMessage('PrjName' + '-- '+ aPrjName);
+{$ENDIF}
   if DataSource.DataSet.Locate('PrjName', aPrjName, [loCaseInsensitive]) then
   begin
     fPrjName   := ShortString(DataSource.DataSet.FieldByName('PrjName').AsString);
@@ -731,30 +744,49 @@ end;
 procedure TProjectInfo.PrjTransportChange(aTransport: TTransportUsed);
 begin
   if Assigned(fOnChangeTransport) then
-    fOnChangeTransport(fTransport);
+    fOnChangeTransport(aTransport);
 end;
 
 procedure TProjectInfo.PrjServerChange(aServer: tStr45);
 begin
   if Assigned(fOnChangeServer) then
-    fOnChangeServer(fServer);
+    fOnChangeServer(aServer);
 end;
+
 
 procedure TProjectInfo.PrjAliasChange(aAlias: tStr95);
 begin
   if Assigned(fOnChangeAlias) then
-    fOnChangeAlias(fAlias);
+    fOnChangeAlias(aAlias);
 end;
+
+
+procedure TProjectInfo.PrjFileSaveLocChange(aFilePath: string);
+begin
+  if Assigned(fOnChangeFileSaveLoc) then
+    fOnChangeAlias(aFilePath);
+end;
+
+
+procedure TProjectInfo.PrjPropertiesToActive;
+begin
+   fActiveTransport := fTransport;
+   fActiveServer := fServer;
+   fActiveAlias :=  fAlias;
+end;
+
 
 procedure TProjectInfo.BeginUpdate;
 begin
   fUpdate := True;
 end;
 
+
 procedure TProjectInfo.EndUpdate;
 begin
   fUpdate := false;
 end;
+
 
 procedure TProjectInfo.ClearPrj;
 begin
@@ -766,9 +798,28 @@ begin
   fPasFileSaveLoc := '';
   fDBPassWord     := '';
   fActiveServer   := '';
-  fActiveDb       := '';
+  fActiveAlias    := '';
   fTreeNode       := nil;
 end;
+
+
+procedure TProjectInfo.SetIniPathFile(const Value: string);
+var
+  fPath: string;
+begin
+  fIniPathFile := ExtractFilePath(Value);
+  if fIniPathFile  = '' then
+    Exit;
+
+  fIniPathFile := RemoveTrailingSlash(fIniPathFile);
+  fIniPathFile := fIniPathFile + cFilterIniFiles;
+
+  fPath := ExtractFilePath(fIniPathFile);
+  if not System.SysUtils.DirectoryExists(fPath) then
+    if not CreateDir(fPath) then
+      raise Exception.Create('Cannot create C:\temp');
+end;
+
 
 
 constructor TProjectInfo.Create(aPrjName: string; aDataSet: TDataSet);
@@ -776,6 +827,8 @@ begin
   fDataSource := tJvDataSource.Create(Nil);
   fPrjName := ShortString(aPrjName);
   fDataSource.DataSet := aDataSet;
+
+  fIniPathFile := fPasFileSaveLoc + cFilterIniFiles;
 end;
 
 destructor TProjectInfo.Destory;

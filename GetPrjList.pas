@@ -27,7 +27,7 @@ uses
   JvXPCore, JvXPButtons, JvImage, JvImageList, JvSpeedButton, JvBehaviorLabel,
   JvComboListBox, JvBalloonHint, JvRadioGroup,
 
-  PngSpeedButton, JvAnimatedImage, gemCapPanelBtn
+  PngSpeedButton, JvAnimatedImage, gemCapPanelBtn, JvRichEdit
 
   {$IFDEF  USE_CODESITE}, CodeSiteLogging {$ENDIF};
 
@@ -142,7 +142,7 @@ type
     lbl_HelpOpenAppDb: TLabel;
     crd_Introduction: TCard;
     act_IntroductionHelp: TAction;
-    mmo_1: TRzMemo;
+    edt_Intro: TJvRichEdit;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -206,7 +206,6 @@ type
     procedure SetConnectBtn(aConnected: Boolean);
     procedure SetFormSize;
     procedure CheckUserServerSelection(FullNetWorkServerTest: Boolean = false);
-    function ReadConfigXmlFile(aChildern: tStrings): string;
     procedure PleaseWait(aToDo: boolean);
   public
     { Public declarations }
@@ -215,7 +214,7 @@ type
 //    property PrjInfo: TProjectInfo read fPrjInfo write fPrjInfo;
   end;
 
-  tCardList = (cl_CardCreatePrjDb, cl_CardMostRecnt, cl_Server, cl_NewDb, cl_Pack);
+  tCardList = (cl_CardCreatePrjDb, cl_CardMostRecnt, cl_Server, cl_NewDb, cl_Pack, cl_Intro);
   tFwd = (fwd_Width, fwd_Height);
 
 resourcestring
@@ -248,10 +247,10 @@ const
   cUsePrjMan = '(Create, Edit, Remove Projects)';
   cUseRecent = '(Select Recently Use Project)';
 
-  cPrjForm: array[cl_CardCreatePrjDb..cl_Pack, fwd_Width..fwd_Height] of integer =
+  cPrjForm: array[cl_CardCreatePrjDb..cl_Intro, fwd_Width..fwd_Height] of integer =
                                                (( 1171, 697), (683, 565),
                                                 ( 730, 651), (479, 565),
-                                                ( 965, 565));
+                                                ( 965, 565), (871, 563));
 
   cBtnHintMRU  = 'Select project from a MRU Listing';
   cBtnHintGrid = 'Select project from Db Project Grid Listing';
@@ -259,39 +258,6 @@ const
   cBtnMRUCaption = 'Recently Use Projects';
 
 
-
-function Tfrm_SelectProject. ReadConfigXmlFile(aChildern: tStrings): string;
-var
-//  XmlFile : TXMLDocument;
-  i : Integer;
-  XMLPath : string;
-  fCild: string;
-begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'ReadConfigXmlFile' );{$ENDIF}
-
-//LB_FINDSTRING
-//  XMLPath := PathAndFileAtFormLocSize;
-//  XmlFile := TXMLDocument.Create(Application);
-//  try
-//    XmlFile.LoadFromFile(XMLPath);
-//    XmlFile.Active := True;
-//    MainNode := XmlFile.DocumentElement;
-//    fCild := aChildern;
-//
-//    for i:=0 to MainNode.ChildNodes[aChildern.Strings[0]].ChildNodes.Count-1 do
-//    begin
-//      CustomerNode := MainNode.ChildNodes['Customers'].ChildNodes[i];
-//      MainNode.ChildNodes['Customers'].ChildNodes[i].ChildNodes
-//      //Here you can get any imformation
-//      ShowMessage(CustomerNode.ChildNodes['address_name'].Text);
-//      ShowMessage(CustomerNode.ChildNodes['address_line_1'].Text);
-//    end;
-//  finally
-//    FreeAndNil(XmlFile);
-//  end;
-
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'ReadConfigXmlFile' );{$ENDIF}
-end;
 
 procedure Tfrm_SelectProject.SetStatusBar(aMsg: string; aPanel: Byte; aColor: TColor);
 begin
@@ -463,7 +429,8 @@ end;
 
 procedure Tfrm_SelectProject.act_IntroductionHelpExecute(Sender: TObject);
 begin
-//
+  cardpnl_Dialogs.ActiveCard := crd_Introduction;
+  SetFormSize;
 end;
 
 procedure Tfrm_SelectProject.SharedMem2Click(Sender: TObject);
@@ -486,19 +453,6 @@ begin
 
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'sv_MenuItemsClosed' );{$ENDIF}
 end;
-
-
-//procedure Tfrm_SelectProject.sv_MenuItemsClosing(Sender: TObject);
-//begin
-////  if cardpnl_Dialogs.ActiveCard = Card_CreateSelectPrjDb then begin
-////    frm_SelectProject.Width := cCard_CreateSelectPrjDb_FormW;
-////    frm_SelectProject.Height := cCard_CreateSelectPrjDb_FormH;
-////  end;
-////  if cardpnl_Dialogs.ActiveCard = Card_MostRecentlyUsedPrj then begin
-////    frm_SelectProject.Width := cCard_MostRecentlyUsedPrj_FormW;
-////    frm_SelectProject.Height := cCard_MostRecentlyUsedPrj_FormW;
-////  end;
-//end;
 
 
 procedure Tfrm_SelectProject.act_PrjEditExecute(Sender: TObject);
@@ -1040,28 +994,6 @@ end;
 
 procedure Tfrm_SelectProject.OpenPrjFrom(Sender: TObject; PrjOpenType: tPrjOpenType);
 // open project from click on mru project list
-
-//  function SetPrjInfo: boolean;
-//  begin
-//    Result := True;
-//    try
-//      gProjectInfo.BeginUpdate;
-//
-//      gProjectInfo.PrjName := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('PrjName').AsString);
-//      gProjectInfo.PrjPath := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('PrjPath').AsString);
-//      gProjectInfo.Transport := TTransportUsed(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('TransportID').AsInteger);
-//      gProjectInfo.Server := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Server').AsString);
-//      gProjectInfo.Alias := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Alias').AsString);
-//      gProjectInfo.ActiveTrans := gProjectInfo.Transport;
-//      gProjectInfo.ActiveServer := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Server').AsString);
-//      gProjectInfo.ActiveDb := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('Alias').AsString);
-//      gProjectInfo.DBPassWord := ShortString(dm_DataMod.nxtbl_NxDbSqlToolsPrjs.FieldByName('DbPassWord').AsString);
-//    except
-//      result := False;
-//    end;
-//    gProjectInfo.EndUpdate;
-//  end;
-
 var
   fError  : Boolean;
   fMsg: string;
@@ -1112,6 +1044,7 @@ begin
       end;
     lstGemMruList1.Add(string(gProjectInfo.PrjName), string(gProjectInfo.PrjPath));
     gProjectInfo.EndUpdate;
+    gProjectInfo.PrjPropertiesToActive;
     OpenProject(Sender);
   end
   else begin

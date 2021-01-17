@@ -4,8 +4,8 @@ object frm_SelectProject: Tfrm_SelectProject
   Anchors = [akLeft, akRight]
   BorderStyle = bsDialog
   Caption = 'Select Project'
-  ClientHeight = 622
-  ClientWidth = 1183
+  ClientHeight = 534
+  ClientWidth = 865
   Color = clBtnFace
   Constraints.MinHeight = 563
   Font.Charset = ANSI_CHARSET
@@ -24,23 +24,25 @@ object frm_SelectProject: Tfrm_SelectProject
     AlignWithMargins = True
     Left = 213
     Top = 81
-    Width = 967
-    Height = 500
+    Width = 649
+    Height = 412
     Align = alClient
-    ActiveCard = crd_Introduction
+    ActiveCard = Card_CreateSelectPrjDb
     Caption = 'cardpnl_Dialogs'
     TabOrder = 0
     OnCardChange = cardpnl_DialogsCardChange
-    ExplicitHeight = 582
+    ExplicitWidth = 967
+    ExplicitHeight = 500
     object Card_CreateSelectPrjDb: TCard
       Left = 1
       Top = 1
-      Width = 965
-      Height = 498
+      Width = 647
+      Height = 410
       Caption = 'CreateSelectPrjDb'
       CardIndex = 0
       TabOrder = 0
-      ExplicitHeight = 580
+      ExplicitWidth = 965
+      ExplicitHeight = 498
       object Label3: TLabel
         Left = 0
         Top = 2
@@ -412,12 +414,13 @@ object frm_SelectProject: Tfrm_SelectProject
     object Card_MostRecentlyUsedPrj: TCard
       Left = 1
       Top = 1
-      Width = 965
-      Height = 498
+      Width = 647
+      Height = 410
       Caption = 'Most Recently Used'
       CardIndex = 1
       TabOrder = 1
-      ExplicitHeight = 580
+      ExplicitWidth = 965
+      ExplicitHeight = 498
       object lbl4: TLabel
         Left = 19
         Top = 29
@@ -463,12 +466,13 @@ object frm_SelectProject: Tfrm_SelectProject
     object crd_SetDbServer: TCard
       Left = 1
       Top = 1
-      Width = 965
-      Height = 498
+      Width = 647
+      Height = 410
       Caption = 'crd_SetDbServer'
       CardIndex = 2
       TabOrder = 2
-      ExplicitHeight = 580
+      ExplicitWidth = 965
+      ExplicitHeight = 498
       object Label13: TLabel
         Left = 16
         Top = 59
@@ -843,54 +847,64 @@ object frm_SelectProject: Tfrm_SelectProject
     object crd_CreateNewDbTables: TCard
       Left = 1
       Top = 1
-      Width = 965
-      Height = 498
+      Width = 647
+      Height = 410
       Caption = 'crd_CreateNewDbTables'
       CardIndex = 3
       TabOrder = 3
-      ExplicitHeight = 580
+      ExplicitWidth = 965
+      ExplicitHeight = 498
     end
     object crd_PackRestructureDb: TCard
       Left = 1
       Top = 1
-      Width = 965
-      Height = 498
+      Width = 647
+      Height = 410
       Caption = 'crd_PackRestructureDb'
       CardIndex = 4
       TabOrder = 4
-      ExplicitHeight = 580
+      ExplicitWidth = 965
+      ExplicitHeight = 498
     end
     object crd_Introduction: TCard
       Left = 1
       Top = 1
-      Width = 965
-      Height = 498
+      Width = 647
+      Height = 410
       Caption = 'crd_Introduction'
       CardIndex = 5
       TabOrder = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 185
-      ExplicitHeight = 41
-      object mmo_1: TRzMemo
-        Left = 24
+      ExplicitWidth = 965
+      ExplicitHeight = 498
+      object edt_Intro: TJvRichEdit
+        Left = 32
         Top = 16
-        Width = 593
-        Height = 465
-        Color = clBtnFace
+        Width = 569
+        Height = 361
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Segoe UI'
+        Font.Style = []
         Lines.Strings = (
           
             'This App is used to determine the results of SQL queries in Delp' +
-            'hi.  The Query can be used in a Master Detail '
+            'hi.  The Query '
           
-            'with the Query being the detail table.  The master is a NxTable.' +
-            '  The Query can be written out as Delphi Code.  '
+            'can be used in a Master Detail with the Query being the detail t' +
+            'able.  The master '
           
-            'There can be many tables and queries openned at the same time.  ' +
-            'Each table and query is opened in its own '
+            'is a NxTable.  The Query can be written out as Delphi Code.  The' +
+            're can be many '
           
-            'window.  The windows can be docked on the main form of the app o' +
-            'r shown floating on the screen.')
+            'tables and queries openned at the same time.  Each table and que' +
+            'ry is opened in '
+          
+            'its own window.  The windows can be docked on the main form of t' +
+            'he app or '
+          'shown floating on the screen.')
+        ParentFont = False
+        SelText = ''
         TabOrder = 0
       end
     end
@@ -898,12 +912,13 @@ object frm_SelectProject: Tfrm_SelectProject
   object JvPanel1: TJvPanel
     Left = 0
     Top = 0
-    Width = 1183
+    Width = 865
     Height = 78
     Align = alTop
     TabOrder = 1
+    ExplicitWidth = 1183
     DesignSize = (
-      1183
+      865
       78)
     object JvLED1: TJvLED
       Left = 0
@@ -928,7 +943,7 @@ object frm_SelectProject: Tfrm_SelectProject
     object Shape1: TShape
       Left = 23
       Top = 22
-      Width = 1084
+      Width = 766
       Height = 7
       Anchors = [akLeft, akTop, akRight]
       Brush.Color = clBlue
@@ -1093,8 +1108,8 @@ object frm_SelectProject: Tfrm_SelectProject
   end
   object StatusBarPro: TStatusBarPro
     Left = 0
-    Top = 584
-    Width = 1183
+    Top = 496
+    Width = 865
     Height = 38
     Panels = <
       item
@@ -1108,13 +1123,14 @@ object frm_SelectProject: Tfrm_SelectProject
       end>
     SimplePanel = False
     WordWrap = True
-    ExplicitTop = 666
+    ExplicitTop = 584
+    ExplicitWidth = 1183
   end
   object sv_MenuItems: TSplitView
     Left = 0
     Top = 78
     Width = 210
-    Height = 506
+    Height = 418
     CloseStyle = svcCompact
     Color = clBtnText
     DockSite = True
@@ -1124,7 +1140,7 @@ object frm_SelectProject: Tfrm_SelectProject
     OnClosed = sv_MenuItemsClosed
     OnOpened = sv_MenuItemsOpened
     OnOpening = sv_MenuItemsOpening
-    ExplicitHeight = 588
+    ExplicitHeight = 506
     object ctgrybtns_Menu: TCategoryButtons
       Left = 0
       Top = 0
@@ -1190,7 +1206,6 @@ object frm_SelectProject: Tfrm_SelectProject
       RegularButtonColor = clBtnText
       SelectedButtonColor = clBlack
       TabOrder = 0
-      ExplicitLeft = -2
     end
   end
   object ActionList1: TActionList
