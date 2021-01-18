@@ -31,8 +31,6 @@ object frm_SelectProject: Tfrm_SelectProject
     Caption = 'cardpnl_Dialogs'
     TabOrder = 0
     OnCardChange = cardpnl_DialogsCardChange
-    ExplicitWidth = 967
-    ExplicitHeight = 500
     object Card_CreateSelectPrjDb: TCard
       Left = 1
       Top = 1
@@ -41,8 +39,6 @@ object frm_SelectProject: Tfrm_SelectProject
       Caption = 'CreateSelectPrjDb'
       CardIndex = 0
       TabOrder = 0
-      ExplicitWidth = 965
-      ExplicitHeight = 498
       object Label3: TLabel
         Left = 0
         Top = 2
@@ -419,8 +415,6 @@ object frm_SelectProject: Tfrm_SelectProject
       Caption = 'Most Recently Used'
       CardIndex = 1
       TabOrder = 1
-      ExplicitWidth = 965
-      ExplicitHeight = 498
       object lbl4: TLabel
         Left = 19
         Top = 29
@@ -471,8 +465,6 @@ object frm_SelectProject: Tfrm_SelectProject
       Caption = 'crd_SetDbServer'
       CardIndex = 2
       TabOrder = 2
-      ExplicitWidth = 965
-      ExplicitHeight = 498
       object Label13: TLabel
         Left = 16
         Top = 59
@@ -852,8 +844,6 @@ object frm_SelectProject: Tfrm_SelectProject
       Caption = 'crd_CreateNewDbTables'
       CardIndex = 3
       TabOrder = 3
-      ExplicitWidth = 965
-      ExplicitHeight = 498
     end
     object crd_PackRestructureDb: TCard
       Left = 1
@@ -863,8 +853,6 @@ object frm_SelectProject: Tfrm_SelectProject
       Caption = 'crd_PackRestructureDb'
       CardIndex = 4
       TabOrder = 4
-      ExplicitWidth = 965
-      ExplicitHeight = 498
     end
     object crd_Introduction: TCard
       Left = 1
@@ -874,8 +862,6 @@ object frm_SelectProject: Tfrm_SelectProject
       Caption = 'crd_Introduction'
       CardIndex = 5
       TabOrder = 5
-      ExplicitWidth = 965
-      ExplicitHeight = 498
       object edt_Intro: TJvRichEdit
         Left = 32
         Top = 16
@@ -916,7 +902,6 @@ object frm_SelectProject: Tfrm_SelectProject
     Height = 78
     Align = alTop
     TabOrder = 1
-    ExplicitWidth = 1183
     DesignSize = (
       865
       78)
@@ -1021,6 +1006,7 @@ object frm_SelectProject: Tfrm_SelectProject
       Width = 64
       Height = 66
       ClicksDisabled = False
+      Image_Align = alNone
       Image_AutoSize = False
       Image_Center = True
       Image_Picture.Data = {
@@ -1089,6 +1075,7 @@ object frm_SelectProject: Tfrm_SelectProject
       Image_Proportional = True
       Image_Stretch = True
       Image_Visible = True
+      Image_Width = 105
       Image_Height = 27
       ButtonOverColor = clMedGray
       ButtonDownColor = clBlack
@@ -1123,8 +1110,6 @@ object frm_SelectProject: Tfrm_SelectProject
       end>
     SimplePanel = False
     WordWrap = True
-    ExplicitTop = 584
-    ExplicitWidth = 1183
   end
   object sv_MenuItems: TSplitView
     Left = 0
@@ -1140,7 +1125,6 @@ object frm_SelectProject: Tfrm_SelectProject
     OnClosed = sv_MenuItemsClosed
     OnOpened = sv_MenuItemsOpened
     OnOpening = sv_MenuItemsOpening
-    ExplicitHeight = 506
     object ctgrybtns_Menu: TCategoryButtons
       Left = 0
       Top = 0

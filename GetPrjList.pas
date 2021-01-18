@@ -414,7 +414,7 @@ begin
     dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Delete;
     lstGemMruList1.DeleteItem(string(gProjectInfo.PrjName));
     gProjectInfo.EndUpdate;
-    GetProjectList;
+//    GetProjectList;
   end;
 
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'act_DeletePrjExecute' );{$ENDIF}

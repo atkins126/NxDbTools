@@ -46,25 +46,27 @@ type
   tChangeFileSaveLoc = procedure(aPath: string) of object;
 
   TProjectInfo = class
-    fPrjName             : tStr25;
-    fPrjPath             : tStr255;
-    fTransport           : TTransportUsed;
-    fServer              : tStr45;
-    fAlias               : tStr95;
-    fPasFileSaveLoc      : tStr255;
-    fDBPassWord          : tStr255;
-    fTableName           : tStr25;
-    fTreeNode            : TTreeNode;
-    fActiveTransport     : TTransportUsed;
-    fActiveServer        : tStr45;
-    fActiveAlias         : tStr95;
-    fUpdate              : Boolean;
-    fOnChangeTransport   : TChangeTransport;
-    fOnChangeServer      : tChangeServer;
-    fOnChangeAlias       : tChangeAlias;
-    fOnChangeFileSaveLoc : tChangeFIleSaveLoc;
-    fDataSource          : TJvDataSource;
-    fIniPathFile         : string;
+    fPrjName                : tStr25;
+    fPrjPath                : tStr255;
+    fPrjTransport           : TTransportUsed;
+    fPrjServer              : tStr45;
+    fPrjAlias               : tStr95;
+    fPrjLocalServerPath     : string;
+    fPasFileSaveLoc         : tStr255;
+    fDBPassWord             : tStr255;
+    fTableName              : tStr25;
+    fTreeNode               : TTreeNode;
+    fActiveTransport        : TTransportUsed;
+    fActiveServer           : tStr45;
+    fActiveAlias            : tStr95;
+    fUpdate                 : Boolean;
+    fOnChangeTransport      : TChangeTransport;
+    fOnChangeServer         : tChangeServer;
+    fOnChangeAlias          : tChangeAlias;
+    fOnChangeFileSaveLoc    : tChangeFIleSaveLoc;
+    fDataSource             : TJvDataSource;
+    fIniPathFile            : string;
+    fActiveLocalServerPath  : string;
   private
     procedure PrjTransportChange(aTransport: TTransportUsed);
     procedure PrjServerChange(aServer: tStr45);
@@ -99,13 +101,15 @@ type
 
     property IniPathFile      :string read fIniPathFile write SetIniPathFile;
 
-    property PrjTransport     : TTransportUsed read fTransport write SetTransport;
-    property PrjServer        : tstr45 read fServer write SetServer;
-    property PrjAlias         : tstr95 read fAlias write SetAlias;
+    property PrjTransport       : TTransportUsed read fPrjTransport write SetTransport;
+    property PrjServer          : tstr45 read fPrjServer write SetServer;
+    property PrjAlias           : tstr95 read fPrjAlias write SetAlias;
+    property PrjLocalServerPath : string read fPrjLocalServerPath write fPrjLocalServerPath;
 
     property ActiveTrans       : TTransportUsed read fActiveTransport write fActiveTransport;
     property ActiveServer      : tstr45 read fActiveServer write fActiveServer;
     property ActiveAlias       : tstr95 read fActiveAlias write fActiveAlias;
+    property ActiveLocalServerPath: string read fActiveLocalServerPath write fActiveLocalServerPath;
 
     property Table             : tStr25 read fTableName write fTableName;
     property Node              : tTreeNode read fTreeNode write fTreeNode;
@@ -192,19 +196,16 @@ var
   PrjSetupCompomentsIni      : string;
   PathAndFileAtFormLocSize   : string;
   AppPath                    : string;
-//  FunctionNamesPath          : string;
   DelphiDbDefaultPath        : string;
   NxSQLViewerDataIniFile     : tGemINI;
   SQLBtnsArray               : Tarray<tJvPanel>;
-//  RootNodeDbArray            : Tarray<tRootNodeDb>;
   BtnDefaultSettingsPathFile : string;
   BtnDefaultSettingsRec      : File of TDefaultSettingsSQLBtns;
   DefaultSettingsSQLBtns     : TDefaultSettingsSQLBtns;
-  LocalServerAliasesPath     : string;
   IniNxSQLPathFile           : string;
   DefaultPathForPrjsFolder   : string;
   fthe_DefaultPrjPath        : string;
-  fTheProjects               : TStringList;
+//  fTheProjects               : TStringList;
   MRUFile                    : string;
   UpdateInstallPath          : string;
   SqlFontStylesSaveFilePath  : string;
@@ -277,7 +278,7 @@ function ExtractAliasAndPath(aOrgStr: string; out aAlias, aPath: string): Boolea
 
 function BoolToStr(aBool: boolean): string;
 
-procedure GetProjectList;//(Out aResults: TStrings);
+//procedure GetProjectList;//(Out aResults: TStrings);
 
 //function ReadProjectSetup(var aProjectInfo: TProjectInfo): boolean;
 //
@@ -291,26 +292,26 @@ implementation
 uses
   GEMUseFullRoutines;
 
-procedure GetProjectList;//(Out aResults: TStrings);
-var
-  strFiles: TStringDynArray;
-  i: integer;
-
-  function getProjectName(aPath: string):string;
-  var
-    position: Integer;
-  begin
-    position := LastDelimiter( '\', aPath );
-    result := Copy ( aPath, position + 1, Length(aPath) - position);
-  end;
-
-begin
-  fTheProjects.Clear;
-  strFiles := TDirectory.GetDirectories(DefaultPathForPrjsFolder);
-  for i := 0  to High(strFiles) do begin
-    fTheProjects.Add(getProjectName(strFiles[i]) + '=' + strFiles[i]);
-  end;
-end;
+//procedure GetProjectList;//(Out aResults: TStrings);
+//var
+//  strFiles: TStringDynArray;
+//  i: integer;
+//
+//  function getProjectName(aPath: string):string;
+//  var
+//    position: Integer;
+//  begin
+//    position := LastDelimiter( '\', aPath );
+//    result := Copy ( aPath, position + 1, Length(aPath) - position);
+//  end;
+//
+//begin
+//  fTheProjects.Clear;
+//  strFiles := TDirectory.GetDirectories(DefaultPathForPrjsFolder);
+//  for i := 0  to High(strFiles) do begin
+//    fTheProjects.Add(getProjectName(strFiles[i]) + '=' + strFiles[i]);
+//  end;
+//end;
 
 
 {Begin tJvPanel }
@@ -399,7 +400,7 @@ end;
 procedure SetProgramPaths;
 begin
   fPrjPathValidChars := True;
-  fTheProjects.NameValueSeparator := '=';
+//  fTheProjects.NameValueSeparator := '=';
 
   AppPath := getWinSpecialFolder(CSIDL_LOCAL_APPDATA, False) + cSRSDpath;
   DefaultPathForPrjsFolder := getWinSpecialFolder(CSIDL_PERSONAL, false) + cDefaultPathForPrjs + '\';
@@ -570,23 +571,23 @@ end;
 
 procedure TProjectInfo.SetTransport(const Value: TTransportUsed);
 begin
-  if Value <> fTransport then begin
-    fTransport := Value;
+  if Value <> fPrjTransport then begin
+    fPrjTransport := Value;
     if not fUpdate then begin
       PrjTransportChange(fTransport);
-      fServer := '';
-      fAlias := '';
+      fPrjServer := '';
+      fPrjAlias := '';
     end;
   end;
 end;
 
 procedure TProjectInfo.SetServer(const Value: tstr45);
 begin
-  if Value <> fServer then begin
-    fServer := Value;
+  if Value <> fPrjServer then begin
+    fPrjServer := Value;
     if not fUpdate then begin
-      PrjServerChange(fServer);
-      fAlias := '';
+      PrjServerChange(fPrjServer);
+      fPrjAlias := '';
     end;
   end;
 end;
@@ -605,9 +606,9 @@ begin
     DataSource.DataSet.Edit;
     DataSource.DataSet.FieldByName('PrjName').AsString      := fPrjName;
     DataSource.DataSet.FieldByName('PrjPath').AsString      := fPrjPath;
-    DataSource.DataSet.FieldByName('TransportID').AsInteger := Ord(fTransport);
-    DataSource.DataSet.FieldByName('Server').AsString       := fServer;
-    DataSource.DataSet.FieldByName('Alias').AsString        := fAlias;
+    DataSource.DataSet.FieldByName('TransportID').AsInteger := Ord(fPrjTransport);
+    DataSource.DataSet.FieldByName('Server').AsString       := fPrjServer;
+    DataSource.DataSet.FieldByName('Alias').AsString        := fPrjAlias;
     DataSource.DataSet.FieldByName('DbPassWord').AsString   := fDBPassWord;
     DataSource.DataSet.Post;
     result := True;
@@ -633,11 +634,11 @@ begin
     s := 'Reading fPrjName';
     fPrjPath   := ShortString(DataSource.DataSet.FieldByName('PrjPath').AsString);
     s := 'Reading fPrjPath';
-    fTransport := TTransportUsed(DataSource.DataSet.FieldByName('TransportID').AsInteger);
+    fPrjTransport := TTransportUsed(DataSource.DataSet.FieldByName('TransportID').AsInteger);
     s := 'Reading fTransport';
-    fServer    := ShortString(DataSource.DataSet.FieldByName('Server').AsString);
+    fPrjServer    := ShortString(DataSource.DataSet.FieldByName('Server').AsString);
     s := 'Reading fPrjName';
-    fAlias     := ShortString(DataSource.DataSet.FieldByName('Alias').AsString);
+    fPrjAlias     := ShortString(DataSource.DataSet.FieldByName('Alias').AsString);
     s := 'Reading fPrjName';
     fDBPassWord:= ShortString(DataSource.DataSet.FieldByName('DbPassWord').AsString);
     result := True;
@@ -698,9 +699,9 @@ begin
     DataSource.DataSet.Insert;
     DataSource.DataSet.FieldByName('PrjName').AsString      := fPrjName;
     DataSource.DataSet.FieldByName('PrjPath').AsString      := fPrjPath;
-    DataSource.DataSet.FieldByName('TransportID').AsInteger := Ord(fTransport);
-    DataSource.DataSet.FieldByName('Server').AsString       := fServer;
-    DataSource.DataSet.FieldByName('Alias').AsString        := fAlias;
+    DataSource.DataSet.FieldByName('TransportID').AsInteger := Ord(fPrjTransport);
+    DataSource.DataSet.FieldByName('Server').AsString       := fPrjServer;
+    DataSource.DataSet.FieldByName('Alias').AsString        := fPrjAlias;
     DataSource.DataSet.FieldByName('DbPassWord').AsString   := fDBPassWord;
     DataSource.DataSet.Post;
     Result := True;
@@ -770,9 +771,9 @@ end;
 
 procedure TProjectInfo.PrjPropertiesToActive;
 begin
-   fActiveTransport := fTransport;
-   fActiveServer := fServer;
-   fActiveAlias :=  fAlias;
+   fActiveTransport := fPrjTransport;
+   fActiveServer := fPrjServer;
+   fActiveAlias :=  fPrjAlias;
 end;
 
 
@@ -790,16 +791,19 @@ end;
 
 procedure TProjectInfo.ClearPrj;
 begin
-  fPrjName        := '';
-  fPrjPath        := '';
-  fTransport      := tranNone;
-  fServer         := '';
-  fAlias          := '';
-  fPasFileSaveLoc := '';
-  fDBPassWord     := '';
-  fActiveServer   := '';
-  fActiveAlias    := '';
-  fTreeNode       := nil;
+  fPrjName               := '';
+  fPrjPath               := '';
+  fPrjTransport          := tranNone;
+  fPrjServer             := '';
+  fPrjAlias              := '';
+  fPrjLocalServerPath    := '';
+  fPasFileSaveLoc        := '';
+  fDBPassWord            := '';
+  fActiveTransport       := tranNone;
+  fActiveServer          := '';
+  fActiveAlias           := '';
+  fActiveLocalServerPath := '';
+  fTreeNode              := nil;
 end;
 
 
