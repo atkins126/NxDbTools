@@ -1200,7 +1200,7 @@ begin
 
 
   CanClose := JvLED1.Status;
-  IniSaveComponents(PrjSetupCompomentsIni, fComponentIni);//, Ext_Section:String='', false);
+//  IniSaveComponents(PrjSetupCompomentsIni, fComponentIni);//, Ext_Section:String='', false);
 
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'FormCloseQuery' );{$ENDIF}
 end;
@@ -1417,7 +1417,7 @@ procedure Tfrm_SelectProject.FormShow(Sender: TObject);
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormShow' );{$ENDIF}
 
-  IniLoadComponents(PrjSetupCompomentsIni, fComponentIni, false);
+//  IniLoadComponents(PrjSetupCompomentsIni, fComponentIni, false);
   SetDialogServerType;
   CheckUserServerSelection(True);
   act_ConnectBtn.Execute;

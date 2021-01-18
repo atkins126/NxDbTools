@@ -863,7 +863,7 @@ end;
 
 procedure Tfrm_NxToolsMain.SetPasFileLoc(const Value: tStr255);
 begin
-  gProjectInfo.PasFileSaveLoc := Value;
+  gProjectInfo.PasSqlFileSaveLoc := Value;
 end;
 
 
@@ -983,7 +983,7 @@ begin
   fLocalAliasPaths.Free;
 
 //  IniWriteString(PathAndFileIni, 'DefaultPrj','Path', stsbrpr_StatusBar.Panels[ord(spoDefaultPrjDir)].Text);
-  FreeAndNil(fTheProjects);
+//  FreeAndNil(fTheProjects);
 
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'FormClose' );{$ENDIF}
 end;
@@ -1198,7 +1198,7 @@ begin
 
   fFormShowing := true;
 
-  fTheProjects := TStringList.Create;
+//  fTheProjects := TStringList.Create;
   SetProgramPaths;
   {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part A' );{$ENDIF}
 
@@ -1248,7 +1248,7 @@ end;
 procedure Tfrm_NxToolsMain.FormDestroy(Sender: TObject);
 begin
   FreeAndNil(gProjectInfo);
-  DestroyFromMenuItems;
+  DestroyFormMenuItems;
 end;
 
 
@@ -1271,7 +1271,7 @@ procedure Tfrm_NxToolsMain.AddFormsToWindowsMenu;
 var
   NewItem: TMenuItem;
 begin
-  DestroyFromMenuItems;
+  DestroyFormMenuItems;
 {$REGION 'DOC'}
     { first create the separator }
   //  NewItem := TMenuItem.Create(mm_MainMenu.Items[1]);
@@ -2071,7 +2071,7 @@ begin
   fSQLArrayDockForm[DockingFormsInfo.NumSqlForms].Caption := 'SQL-' + IntToStr(DockingFormsInfo.SqlformNumbering);
   fSQLArrayDockForm[DockingFormsInfo.NumSqlForms].tag := DockingFormsInfo.NumSqlForms;
   fSQLArrayDockForm[DockingFormsInfo.NumSqlForms].PrjPath := String(gProjectInfo.PrjPath);
-  fSQLArrayDockForm[DockingFormsInfo.NumSqlForms].PasFileSaveLoc := String(gProjectInfo.PasFileSaveLoc);
+  fSQLArrayDockForm[DockingFormsInfo.NumSqlForms].PasFileSaveLoc := String(gProjectInfo.PasSqlFileSaveLoc);
 
   DockingFormsInfo.ActiveIndex := DockingFormsInfo.NumSqlForms;
 

@@ -48,41 +48,52 @@ type
   TProjectInfo = class
     fPrjName                : tStr25;
     fPrjPath                : tStr255;
+
     fPrjTransport           : TTransportUsed;
     fPrjServer              : tStr45;
     fPrjAlias               : tStr95;
     fPrjLocalServerPath     : string;
-    fPasFileSaveLoc         : tStr255;
-    fDBPassWord             : tStr255;
-    fTableName              : tStr25;
-    fTreeNode               : TTreeNode;
+
     fActiveTransport        : TTransportUsed;
     fActiveServer           : tStr45;
     fActiveAlias            : tStr95;
+    fActiveLocalServerPath  : string;
+
+    fPasSqlFileSaveLoc      : tStr255;
+    fDefaultPasSqlFileLoc   : string;
+    fIniFilterPathFile      : string;
+
+    fDBPassWord             : tStr255;
+    fTableName              : tStr25;
+    fTreeNode               : TTreeNode;
     fUpdate                 : Boolean;
+
     fOnChangeTransport      : TChangeTransport;
     fOnChangeServer         : tChangeServer;
     fOnChangeAlias          : tChangeAlias;
     fOnChangeFileSaveLoc    : tChangeFIleSaveLoc;
+
     fDataSource             : TJvDataSource;
-    fIniPathFile            : string;
-    fActiveLocalServerPath  : string;
   private
     procedure PrjTransportChange(aTransport: TTransportUsed);
     procedure PrjServerChange(aServer: tStr45);
     procedure PrjAliasChange(aAlias: tStr95);
     procedure PrjFileSaveLocChange(aFilePath: string);
-    procedure SetAlias(const Value: tstr95);
-    procedure SetServer(const Value: tstr45);
-    procedure SetTransport(const Value: TTransportUsed);
+    procedure SetPrjAlias(const Value: tstr95);
+    procedure SetPrjServer(const Value: tstr45);
+    procedure SetPrjTransport(const Value: TTransportUsed);
     procedure SetDataSource(const Value: TJvDataSource);
     procedure SetIniPathFile(const Value: string);
+//    procedure SetDefaultPasSqlFileLoc(const Value: string);
+//    procedure SetDataSource(const Value: TJvDataSource);
   public
     constructor Create(aPrjName: string; aDataSet: TDataSet);
     destructor Destory;
     procedure BeginUpdate;
     procedure EndUpdate;
     procedure ClearPrj;
+
+//    function DefaultPasSqlFiles: string;
 
     function LoadPropertiesFromTable(var Msg: string; aPrjName: string): Boolean; overload;
     function LoadPropertiesFromTable(var Msg: string): Boolean; overload;
@@ -96,14 +107,15 @@ type
     property DataSource: TJvDataSource read fDataSource write SetDataSource;
     property PrjName: tStr25 read fPrjName write fPrjName;
     property PrjPath: tStr255 read fPrjPath write fPrjPath;
-    property PasFileSaveLoc: tStr255 read fPasFileSaveLoc write fPasFileSaveLoc;
+    property PasSqlFileSaveLoc: tStr255 read fPasSqlFileSaveLoc write fPasSqlFileSaveLoc;
+    property DefaultPasSqlFileLoc: string read fDefaultPasSqlFileLoc;
     property PrjDBPassWord: tStr255 read fDBPassWord write fDBPassWord;
 
-    property IniPathFile      :string read fIniPathFile write SetIniPathFile;
+    property IniFilterPathFile  :string read fIniFilterPathFile write SetIniPathFile;
 
-    property PrjTransport       : TTransportUsed read fPrjTransport write SetTransport;
-    property PrjServer          : tstr45 read fPrjServer write SetServer;
-    property PrjAlias           : tstr95 read fPrjAlias write SetAlias;
+    property PrjTransport       : TTransportUsed read fPrjTransport write SetPrjTransport;
+    property PrjServer          : tstr45 read fPrjServer write SetPrjServer;
+    property PrjAlias           : tstr95 read fPrjAlias write SetPrjAlias;
     property PrjLocalServerPath : string read fPrjLocalServerPath write fPrjLocalServerPath;
 
     property ActiveTrans       : TTransportUsed read fActiveTransport write fActiveTransport;
@@ -141,13 +153,13 @@ type
     TypeFontItem      : tSqlFontType;
   end;
 
-  TDefaultSettingsSQLBtns = record
-    TopMargin: Integer;
-    Spacing  : Integer;
-    Height   : Integer;
-    Col1Left : Integer;
-    Col2Left : Integer;
-  end;
+//  TDefaultSettingsSQLBtns = record
+//    TopMargin: Integer;
+//    Spacing  : Integer;
+//    Height   : Integer;
+//    Col1Left : Integer;
+//    Col2Left : Integer;
+//  end;
 
   // intercepter or interposer class
   tJvPanel = class(JvPanel.tJvPanel) //(Vcl.StdCtrls.TButton)
@@ -195,43 +207,44 @@ var
   PathAndFileIni             : string;
   PrjSetupCompomentsIni      : string;
   PathAndFileAtFormLocSize   : string;
-  AppPath                    : string;
+//  AppPath                    : string;
   DelphiDbDefaultPath        : string;
   NxSQLViewerDataIniFile     : tGemINI;
   SQLBtnsArray               : Tarray<tJvPanel>;
-  BtnDefaultSettingsPathFile : string;
-  BtnDefaultSettingsRec      : File of TDefaultSettingsSQLBtns;
-  DefaultSettingsSQLBtns     : TDefaultSettingsSQLBtns;
-  IniNxSQLPathFile           : string;
+//  BtnDefaultSettingsPathFile : string;
+//  BtnDefaultSettingsRec      : File of TDefaultSettingsSQLBtns;
+//  DefaultSettingsSQLBtns     : TDefaultSettingsSQLBtns;
+  IniNxSQLPathFile           : string;   // location of saved SQL files
   DefaultPathForPrjsFolder   : string;
-  fthe_DefaultPrjPath        : string;
+//  fthe_DefaultPrjPath        : string;
 //  fTheProjects               : TStringList;
   MRUFile                    : string;
   UpdateInstallPath          : string;
-  SqlFontStylesSaveFilePath  : string;
-  fPrjPathValidChars         : Boolean;
+  SqlFontStylesSaveFilePath  : string;   //keep
+//  fPrjPathValidChars         : Boolean;
   gProjectInfo               : TProjectInfo;
 
 
 const
   WM_SHOWPRJSDIALOG = WM_APP + 321;
 
-  cSRSDpath = '\SlickRockSoftwareDesign\NxDatabaseViewer';
+  cSRSDpath = '\SlickRockSoftwareDesign\NxDelphiSqlTools';
 
   cNxTableViewerIni    = '\nxTableViewer.ini';   // keep  // Floating form location and size memory
   cDelphiSqToolsDbPath = '\DelphiSqlToolsDb\';   // keep // Nexus Delphi Sql Tools database
   cFormLocSizeDef      = '\FormLocSizeDefs.xml'; // keep  // Location and size of forms memory
-  cPrjSetUpComponents  = '\PrjSetUp.ini';
-  cBtnDefaultHieght    = 20;
-  cLocalServerAliases  = '\LocalDbs.txt'; //
-  cFilterIniFiles      = '\Filters.ini';
-  cDefaultPathForPrjs  = '\NxSQL_Prjs'; // remove
-  cThe_DefaultPrjPath = '\DefaultPrj';
+  cPrjSetUpComponents  = '\PrjSetUp.ini';         //keep //components values
 
-  cPrgFileName = '\ProjectSetup.prj'; // remove
-  cMRUFileName = '\MRUPrj.txt';  // ok
+  cBtnDefaultHieght    = 20;   // keep
+//  cLocalServerAliases  = '\LocalDbs.txt'; //
+  cFilterIniFiles      = '\Filters\Filters.ini';   //keep
+  cDefaultPathForPrjs  = '\NxSQL_Prjs'; // keep
+  cThe_DefaultPrjPath = '\DefaultPrj'; // ok
+
+//  cPrgFileName = '\ProjectSetup.prj'; // remove
+  cMRUFileName = '\MRUPrj.txt';  // ok   recent used projects
   cUpdateInstallPath = '\Installer'; //ok
-  cSqlBtnsDbAlias    = 'NxDelphiSqlTools'; // ok
+//  cSqlBtnsDbAlias    = 'NxDelphiSqlTools'; // ok
   cSqlFontFileName   = '\EditorFonts.bin'; // ok
 
   cNxDbTimeOut = 3000;
@@ -277,6 +290,8 @@ function ExtractTextInsideGivenTagEx(const bTag, eTag, Text: string): string;
 function ExtractAliasAndPath(aOrgStr: string; out aAlias, aPath: string): Boolean;
 
 function BoolToStr(aBool: boolean): string;
+
+function GetAppSettingsPath: string;
 
 //procedure GetProjectList;//(Out aResults: TStrings);
 
@@ -397,24 +412,32 @@ begin
 end;
 
 
-procedure SetProgramPaths;
+function GetAppSettingsPath: string;
 begin
-  fPrjPathValidChars := True;
+  result := getWinSpecialFolder(CSIDL_LOCAL_APPDATA, False) + cSRSDpath;
+end;
+
+
+procedure SetProgramPaths;
+
+begin
+//  fPrjPathValidChars := True;
 //  fTheProjects.NameValueSeparator := '=';
 
-  AppPath := getWinSpecialFolder(CSIDL_LOCAL_APPDATA, False) + cSRSDpath;
-  DefaultPathForPrjsFolder := getWinSpecialFolder(CSIDL_PERSONAL, false) + cDefaultPathForPrjs + '\';
-  fPrjPathValidChars       := TPath.HasValidPathChars(DefaultPathForPrjsFolder, false);
+  var AppPath: string := GetAppSettingsPath;
+  DefaultPathForPrjsFolder := AppPath + cDefaultPathForPrjs + '\';
+//  DefaultPathForPrjsFolder := getWinSpecialFolder(CSIDL_PERSONAL, false) + cDefaultPathForPrjs + '\';
+//  fPrjPathValidChars       := TPath.HasValidPathChars(DefaultPathForPrjsFolder, false);
 
   MRUFile                  := AppPath + cMRUFileName;  //DefaultPathForPrjsFolder +
-  fthe_DefaultPrjPath      := DefaultPathForPrjsFolder + cthe_DefaultPrjPath;
+//  fthe_DefaultPrjPath      := DefaultPathForPrjsFolder + cthe_DefaultPrjPath;
   UpdateInstallPath        := AppPath + cUpdateInstallPath;
 
   ForceDirectories(AppPath);
 
   ForceDirectories(DefaultPathForPrjsFolder);
 
-  ForceDirectories(fthe_DefaultPrjPath);
+//  ForceDirectories(fthe_DefaultPrjPath);
 
   ForceDirectories(UpdateInstallPath);
 
@@ -422,15 +445,13 @@ begin
 
   SqlFontStylesSaveFilePath := AppPath + cSqlFontFileName;
 
-
   PathAndFileIni             := AppPath + cNxTableViewerIni;
-
 
   PrjSetupCompomentsIni      := AppPath + cPrjSetUpComponents;
   DelphiDbDefaultPath        := AppPath + cDelphiSqToolsDbPath;
   PathAndFileAtFormLocSize   := AppPath + cFormLocSizeDef;
 //  MRUMenuItemsPathFile       := AppPath + MRUItemsIni;
-  LocalServerAliasesPath     := AppPath + cLocalServerAliases;
+//  LocalServerAliasesPath     := AppPath + cLocalServerAliases;
 
 end;
 
@@ -569,19 +590,19 @@ end;
 
 { TProjectInfo }
 
-procedure TProjectInfo.SetTransport(const Value: TTransportUsed);
+procedure TProjectInfo.SetPrjTransport(const Value: TTransportUsed);
 begin
   if Value <> fPrjTransport then begin
     fPrjTransport := Value;
     if not fUpdate then begin
-      PrjTransportChange(fTransport);
+      PrjTransportChange(fPrjTransport);
       fPrjServer := '';
       fPrjAlias := '';
     end;
   end;
 end;
 
-procedure TProjectInfo.SetServer(const Value: tstr45);
+procedure TProjectInfo.SetPrjServer(const Value: tstr45);
 begin
   if Value <> fPrjServer then begin
     fPrjServer := Value;
@@ -676,9 +697,9 @@ begin
   begin
     fPrjName   := ShortString(DataSource.DataSet.FieldByName('PrjName').AsString);
     fPrjPath   := ShortString(DataSource.DataSet.FieldByName('PrjPath').AsString);
-    fTransport := TTransportUsed(DataSource.DataSet.FieldByName('TransportID').AsInteger);
-    fServer    := ShortString(DataSource.DataSet.FieldByName('Server').AsString);
-    fAlias     := ShortString(DataSource.DataSet.FieldByName('Alias').AsString);
+    fPrjTransport := TTransportUsed(DataSource.DataSet.FieldByName('TransportID').AsInteger);
+    fPrjServer    := ShortString(DataSource.DataSet.FieldByName('Server').AsString);
+    fPrjAlias     := ShortString(DataSource.DataSet.FieldByName('Alias').AsString);
     fDBPassWord:= ShortString(DataSource.DataSet.FieldByName('DbPassWord').AsString);
     Result := True;
   end
@@ -710,6 +731,7 @@ begin
   end;
 end;
 
+
 function TProjectInfo.DeletePrj(var Msg: string; aPrjName: string): Boolean;
 begin
   result := False;
@@ -728,12 +750,12 @@ begin
 end;
 
 
-procedure TProjectInfo.SetAlias(const Value: tstr95);
+procedure TProjectInfo.SetPrjAlias(const Value: tstr95);
 begin
-  if Value <> fAlias then begin
-    fAlias := Value;
+  if Value <> fPrjAlias then begin
+    fPrjAlias := Value;
     if not fUpdate then
-      PrjAliasChange(fAlias);
+      PrjAliasChange(fPrjAlias);
   end;
 end;
 
@@ -797,7 +819,7 @@ begin
   fPrjServer             := '';
   fPrjAlias              := '';
   fPrjLocalServerPath    := '';
-  fPasFileSaveLoc        := '';
+  fPasSqlFileSaveLoc     := '';
   fDBPassWord            := '';
   fActiveTransport       := tranNone;
   fActiveServer          := '';
@@ -811,19 +833,19 @@ procedure TProjectInfo.SetIniPathFile(const Value: string);
 var
   fPath: string;
 begin
-  fIniPathFile := ExtractFilePath(Value);
-  if fIniPathFile  = '' then
+  if Value = '' then
     Exit;
 
-  fIniPathFile := RemoveTrailingSlash(fIniPathFile);
-  fIniPathFile := fIniPathFile + cFilterIniFiles;
+  fIniFilterPathFile := ExtractFilePath(Value);
 
-  fPath := ExtractFilePath(fIniPathFile);
+  fIniFilterPathFile := RemoveTrailingSlash(fIniFilterPathFile);
+  fIniFilterPathFile := fIniFilterPathFile + cFilterIniFiles;
+
+  fPath := ExtractFilePath(fIniFilterPathFile);
   if not System.SysUtils.DirectoryExists(fPath) then
     if not CreateDir(fPath) then
       raise Exception.Create('Cannot create C:\temp');
 end;
-
 
 
 constructor TProjectInfo.Create(aPrjName: string; aDataSet: TDataSet);
@@ -831,9 +853,10 @@ begin
   fDataSource := tJvDataSource.Create(Nil);
   fPrjName := ShortString(aPrjName);
   fDataSource.DataSet := aDataSet;
-
-  fIniPathFile := fPasFileSaveLoc + cFilterIniFiles;
+  fDefaultPasSqlFileLoc := GetAppSettingsPath + cDefaultPathForPrjs;
+  fIniFilterPathFile := fDefaultPasSqlFileLoc + cFilterIniFiles;
 end;
+
 
 destructor TProjectInfo.Destory;
 begin
