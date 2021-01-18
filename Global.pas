@@ -104,32 +104,32 @@ type
     function InsertPrjIntoDb(var Msg: string): Boolean;
     function DeletePrj(var Msg: string; aPrjName: string): Boolean;
 
-    property DataSource: TJvDataSource read fDataSource write SetDataSource;
-    property PrjName: tStr25 read fPrjName write fPrjName;
-    property PrjPath: tStr255 read fPrjPath write fPrjPath;
-    property PasSqlFileSaveLoc: tStr255 read fPasSqlFileSaveLoc write fPasSqlFileSaveLoc;
-    property DefaultPasSqlFileLoc: string read fDefaultPasSqlFileLoc;
-    property PrjDBPassWord: tStr255 read fDBPassWord write fDBPassWord;
+    property DataSource           : TJvDataSource read fDataSource write SetDataSource;
+    property PrjName              : tStr25 read fPrjName write fPrjName;
+    property PrjPath              : tStr255 read fPrjPath write fPrjPath;
+    property PasSqlFileSaveLoc    : tStr255 read fPasSqlFileSaveLoc write fPasSqlFileSaveLoc;
+    property DefaultPasSqlFileLoc : string read fDefaultPasSqlFileLoc;
+    property PrjDBPassWord        : tStr255 read fDBPassWord write fDBPassWord;
 
-    property IniFilterPathFile  :string read fIniFilterPathFile write SetIniPathFile;
+    property IniFilterPathFile    :string read fIniFilterPathFile write SetIniPathFile;
 
-    property PrjTransport       : TTransportUsed read fPrjTransport write SetPrjTransport;
-    property PrjServer          : tstr45 read fPrjServer write SetPrjServer;
-    property PrjAlias           : tstr95 read fPrjAlias write SetPrjAlias;
-    property PrjLocalServerPath : string read fPrjLocalServerPath write fPrjLocalServerPath;
+    property PrjTransport          : TTransportUsed read fPrjTransport write SetPrjTransport;
+    property PrjServer             : tstr45 read fPrjServer write SetPrjServer;
+    property PrjAlias              : tstr95 read fPrjAlias write SetPrjAlias;
+    property PrjLocalServerPath    : string read fPrjLocalServerPath write fPrjLocalServerPath;
 
-    property ActiveTrans       : TTransportUsed read fActiveTransport write fActiveTransport;
-    property ActiveServer      : tstr45 read fActiveServer write fActiveServer;
-    property ActiveAlias       : tstr95 read fActiveAlias write fActiveAlias;
-    property ActiveLocalServerPath: string read fActiveLocalServerPath write fActiveLocalServerPath;
+    property ActiveTrans           : TTransportUsed read fActiveTransport write fActiveTransport;
+    property ActiveServer          : tstr45 read fActiveServer write fActiveServer;
+    property ActiveAlias           : tstr95 read fActiveAlias write fActiveAlias;
+    property ActiveLocalServerPath : string read fActiveLocalServerPath write fActiveLocalServerPath;
 
-    property Table             : tStr25 read fTableName write fTableName;
-    property Node              : tTreeNode read fTreeNode write fTreeNode;
+    property Table                 : tStr25 read fTableName write fTableName;
+    property Node                  : tTreeNode read fTreeNode write fTreeNode;
 
-    property OnChangeTransport : TChangeTransport read fOnChangeTransport write fOnChangeTransport;
-    property OnChangeServer    : tChangeServer read fOnChangeServer write fOnChangeServer;
-    property OnChangeAlias     : tChangeAlias read fOnChangeAlias write fOnChangeAlias;
-    property OnChangeFileSaveLoc: tChangeFileSaveLoc read fOnChangeFileSaveLoc write fOnChangeFileSaveLoc;
+    property OnChangeTransport     : TChangeTransport read fOnChangeTransport write fOnChangeTransport;
+    property OnChangeServer        : tChangeServer read fOnChangeServer write fOnChangeServer;
+    property OnChangeAlias         : tChangeAlias read fOnChangeAlias write fOnChangeAlias;
+    property OnChangeFileSaveLoc   : tChangeFileSaveLoc read fOnChangeFileSaveLoc write fOnChangeFileSaveLoc;
   end;
 
   TSQLBtnsDefaults = record
@@ -222,6 +222,7 @@ var
   UpdateInstallPath          : string;
   SqlFontStylesSaveFilePath  : string;   //keep
 //  fPrjPathValidChars         : Boolean;
+  LocalServerAliasesPath     : string;
   gProjectInfo               : TProjectInfo;
 
 
@@ -236,7 +237,7 @@ const
   cPrjSetUpComponents  = '\PrjSetUp.ini';         //keep //components values
 
   cBtnDefaultHieght    = 20;   // keep
-//  cLocalServerAliases  = '\LocalDbs.txt'; //
+  cLocalServerAliases  = '\LocalDbs.txt'; //  keep
   cFilterIniFiles      = '\Filters\Filters.ini';   //keep
   cDefaultPathForPrjs  = '\NxSQL_Prjs'; // keep
   cThe_DefaultPrjPath = '\DefaultPrj'; // ok
@@ -436,7 +437,6 @@ begin
   ForceDirectories(AppPath);
 
   ForceDirectories(DefaultPathForPrjsFolder);
-
 //  ForceDirectories(fthe_DefaultPrjPath);
 
   ForceDirectories(UpdateInstallPath);
@@ -451,7 +451,7 @@ begin
   DelphiDbDefaultPath        := AppPath + cDelphiSqToolsDbPath;
   PathAndFileAtFormLocSize   := AppPath + cFormLocSizeDef;
 //  MRUMenuItemsPathFile       := AppPath + MRUItemsIni;
-//  LocalServerAliasesPath     := AppPath + cLocalServerAliases;
+  LocalServerAliasesPath     := AppPath + cLocalServerAliases;
 
 end;
 
@@ -652,16 +652,11 @@ begin
   try
     s := 'Reading fPrjName';
     fPrjName   := ShortString(DataSource.DataSet.FieldByName('PrjName').AsString);
-    s := 'Reading fPrjName';
+    s := 'Reading PrjPath';
     fPrjPath   := ShortString(DataSource.DataSet.FieldByName('PrjPath').AsString);
-    s := 'Reading fPrjPath';
+    s := 'Reading TransportID';
     fPrjTransport := TTransportUsed(DataSource.DataSet.FieldByName('TransportID').AsInteger);
-    s := 'Reading fTransport';
-    fPrjServer    := ShortString(DataSource.DataSet.FieldByName('Server').AsString);
-    s := 'Reading fPrjName';
-    fPrjAlias     := ShortString(DataSource.DataSet.FieldByName('Alias').AsString);
-    s := 'Reading fPrjName';
-    fDBPassWord:= ShortString(DataSource.DataSet.FieldByName('DbPassWord').AsString);
+
     result := True;
   except
     on e: EDatabaseError do
@@ -695,12 +690,13 @@ begin
 {$ENDIF}
   if DataSource.DataSet.Locate('PrjName', aPrjName, [loCaseInsensitive]) then
   begin
-    fPrjName   := ShortString(DataSource.DataSet.FieldByName('PrjName').AsString);
-    fPrjPath   := ShortString(DataSource.DataSet.FieldByName('PrjPath').AsString);
-    fPrjTransport := TTransportUsed(DataSource.DataSet.FieldByName('TransportID').AsInteger);
-    fPrjServer    := ShortString(DataSource.DataSet.FieldByName('Server').AsString);
-    fPrjAlias     := ShortString(DataSource.DataSet.FieldByName('Alias').AsString);
-    fDBPassWord:= ShortString(DataSource.DataSet.FieldByName('DbPassWord').AsString);
+    fPrjName           := ShortString(DataSource.DataSet.FieldByName('PrjName').AsString);
+    fPrjPath           := ShortString(DataSource.DataSet.FieldByName('PrjPath').AsString);
+    fPrjTransport      := TTransportUsed(DataSource.DataSet.FieldByName('TransportID').AsInteger);
+    fPrjServer         := ShortString(DataSource.DataSet.FieldByName('Server').AsString);
+    fPrjAlias          := ShortString(DataSource.DataSet.FieldByName('Alias').AsString);
+    fDBPassWord        := ShortString(DataSource.DataSet.FieldByName('DbPassWord').AsString);
+    fPasSqlFileSaveLoc := DataSource.DataSet.FieldByName('PassFileSaveLoc').AsString;
     Result := True;
   end
   else

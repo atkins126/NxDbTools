@@ -410,6 +410,7 @@ type
     procedure mniSetTransportserverthendb1Click(Sender: TObject);
     procedure act_ExpandTreeTFExecute(Sender: TObject);
     procedure act_CollapseTreeTFExecute(Sender: TObject);
+    procedure act_AddAliasPathExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -427,7 +428,7 @@ type
     tv_TblAndFields    : TTreeView;
     fLocalAliasPaths   : tStringList;
 //    fProjectInfo       : TProjectInfo;
-    fPasFileLoc        : tStr255;
+//    fPasFileLoc        : tStr255;
     fFormShowing       : Boolean;
 
     // floating forms
@@ -439,7 +440,7 @@ type
     function GetBtnLeftColStart: integer;
     function GetBtnRightColStart: integer;
 //    procedure lst_AcsvTableFieldsWidthliasListBox1Click(Sender: TObject);
-    procedure SetPasFileLoc(const Value: tStr255);
+//    procedure SetPasFileLoc(const Value: tStr255);
     property SQLCommandsFF   : TFloatingForm read GetSQLCommandsFF;
     procedure SQLCommandsFFOnDestroyFloat(Sender: TObject);
     procedure SQLCommandsFFOnShowFloat(Sender: TObject);
@@ -515,7 +516,7 @@ type
     property BtnLeftColStart : integer read GetBtnLeftColStart;// write fBtnLeftColStart;
     property BtnRightColStart: integer read GetBtnRightColStart;  // write fBtnRightColStart;
 
-    property PasFileLoc: tStr255 read fPasFileLoc write SetPasFileLoc;
+//    property PasFileLoc: tStr255 read fPasFileLoc write SetPasFileLoc;
 //    property ProjectInfo: TProjectInfo read fProjectInfo write fProjectInfo;
   end;
 
@@ -861,10 +862,10 @@ begin
 end;
 
 
-procedure Tfrm_NxToolsMain.SetPasFileLoc(const Value: tStr255);
-begin
-  gProjectInfo.PasSqlFileSaveLoc := Value;
-end;
+//procedure Tfrm_NxToolsMain.SetPasFileLoc(const Value: tStr255);
+//begin
+//  gProjectInfo.PasSqlFileSaveLoc := Value;
+//end;
 
 
 function Tfrm_NxToolsMain.GetAppVersionStr: string;
@@ -1846,6 +1847,18 @@ begin
   pgc_ToolsCommands.ActivePageIndex := 0;
 end;
 
+
+procedure Tfrm_NxToolsMain.act_AddAliasPathExecute(Sender: TObject);
+begin
+  if AliasPath.Execute then
+    if AliasPath.DbFolderAlias <> '' then begin
+      if FileExists(LocalServerAliasesPath) then
+        lst_AliasListBox.Items.LoadFromFile(LocalServerAliasesPath);
+      lst_AliasListBox.Items.Add(AliasPath.DbFolderAlias);
+      lst_AliasListBox.Items.SaveToFile(LocalServerAliasesPath);
+      theTransport := tranLocalServer;
+    end;
+end;
 
 procedure Tfrm_NxToolsMain.act_CollapseTreeExecute(Sender: TObject);
 begin
@@ -3183,7 +3196,7 @@ begin
   mem_ProjectStats.Lines.Add('  Active Transport: '+ QuotedStr(cTransportTypes[gProjectInfo.ActiveTrans]));
   mem_ProjectStats.Lines.Add('  Active Server: '+ QuotedStr(String(gProjectInfo.ActiveServer)));
   mem_ProjectStats.Lines.Add('  Active Database: '+ QuotedStr(String(gProjectInfo.ActiveAlias)));
-  mem_ProjectStats.Lines.Add('  Delphi File Save Location: '+ QuotedStr(String(gProjectInfo.PasFileSaveLoc)));
+  mem_ProjectStats.Lines.Add('  Delphi File Save Location: '+ QuotedStr(String(gProjectInfo.PasSqlFileSaveLoc)));
   mem_ProjectStats.Lines.Add('  Db Password: '+ QuotedStr(String(gProjectInfo.PrjDBPassWord)));
 end;
 

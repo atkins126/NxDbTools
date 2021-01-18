@@ -42,9 +42,10 @@ object dm_DataMod: Tdm_DataMod
     Top = 296
   end
   object nxsrvrngn_Local: TnxServerEngine
+    OnSettingsLoaded = nxsrvrngn_LocalSettingsLoaded
     SqlEngine = nxsqlngn_Local
     ServerName = ''
-    Options = []
+    Options = [seoCloseAllWhenInactive]
     TableExtension = 'nx1'
     Left = 296
     Top = 136
@@ -54,7 +55,7 @@ object dm_DataMod: Tdm_DataMod
     StmtLogTableName = 'QueryLog'
     UseFieldCache = False
     Left = 288
-    Top = 192
+    Top = 208
   end
   object nxsn_SqlTools: TnxSession
     ActiveDesigntime = True
@@ -100,6 +101,7 @@ object dm_DataMod: Tdm_DataMod
   object nxtbl_NxDbSqlToolsPrjs: TnxTable
     ActiveDesigntime = True
     Database = nxdb_SQLBtns
+    AfterPost = nxtbl_NxDbSqlToolsPrjsAfterPost
     OnEditError = nxtbl_NxDbSqlToolsPrjsEditError
     OnPostError = nxtbl_NxDbSqlToolsPrjsPostError
     TableName = 'NxDbSqlToolsPrjs'
@@ -247,5 +249,15 @@ object dm_DataMod: Tdm_DataMod
     DisplayCategory = 'Transports'
     Left = 408
     Top = 72
+  end
+  object nxdtbsmpr_1: TnxDatabaseMapper
+    Mappings = <>
+    Left = 552
+    Top = 240
+  end
+  object nxsrvrnfplgn_1: TnxServerInfoPlugin
+    DisplayCategory = 'Plugins'
+    Left = 560
+    Top = 312
   end
 end

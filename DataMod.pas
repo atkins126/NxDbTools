@@ -17,7 +17,8 @@ uses
   JvDataSource,
 
   ModListnxTable, nxsrServerEngine, nxtsBaseSecuredTransport,
-  nxtsBlowfishRC4SecuredTransport, nxscrBaseScriptingEngine;
+  nxtsBlowfishRC4SecuredTransport, nxscrBaseScriptingEngine,
+  nxsiServerInfoPluginBase, nxsiServerInfoPluginServer, nxdbDatabaseMapper;
 
 type
 
@@ -73,11 +74,15 @@ type
     nxnmdp_trnsprt: TnxNamedPipeTransport;
     NxSqlButtonsDbTAddToEditorFunctionList: TBooleanField;
     nxtbl_NxDbSqlToolsPrjsLocalServerDbPath: TWideStringField;
+    nxdtbsmpr_1: TnxDatabaseMapper;
+    nxsrvrnfplgn_1: TnxServerInfoPlugin;
     procedure NxSqlButtonsDbTAfterDelete(DataSet: TDataSet);
     procedure nxtbl_NxDbSqlToolsPrjsPostError(DataSet: TDataSet;
       E: EDatabaseError; var Action: TDataAction);
     procedure nxtbl_NxDbSqlToolsPrjsEditError(DataSet: TDataSet;
       E: EDatabaseError; var Action: TDataAction);
+    procedure nxtbl_NxDbSqlToolsPrjsAfterPost(DataSet: TDataSet);
+    procedure nxsrvrngn_LocalSettingsLoaded(Sender: TObject);
   private
     { Private declarations }
   public
@@ -95,6 +100,24 @@ uses
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
 {$R *.dfm}
+
+procedure Tdm_DataMod.nxsrvrngn_LocalSettingsLoaded(Sender: TObject);
+begin
+
+  nxsrvrngn_Local.AliasHandler.SaveConfig()
+end;
+
+procedure Tdm_DataMod.nxtbl_NxDbSqlToolsPrjsAfterPost(DataSet: TDataSet);
+begin
+  if (nxtbl_NxDbSqlToolsPrjsPassFileSaveLoc.AsString = '') or (not DirectoryExists(PassFileSaveLoc.AsString)) then
+  begin
+    DataSet.Edit;
+    nxtbl_NxDbSqlToolsPrjsPassFileSaveLoc.AsString := gProjectInfo.DefaultPasSqlFileLoc;
+    DataSet.Post;
+  end;
+  gProjectInfo.PasSqlFileSaveLoc := nxtbl_NxDbSqlToolsPrjsPassFileSaveLoc.AsString;
+end;
+
 
 procedure Tdm_DataMod.nxtbl_NxDbSqlToolsPrjsEditError(DataSet: TDataSet;
   E: EDatabaseError; var Action: TDataAction);
