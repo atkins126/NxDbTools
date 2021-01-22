@@ -1031,7 +1031,7 @@ begin
 
     pot_Default: begin
       gProjectInfo.PrjName := ShortString(AnsiRightStr(cthe_DefaultPrjPath, Length(cthe_DefaultPrjPath) - 1));
-      gProjectInfo.PrjPath := ShortString(DefaultPathForPrjsFolder);
+      gProjectInfo.PrjPath := ShortString(gGobalVarClass.DefaultPathForPrjsFolder);
     end;
   end;
 
@@ -1212,7 +1212,7 @@ var
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormCreate' );{$ENDIF}
 
-  lstGemMruList1.MruListFile := MRUFile;
+  lstGemMruList1.MruListFile := gGobalVarClass.MRUFile;
   {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'FormCreate A' );{$ENDIF}
   {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'FormCreate B' );{$ENDIF}
   JvFormStorage1.RestoreFormPlacement;
@@ -1606,7 +1606,7 @@ procedure Tfrm_SelectProject.btn_ResetLocalDbPathClick(Sender: TObject);
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'btn_ResetLocalDbPathClick' );{$ENDIF}
 
-  edit_LocalDbPath.Text := DelphiDbDefaultPath;
+  edit_LocalDbPath.Text := gGobalVarClass.DelphiDbDefaultPath;
 
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'btn_ResetLocalDbPathClick' );{$ENDIF}
 end;

@@ -104,12 +104,12 @@ uses
 procedure Tdm_DataMod.nxsrvrngn_LocalSettingsLoaded(Sender: TObject);
 begin
 
-  nxsrvrngn_Local.AliasHandler.SaveConfig()
+//  nxsrvrngn_Local.AliasHandler.SaveConfig()
 end;
 
 procedure Tdm_DataMod.nxtbl_NxDbSqlToolsPrjsAfterPost(DataSet: TDataSet);
 begin
-  if (nxtbl_NxDbSqlToolsPrjsPassFileSaveLoc.AsString = '') or (not DirectoryExists(PassFileSaveLoc.AsString)) then
+  if (nxtbl_NxDbSqlToolsPrjsPassFileSaveLoc.AsString = '') or (not DirectoryExists(nxtbl_NxDbSqlToolsPrjsLocalServerDbPath.AsString)) then
   begin
     DataSet.Edit;
     nxtbl_NxDbSqlToolsPrjsPassFileSaveLoc.AsString := gProjectInfo.DefaultPasSqlFileLoc;

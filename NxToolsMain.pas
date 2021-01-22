@@ -1164,7 +1164,7 @@ procedure Tfrm_NxToolsMain.FormCreate(Sender: TObject);
         fSqlEditorFonts[index].Create(36 + fTopIndex, cFLeft, 34 + fTopIndex,
                                       cSLeft, 35 + fTopIndex, ctLeft,
                                       catpan_SqlFontColors, index,
-                                      SqlFontStylesSaveFilePath, CCItems);
+                                      gGobalVarClass.SqlFontStylesSaveFilePath, CCItems);
         fSqlEditorFonts[index].ReadSettings;
         fSqlEditorFonts[index].OnChange := OnFontStuffChange;
 
@@ -1200,14 +1200,15 @@ begin
   fFormShowing := true;
 
 //  fTheProjects := TStringList.Create;
-  SetProgramPaths;
+  gGobalVarClass.Create;
+//  SetProgramPaths;
   {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part A' );{$ENDIF}
 
   GEMAppUpdater.UpdaterApplicationLocName := ExtractFileDir(ParamStr(0)) + '\SRSDAppUpdater.exe';
-  GEMAppUpdater.LocalInstallPath := UpdateInstallPath;
+  GEMAppUpdater.LocalInstallPath := gGobalVarClass.UpdateInstallPath;
   GEMAppUpdater.IconFileLocation := ExtractFileDir(ParamStr(0)) + '\NxDbSQLTableViewer_Icon.ico';
 
-  jvpxmlflstrg_NxDbToolsPrefs.FileName := PathAndFileAtFormLocSize;
+  jvpxmlflstrg_NxDbToolsPrefs.FileName := gGobalVarClass.PathAndFileAtFormLocSize;
   {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part B' );{$ENDIF}
 
   spltvw_ToolsCommands.Opened := False;
@@ -1248,6 +1249,7 @@ end;
 
 procedure Tfrm_NxToolsMain.FormDestroy(Sender: TObject);
 begin
+  FreeAndNil(gGobalVarClass);
   FreeAndNil(gProjectInfo);
   DestroyFormMenuItems;
 end;
@@ -1674,7 +1676,10 @@ end;
 function Tfrm_NxToolsMain.GetDatabaseToolsFF: TFloatingForm;
 begin
   if fDatabaseToolsFF = nil then begin
-    fDatabaseToolsFF := TFloatingForm.Create(self, ts_DatabaseTools, img_DBToolsUnDock, img_DBToolsDock);
+    fDatabaseToolsFF := TFloatingForm.Create(self, ts_DatabaseTools, img_DBToolsUnDock,
+                                             img_DBToolsDock,
+                                             gGobalVarClass.PathAndFileIni,
+                                             'fDatabaseToolsFF');
 
     fDatabaseToolsFF.Visible := False;
     fDatabaseToolsFF.OnShowFloat := DatabaseToolsFFOnShowFloat;
@@ -1701,29 +1706,31 @@ end;
 
 procedure Tfrm_NxToolsMain.DatabaseToolsFFOnDestroyFloat(Sender: TObject);
 begin
-  CreateIniFile;
-  try
-    NxSQLViewerDataIniFile.WriteInteger('DatabaseToolsFF','Left', fDatabaseToolsFF.Left);
-    NxSQLViewerDataIniFile.WriteInteger('DatabaseToolsFF', 'Top', fDatabaseToolsFF.Top);
-    NxSQLViewerDataIniFile.WriteInteger('DatabaseToolsFF', 'Width', fDatabaseToolsFF.ClientWidth);
-    NxSQLViewerDataIniFile.WriteInteger('DatabaseToolsFF', 'Height', fDatabaseToolsFF.ClientHeight);
-  finally
-    DestroyIniFile;
-  end;
+  fDatabaseToolsFF.SaveFormLocation;
+//  CreateIniFile;
+//  try
+//    NxSQLViewerDataIniFile.WriteInteger('DatabaseToolsFF','Left', fDatabaseToolsFF.Left);
+//    NxSQLViewerDataIniFile.WriteInteger('DatabaseToolsFF', 'Top', fDatabaseToolsFF.Top);
+//    NxSQLViewerDataIniFile.WriteInteger('DatabaseToolsFF', 'Width', fDatabaseToolsFF.ClientWidth);
+//    NxSQLViewerDataIniFile.WriteInteger('DatabaseToolsFF', 'Height', fDatabaseToolsFF.ClientHeight);
+//  finally
+//    DestroyIniFile;
+//  end;
 end;
 
 
 procedure Tfrm_NxToolsMain.DatabaseToolsFFOnShowFloat(Sender: TObject);
 begin
-  CreateIniFile;
-  try
-    fDatabaseToolsFF.Left         := NxSQLViewerDataIniFile.ReadInteger('DatabaseToolsFF', 'Left', 10);
-    fDatabaseToolsFF.Top          := NxSQLViewerDataIniFile.ReadInteger('DatabaseToolsFF', 'Top', 10);
-    fDatabaseToolsFF.ClientWidth  := NxSQLViewerDataIniFile.ReadInteger('DatabaseToolsFF', 'Width', 235);
-    fDatabaseToolsFF.ClientHeight := NxSQLViewerDataIniFile.ReadInteger('DatabaseToolsFF', 'Height', 524);
-  finally
-    DestroyIniFile;
-  end;
+  fDatabaseToolsFF.LoadFormLocation;
+//  CreateIniFile;
+//  try
+//    fDatabaseToolsFF.Left         := NxSQLViewerDataIniFile.ReadInteger('DatabaseToolsFF', 'Left', 10);
+//    fDatabaseToolsFF.Top          := NxSQLViewerDataIniFile.ReadInteger('DatabaseToolsFF', 'Top', 10);
+//    fDatabaseToolsFF.ClientWidth  := NxSQLViewerDataIniFile.ReadInteger('DatabaseToolsFF', 'Width', 235);
+//    fDatabaseToolsFF.ClientHeight := NxSQLViewerDataIniFile.ReadInteger('DatabaseToolsFF', 'Height', 524);
+//  finally
+//    DestroyIniFile;
+//  end;
 end;
 
 
@@ -1744,7 +1751,10 @@ end;
 function Tfrm_NxToolsMain.GetSQLCommandsFF: TFloatingForm;
 begin
   if fSQLCommandsFF = nil then begin
-    fSQLCommandsFF := TFloatingForm.Create(self, ts_SQLCommands, img_SQLTabUndockImage, img_SQLTabDockImage);
+    fSQLCommandsFF := TFloatingForm.Create(self, ts_SQLCommands, img_SQLTabUndockImage,
+                                           img_SQLTabDockImage,
+                                           gGobalVarClass.PathAndFileIni,
+                                           'fSQLCommandsFF');
 
     fSQLCommandsFF.Visible := False;
     fSQLCommandsFF.OnShowFloat := SQLCommandsFFOnShowFloat;
@@ -1757,29 +1767,31 @@ end;
 
 procedure Tfrm_NxToolsMain.SQLCommandsFFOnDestroyFloat(Sender: TObject);
 begin
-  CreateIniFile;
-  try
-    NxSQLViewerDataIniFile.WriteInteger('SQLCommandsFF', 'Left', fSQLCommandsFF.Left);
-    NxSQLViewerDataIniFile.WriteInteger('SQLCommandsFF', 'Top', fSQLCommandsFF.Top);
-    NxSQLViewerDataIniFile.WriteInteger('SQLCommandsFF', 'Width', fSQLCommandsFF.ClientWidth);
-    NxSQLViewerDataIniFile.WriteInteger('SQLCommandsFF', 'Height', fSQLCommandsFF.ClientHeight);
-  finally
-    DestroyIniFile;
-  end;
+  fSQLCommandsFF.SaveFormLocation;
+//  CreateIniFile;
+//  try
+//    NxSQLViewerDataIniFile.WriteInteger('SQLCommandsFF', 'Left', fSQLCommandsFF.Left);
+//    NxSQLViewerDataIniFile.WriteInteger('SQLCommandsFF', 'Top', fSQLCommandsFF.Top);
+//    NxSQLViewerDataIniFile.WriteInteger('SQLCommandsFF', 'Width', fSQLCommandsFF.ClientWidth);
+//    NxSQLViewerDataIniFile.WriteInteger('SQLCommandsFF', 'Height', fSQLCommandsFF.ClientHeight);
+//  finally
+//    DestroyIniFile;
+//  end;
 end;
 
 
 procedure Tfrm_NxToolsMain.SQLCommandsFFOnShowFloat(Sender: TObject);
 begin
-  CreateIniFile;
-  try
-    fSQLCommandsFF.Left         := NxSQLViewerDataIniFile.ReadInteger('SQLCommandsFF', 'Left', 10);
-    fSQLCommandsFF.Top          := NxSQLViewerDataIniFile.ReadInteger('SQLCommandsFF', 'Top', 10);
-    fSQLCommandsFF.ClientWidth  := NxSQLViewerDataIniFile.ReadInteger('SQLCommandsFF', 'Width', 207);
-    fSQLCommandsFF.ClientHeight := NxSQLViewerDataIniFile.ReadInteger('SQLCommandsFF', 'Height', 475);
-  finally
-    DestroyIniFile;
-  end;
+  fSQLCommandsFF.LoadFormLocation;
+//  CreateIniFile;
+//  try
+//    fSQLCommandsFF.Left         := NxSQLViewerDataIniFile.ReadInteger('SQLCommandsFF', 'Left', 10);
+//    fSQLCommandsFF.Top          := NxSQLViewerDataIniFile.ReadInteger('SQLCommandsFF', 'Top', 10);
+//    fSQLCommandsFF.ClientWidth  := NxSQLViewerDataIniFile.ReadInteger('SQLCommandsFF', 'Width', 207);
+//    fSQLCommandsFF.ClientHeight := NxSQLViewerDataIniFile.ReadInteger('SQLCommandsFF', 'Height', 475);
+//  finally
+//    DestroyIniFile;
+//  end;
 end;
 
 
@@ -1803,7 +1815,11 @@ end;
 function Tfrm_NxToolsMain.GetTableFieldToolsFF: TFloatingForm;
 begin
   if fTableFieldToolsFF = nil then begin
-    fTableFieldToolsFF := TFloatingForm.Create(self, ts_TablesAndFieldsTools, img_TableFieldToolsUndocked, img_TableFieldToolsDocked);
+    fTableFieldToolsFF := TFloatingForm.Create(self, ts_TablesAndFieldsTools,
+                                               img_TableFieldToolsUndocked,
+                                               img_TableFieldToolsDocked,
+                                               gGobalVarClass.PathAndFileIni,
+                                               'fTableFieldToolsFF');
 
     fTableFieldToolsFF.Visible := False;
     fTableFieldToolsFF.OnShowFloat := TableFieldToolsFFOnShowFloat;
@@ -1816,29 +1832,31 @@ end;
 
 procedure Tfrm_NxToolsMain.TableFieldToolsFFOnDestroyFloat(Sender: TObject);
 begin
-  CreateIniFile;
-  try
-    NxSQLViewerDataIniFile.WriteInteger('TableFieldToolsFF','Left', fTableFieldToolsFF.Left);
-    NxSQLViewerDataIniFile.WriteInteger('TableFieldToolsFF', 'Top', fTableFieldToolsFF.Top);
-    NxSQLViewerDataIniFile.WriteInteger('TableFieldToolsFF', 'Width', fTableFieldToolsFF.ClientWidth);
-    NxSQLViewerDataIniFile.WriteInteger('TableFieldToolsFF', 'Height', fTableFieldToolsFF.ClientHeight);
-  finally
-    DestroyIniFile;
-  end;
+  fTableFieldToolsFF.SaveFormLocation;
+//  CreateIniFile;
+//  try
+//    NxSQLViewerDataIniFile.WriteInteger('TableFieldToolsFF','Left', fTableFieldToolsFF.Left);
+//    NxSQLViewerDataIniFile.WriteInteger('TableFieldToolsFF', 'Top', fTableFieldToolsFF.Top);
+//    NxSQLViewerDataIniFile.WriteInteger('TableFieldToolsFF', 'Width', fTableFieldToolsFF.ClientWidth);
+//    NxSQLViewerDataIniFile.WriteInteger('TableFieldToolsFF', 'Height', fTableFieldToolsFF.ClientHeight);
+//  finally
+//    DestroyIniFile;
+//  end;
 end;
 
 
 procedure Tfrm_NxToolsMain.TableFieldToolsFFOnShowFloat(Sender: TObject);
 begin
-  CreateIniFile;
-  try
-    fTableFieldToolsFF.Left         := NxSQLViewerDataIniFile.ReadInteger('TableFieldToolsFF', 'Left', 10);
-    fTableFieldToolsFF.Top          := NxSQLViewerDataIniFile.ReadInteger('TableFieldToolsFF', 'Top', 10);
-    fTableFieldToolsFF.ClientWidth  := NxSQLViewerDataIniFile.ReadInteger('TableFieldToolsFF', 'Width', 235);
-    fTableFieldToolsFF.ClientHeight := NxSQLViewerDataIniFile.ReadInteger('TableFieldToolsFF', 'Height', 524);
-  finally
-    DestroyIniFile;
-  end;
+  fTableFieldToolsFF.LoadFormLocation;
+//  CreateIniFile;
+//  try
+//    fTableFieldToolsFF.Left         := NxSQLViewerDataIniFile.ReadInteger('TableFieldToolsFF', 'Left', 10);
+//    fTableFieldToolsFF.Top          := NxSQLViewerDataIniFile.ReadInteger('TableFieldToolsFF', 'Top', 10);
+//    fTableFieldToolsFF.ClientWidth  := NxSQLViewerDataIniFile.ReadInteger('TableFieldToolsFF', 'Width', 235);
+//    fTableFieldToolsFF.ClientHeight := NxSQLViewerDataIniFile.ReadInteger('TableFieldToolsFF', 'Height', 524);
+//  finally
+//    DestroyIniFile;
+//  end;
 end;
 
 
@@ -1851,11 +1869,11 @@ end;
 procedure Tfrm_NxToolsMain.act_AddAliasPathExecute(Sender: TObject);
 begin
   if AliasPath.Execute then
-    if AliasPath.DbFolderAlias <> '' then begin
-      if FileExists(LocalServerAliasesPath) then
-        lst_AliasListBox.Items.LoadFromFile(LocalServerAliasesPath);
+    if (AliasPath.DbFolderAlias <> 'Error: No ''nx1'' files in folder') then begin
+      if FileExists(gGobalVarClass.LocalServerAliasesPath) then
+        lst_AliasListBox.Items.LoadFromFile(gGobalVarClass.LocalServerAliasesPath);
       lst_AliasListBox.Items.Add(AliasPath.DbFolderAlias);
-      lst_AliasListBox.Items.SaveToFile(LocalServerAliasesPath);
+      lst_AliasListBox.Items.SaveToFile(gGobalVarClass.LocalServerAliasesPath);
       theTransport := tranLocalServer;
     end;
 end;

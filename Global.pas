@@ -21,6 +21,57 @@ uses
   SynHighlighterSQL {$IFDEF USE_CODESITE }, CodeSiteLogging  {$ENDIF};
 
 type
+  TTransportUsed = (tranWinSock, tranNamePipe, tranLocalServer, tranSharedMem, tranNone, tranError);
+
+
+const
+  WM_SHOWPRJSDIALOG = WM_APP + 321;
+
+  cSRSDpath = '\SlickRockSoftwareDesign\NxDelphiSqlTools';
+
+  cNxTableViewerIni    = '\nxTableViewer.ini';   // keep  // Floating form location and size memory
+  cDelphiSqToolsDbPath = '\DelphiSqlToolsDb\';   // keep // Nexus Delphi Sql Tools database
+  cFormLocSizeDef      = '\FormLocSizeDefs.xml'; // keep  // Location and size of forms memory
+  cPrjSetUpComponents  = '\PrjSetUp.ini';         //keep //components values
+
+  cBtnDefaultHieght    = 20;   // keep
+  cLocalServerAliases  = '\LocalDbs.txt'; //  keep
+  cFilterIniFiles      = '\Filters\Filters.ini';   //keep
+  cDefaultPathForPrjs  = '\NxSQL_Prjs'; // keep
+  cThe_DefaultPrjPath = '\DefaultPrj'; // ok
+
+//  cPrgFileName = '\ProjectSetup.prj'; // remove
+  cMRUFileName = '\MRUPrj.txt';  // ok   recent used projects
+  cUpdateInstallPath = '\Installer'; //ok
+//  cSqlBtnsDbAlias    = 'NxDelphiSqlTools'; // ok
+  cSqlFontFileName   = '\EditorFonts.bin'; // ok
+
+  cNxDbTimeOut = 3000;
+
+
+  cTransportTypes: array[TTransportUsed] of string = ('Win Sock', 'Named Pipe',
+                                                      'Local Server', 'Shared Mem',
+                                                      'None', 'Error');
+
+  DbDataTypes: array[TFieldType] of String = ('ftUnknown',  'ftString', 'ftSmallint',
+                       'ftInteger', 'ftWord', // 0..4       /
+                       'ftBoolean', 'ftFloat', 'ftCurrency', 'ftBCD', 'ftDate',
+                       'ftTime', 'ftDateTime', // 5..11         /
+                       'ftBytes', 'ftVarBytes', 'ftAutoInc', 'ftBlob', 'ftMemo',
+                       'ftGraphic', 'ftFmtMemo', // 12..18      /
+                       'ftParadoxOle', 'ftDBaseOle', 'ftTypedBinary', 'ftCursor',
+                       'ftFixedChar', 'ftWideString', // 19..24   /
+                       'ftLargeint', 'ftADT', 'ftArray', 'ftReference', 'ftDataSet',
+                       'ftOraBlob', 'ftOraClob', // 25..31        /
+                       'ftVariant', 'ftInterface', 'ftIDispatch', 'ftGuid', 'ftTimeStamp',
+                       'ftFMTBcd', // 32..37                      /
+                       'ftFixedWideChar', 'ftWideMemo', 'ftOraTimeStamp', 'ftOraInterval', // 38..41        /
+                       'ftLongWord', 'ftShortint', 'ftByte', 'ftExtended', 'ftConnection',
+                       'ftParams', 'ftStream', //42..48
+                       'ftTimeStampOffset', 'ftObject', 'ftSingle'); //49..51       /
+
+
+type
   TStatusPanelOrder = (spoMemory, spoAlias, spoDefaultPrjDir, spoDbStatus, spoDbVer, spoCurrenPrj);
 
   pRootNodeDb = ^tRootNodeDb;
@@ -32,7 +83,6 @@ type
 
   TEditAttri = (eaKeyAttri, eaCommentAttri, eaNumberAttri, eaSQLEditor,
                 eaTableNameAttri, eaFunctionAttri);
-  TTransportUsed = (tranWinSock, tranNamePipe, tranLocalServer, tranSharedMem, tranNone, tranError);
   TDockingFormType = (TSQLForm, TTblForm, TNoForm);
 
   tStr95  = string[95];
@@ -46,6 +96,7 @@ type
   tChangeFileSaveLoc = procedure(aPath: string) of object;
 
   TProjectInfo = class
+    fAppPath                : string;
     fPrjName                : tStr25;
     fPrjPath                : tStr255;
 
@@ -84,6 +135,7 @@ type
     procedure SetPrjTransport(const Value: TTransportUsed);
     procedure SetDataSource(const Value: TJvDataSource);
     procedure SetIniPathFile(const Value: string);
+//    procedure SetIniPathFile(const Value: string);
 //    procedure SetDefaultPasSqlFileLoc(const Value: string);
 //    procedure SetDataSource(const Value: TJvDataSource);
   public
@@ -203,79 +255,68 @@ type
   end;
 
 
+  TGobalVarClass = class
+    fPathAndFileIni             : string;
+    fPrjSetupCompomentsIni      : string;
+    fPathAndFileAtFormLocSize   : string;
+    fDelphiDbDefaultPath        : string;
+    fIniNxSQLPathFile           : string;   // location of saved SQL files
+    fDefaultPathForPrjsFolder   : string;
+    fMRUFile                    : string;
+    fUpdateInstallPath          : string;
+    fSqlFontStylesSaveFilePath  : string;   //keep
+    fAlisesForLocalServer       : string;
+    fNxSQLViewerDataIniFile     : tGemINI;
+    fAppPath                    : string;// := GetAppSettingsPath;
+  private
+    procedure SetProgramPaths;
+  public
+    constructor Create;
+    destructor Destory;
+  published
+    property AppPath                    : string read fAppPath;
+    property PathAndFileIni             : string read fPathAndFileIni;
+    property PrjSetupCompomentsIni      : string read fPrjSetupCompomentsIni;
+    property PathAndFileAtFormLocSize   : string read fPathAndFileAtFormLocSize;
+    property DelphiDbDefaultPath        : string read fDelphiDbDefaultPath;
+    property IniNxSQLPathFile           : string read fIniNxSQLPathFile;   // location of saved SQL files
+    property DefaultPathForPrjsFolder   : string read fDefaultPathForPrjsFolder;
+    property MRUFile                    : string read fMRUFile;
+    property UpdateInstallPath          : string read fUpdateInstallPath;
+    property SqlFontStylesSaveFilePath  : string read fSqlFontStylesSaveFilePath;   //keep
+    property AlisesForLocalServer       : string read fAlisesForLocalServer;
+  end;
+
 var
-  PathAndFileIni             : string;
-  PrjSetupCompomentsIni      : string;
-  PathAndFileAtFormLocSize   : string;
-//  AppPath                    : string;
-  DelphiDbDefaultPath        : string;
+//  PathAndFileIni             : string;
+//  PrjSetupCompomentsIni      : string;
+//  PathAndFileAtFormLocSize   : string;
+////  AppPath                    : string; //remove
+//  DelphiDbDefaultPath        : string;
   NxSQLViewerDataIniFile     : tGemINI;
   SQLBtnsArray               : Tarray<tJvPanel>;
-//  BtnDefaultSettingsPathFile : string;
-//  BtnDefaultSettingsRec      : File of TDefaultSettingsSQLBtns;
-//  DefaultSettingsSQLBtns     : TDefaultSettingsSQLBtns;
-  IniNxSQLPathFile           : string;   // location of saved SQL files
-  DefaultPathForPrjsFolder   : string;
-//  fthe_DefaultPrjPath        : string;
-//  fTheProjects               : TStringList;
-  MRUFile                    : string;
-  UpdateInstallPath          : string;
-  SqlFontStylesSaveFilePath  : string;   //keep
-//  fPrjPathValidChars         : Boolean;
-  LocalServerAliasesPath     : string;
+////  BtnDefaultSettingsPathFile : string;
+////  BtnDefaultSettingsRec      : File of TDefaultSettingsSQLBtns;
+////  DefaultSettingsSQLBtns     : TDefaultSettingsSQLBtns;
+//  IniNxSQLPathFile           : string;   // location of saved SQL files
+//  DefaultPathForPrjsFolder   : string;
+////  fthe_DefaultPrjPath        : string;
+////  fTheProjects               : TStringList;
+//  MRUFile                    : string;
+//  UpdateInstallPath          : string;
+//  SqlFontStylesSaveFilePath  : string;   //keep
+////  fPrjPathValidChars         : Boolean;
+//  LocalServerAliasesPath     : string;
+
+  gGobalVarClass             : TGobalVarClass;
   gProjectInfo               : TProjectInfo;
 
 
-const
-  WM_SHOWPRJSDIALOG = WM_APP + 321;
-
-  cSRSDpath = '\SlickRockSoftwareDesign\NxDelphiSqlTools';
-
-  cNxTableViewerIni    = '\nxTableViewer.ini';   // keep  // Floating form location and size memory
-  cDelphiSqToolsDbPath = '\DelphiSqlToolsDb\';   // keep // Nexus Delphi Sql Tools database
-  cFormLocSizeDef      = '\FormLocSizeDefs.xml'; // keep  // Location and size of forms memory
-  cPrjSetUpComponents  = '\PrjSetUp.ini';         //keep //components values
-
-  cBtnDefaultHieght    = 20;   // keep
-  cLocalServerAliases  = '\LocalDbs.txt'; //  keep
-  cFilterIniFiles      = '\Filters\Filters.ini';   //keep
-  cDefaultPathForPrjs  = '\NxSQL_Prjs'; // keep
-  cThe_DefaultPrjPath = '\DefaultPrj'; // ok
-
-//  cPrgFileName = '\ProjectSetup.prj'; // remove
-  cMRUFileName = '\MRUPrj.txt';  // ok   recent used projects
-  cUpdateInstallPath = '\Installer'; //ok
-//  cSqlBtnsDbAlias    = 'NxDelphiSqlTools'; // ok
-  cSqlFontFileName   = '\EditorFonts.bin'; // ok
-
-  cNxDbTimeOut = 3000;
-
-
-  cTransportTypes: array[TTransportUsed] of string = ('Win Sock', 'Named Pipe',
-                                                      'Local Server', 'Shared Mem',
-                                                      'None', 'Error');
-
-  DbDataTypes: array[TFieldType] of String = ('ftUnknown',  'ftString', 'ftSmallint',
-                       'ftInteger', 'ftWord', // 0..4       /
-                       'ftBoolean', 'ftFloat', 'ftCurrency', 'ftBCD', 'ftDate',
-                       'ftTime', 'ftDateTime', // 5..11         /
-                       'ftBytes', 'ftVarBytes', 'ftAutoInc', 'ftBlob', 'ftMemo',
-                       'ftGraphic', 'ftFmtMemo', // 12..18      /
-                       'ftParadoxOle', 'ftDBaseOle', 'ftTypedBinary', 'ftCursor',
-                       'ftFixedChar', 'ftWideString', // 19..24   /
-                       'ftLargeint', 'ftADT', 'ftArray', 'ftReference', 'ftDataSet',
-                       'ftOraBlob', 'ftOraClob', // 25..31        /
-                       'ftVariant', 'ftInterface', 'ftIDispatch', 'ftGuid', 'ftTimeStamp',
-                       'ftFMTBcd', // 32..37                      /
-                       'ftFixedWideChar', 'ftWideMemo', 'ftOraTimeStamp', 'ftOraInterval', // 38..41        /
-                       'ftLongWord', 'ftShortint', 'ftByte', 'ftExtended', 'ftConnection',
-                       'ftParams', 'ftStream', //42..48
-                       'ftTimeStampOffset', 'ftObject', 'ftSingle'); //49..51       /
 
   { ///////////////  Computer Info     //////////// }
-procedure SetProgramPaths;
-procedure CreateIniFile;
-procedure DestroyIniFile;
+//procedure SetProgramPaths;
+//procedure CreateIniFile;
+//procedure DestroyIniFile;
 function LocalIP: AnsiString;
 
 // font stuff ==================================================================
@@ -292,7 +333,7 @@ function ExtractAliasAndPath(aOrgStr: string; out aAlias, aPath: string): Boolea
 
 function BoolToStr(aBool: boolean): string;
 
-function GetAppSettingsPath: string;
+//function GetAppSettingsPath: string;
 
 //procedure GetProjectList;//(Out aResults: TStrings);
 
@@ -413,63 +454,63 @@ begin
 end;
 
 
-function GetAppSettingsPath: string;
-begin
-  result := getWinSpecialFolder(CSIDL_LOCAL_APPDATA, False) + cSRSDpath;
-end;
+//function GetAppSettingsPath: string;
+//begin
+//  result := getWinSpecialFolder(CSIDL_LOCAL_APPDATA, False) + cSRSDpath;
+//end;
+//
 
-
-procedure SetProgramPaths;
-
-begin
-//  fPrjPathValidChars := True;
-//  fTheProjects.NameValueSeparator := '=';
-
-  var AppPath: string := GetAppSettingsPath;
-  DefaultPathForPrjsFolder := AppPath + cDefaultPathForPrjs + '\';
-//  DefaultPathForPrjsFolder := getWinSpecialFolder(CSIDL_PERSONAL, false) + cDefaultPathForPrjs + '\';
-//  fPrjPathValidChars       := TPath.HasValidPathChars(DefaultPathForPrjsFolder, false);
-
-  MRUFile                  := AppPath + cMRUFileName;  //DefaultPathForPrjsFolder +
-//  fthe_DefaultPrjPath      := DefaultPathForPrjsFolder + cthe_DefaultPrjPath;
-  UpdateInstallPath        := AppPath + cUpdateInstallPath;
-
-  ForceDirectories(AppPath);
-
-  ForceDirectories(DefaultPathForPrjsFolder);
-//  ForceDirectories(fthe_DefaultPrjPath);
-
-  ForceDirectories(UpdateInstallPath);
-
-  IniNxSQLPathFile := DefaultPathForPrjsFolder + cFilterIniFiles;
-
-  SqlFontStylesSaveFilePath := AppPath + cSqlFontFileName;
-
-  PathAndFileIni             := AppPath + cNxTableViewerIni;
-
-  PrjSetupCompomentsIni      := AppPath + cPrjSetUpComponents;
-  DelphiDbDefaultPath        := AppPath + cDelphiSqToolsDbPath;
-  PathAndFileAtFormLocSize   := AppPath + cFormLocSizeDef;
-//  MRUMenuItemsPathFile       := AppPath + MRUItemsIni;
-  LocalServerAliasesPath     := AppPath + cLocalServerAliases;
-
-end;
+//procedure SetProgramPaths;
+//
+//begin
+////  fPrjPathValidChars := True;
+////  fTheProjects.NameValueSeparator := '=';
+//
+//  var AppPath: string := GetAppSettingsPath;
+//  DefaultPathForPrjsFolder := AppPath + cDefaultPathForPrjs + '\';
+////  DefaultPathForPrjsFolder := getWinSpecialFolder(CSIDL_PERSONAL, false) + cDefaultPathForPrjs + '\';
+////  fPrjPathValidChars       := TPath.HasValidPathChars(DefaultPathForPrjsFolder, false);
+//
+//  MRUFile                  := AppPath + cMRUFileName;  //DefaultPathForPrjsFolder +
+////  fthe_DefaultPrjPath      := DefaultPathForPrjsFolder + cthe_DefaultPrjPath;
+//  UpdateInstallPath        := AppPath + cUpdateInstallPath;
+//
+//  ForceDirectories(AppPath);
+//
+//  ForceDirectories(DefaultPathForPrjsFolder);
+////  ForceDirectories(fthe_DefaultPrjPath);
+//
+//  ForceDirectories(UpdateInstallPath);
+//
+//  IniNxSQLPathFile := DefaultPathForPrjsFolder + cFilterIniFiles;
+//
+//  SqlFontStylesSaveFilePath := AppPath + cSqlFontFileName;
+//
+//  PathAndFileIni             := AppPath + cNxTableViewerIni;
+//
+//  PrjSetupCompomentsIni      := AppPath + cPrjSetUpComponents;
+//  DelphiDbDefaultPath        := AppPath + cDelphiSqToolsDbPath;
+//  PathAndFileAtFormLocSize   := AppPath + cFormLocSizeDef;
+////  MRUMenuItemsPathFile       := AppPath + MRUItemsIni;
+//  LocalServerAliasesPath     := AppPath + cLocalServerAliases;
+//
+//end;
 
 
 // ==================================================================
 
-procedure CreateIniFile;
-begin
-  NxSQLViewerDataIniFile := tGemINI.Create(PathAndFileIni);
-end;
-
-// ==================================================================
-
-procedure DestroyIniFile;
-begin
-  FreeAndNil(NxSQLViewerDataIniFile);
-end;
-
+//procedure CreateIniFile;
+//begin
+//  NxSQLViewerDataIniFile := tGemINI.Create(PathAndFileIni);
+//end;
+//
+//// ==================================================================
+//
+//procedure DestroyIniFile;
+//begin
+//  FreeAndNil(NxSQLViewerDataIniFile);
+//end;
+//
 // ==================================================================
 
 function LocalIP: AnsiString;
@@ -760,6 +801,11 @@ begin
   fDataSource := Value;
 end;
 
+procedure TProjectInfo.SetIniPathFile(const Value: string);
+begin
+  fIniFilterPathFile := Value;
+end;
+
 procedure TProjectInfo.PrjTransportChange(aTransport: TTransportUsed);
 begin
   if Assigned(fOnChangeTransport) then
@@ -825,40 +871,86 @@ begin
 end;
 
 
-procedure TProjectInfo.SetIniPathFile(const Value: string);
-var
-  fPath: string;
-begin
-  if Value = '' then
-    Exit;
-
-  fIniFilterPathFile := ExtractFilePath(Value);
-
-  fIniFilterPathFile := RemoveTrailingSlash(fIniFilterPathFile);
-  fIniFilterPathFile := fIniFilterPathFile + cFilterIniFiles;
-
-  fPath := ExtractFilePath(fIniFilterPathFile);
-  if not System.SysUtils.DirectoryExists(fPath) then
-    if not CreateDir(fPath) then
-      raise Exception.Create('Cannot create C:\temp');
-end;
-
-
 constructor TProjectInfo.Create(aPrjName: string; aDataSet: TDataSet);
 begin
-  fDataSource := tJvDataSource.Create(Nil);
-  fPrjName := ShortString(aPrjName);
-  fDataSource.DataSet := aDataSet;
-  fDefaultPasSqlFileLoc := GetAppSettingsPath + cDefaultPathForPrjs;
-  fIniFilterPathFile := fDefaultPasSqlFileLoc + cFilterIniFiles;
+
 end;
 
+//procedure TProjectInfo.SetIniPathFile(const Value: string);
+//var
+//  fPath: string;
+//begin
+//  if Value = '' then
+//    Exit;
+//
+//  fIniFilterPathFile := ExtractFilePath(Value);
+//
+//  fIniFilterPathFile := RemoveTrailingSlash(fIniFilterPathFile);
+//  fIniFilterPathFile := fIniFilterPathFile + cFilterIniFiles;
+//
+//  fPath := ExtractFilePath(fIniFilterPathFile);
+//  if not System.SysUtils.DirectoryExists(fPath) then
+//    if not CreateDir(fPath) then
+//      raise Exception.Create('Cannot create C:\temp');
+//end;
+//
+//
+//constructor TProjectInfo.Create(aPrjName: string; aDataSet: TDataSet);
+//begin
+//  fDataSource := tJvDataSource.Create(Nil);
+//  fPrjName := ShortString(aPrjName);
+//  fDataSource.DataSet := aDataSet;
+//  fAppPath := gGobalVarClass.AppPath;
+//  fDefaultPasSqlFileLoc := fAppPath + cDefaultPathForPrjs;
+//  fIniFilterPathFile := fDefaultPasSqlFileLoc + cFilterIniFiles;
+//end;
+//
 
 destructor TProjectInfo.Destory;
 begin
   FreeAndNil(fDataSource);
 end;
 
+
+{ TGobalVarClass }
+
+constructor TGobalVarClass.Create;
+begin
+  SetProgramPaths;
+  fNxSQLViewerDataIniFile := tGemINI.Create(fPathAndFileIni);
+end;
+
+destructor TGobalVarClass.Destory;
+begin
+  FreeAndNil(fNxSQLViewerDataIniFile);
+end;
+
+
+procedure TGobalVarClass.SetProgramPaths;
+begin
+  fAppPath                  := getWinSpecialFolder(CSIDL_LOCAL_APPDATA, False) + cSRSDpath;
+  fDefaultPathForPrjsFolder := fAppPath + cDefaultPathForPrjs + '\';
+
+  fMRUFile                  := fAppPath + cMRUFileName;
+  fUpdateInstallPath        := fAppPath + cUpdateInstallPath;
+
+  ForceDirectories(AppPath);
+
+  ForceDirectories(fDefaultPathForPrjsFolder);
+
+  ForceDirectories(UpdateInstallPath);
+
+  fIniNxSQLPathFile := fDefaultPathForPrjsFolder + cFilterIniFiles;
+
+  fSqlFontStylesSaveFilePath := AppPath + cSqlFontFileName;
+
+  fPathAndFileIni             := AppPath + cNxTableViewerIni;
+
+  fPrjSetupCompomentsIni      := AppPath + cPrjSetUpComponents;
+  fDelphiDbDefaultPath        := AppPath + cDelphiSqToolsDbPath;
+  fPathAndFileAtFormLocSize   := AppPath + cFormLocSizeDef;
+  fLocalServerAliasesPath     := AppPath + cLocalServerAliases;
+end;
 
 end.
 

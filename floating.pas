@@ -9,6 +9,8 @@ uses
 
   VCL.Graphics, VCL.Controls, VCL.Forms, VCL.Dialogs, Vcl.ExtCtrls,
 
+  GemINI,
+
   ovcbase, ovcsplit;
 
 type
@@ -31,12 +33,20 @@ type
     fOnShowFloat     : TNotifyEvent;
 
     fSplitterWidth   : integer;
+
+    fLocationStorage : TGemINI;
+    fStorePathFile   : string;
+    fHeaderName      : string;
   public
     procedure CreateParams (var Params: TCreateParams); override;
 
     constructor Create(AOwner : TComponent; const noFloatParent : TWinControl;
-                       const SetFloatControl: TControl; ExitControl: TImage); reintroduce;
+                       const SetFloatControl: TControl; ExitControl: TImage;
+                       const aStorePathFile, aHeaderName: string); reintroduce;
     //destructor FormDestroy(Sender: TObject);
+
+    procedure LoadFormLocation;
+    procedure SaveFormLocation;
 
     procedure Float;
 
@@ -58,13 +68,17 @@ begin
 end;
 
 constructor TFloatingForm.Create(AOwner: TComponent; const noFloatParent : TWinControl;
-                                 const setFloatControl: TControl; ExitControl: TImage);
+                                 const setFloatControl: TControl; ExitControl: TImage;
+                                 const aStorePathFile, aHeaderName: string);
 //constructor TFloatingForm.Create(AOwner: TComponent; const noFloatParent : TWinControl);
 begin
   fNoFloatParent       := noFloatParent;
   fSetFloatControl     := setFloatControl;
   fExitControl         := ExitControl;
   fExitControl.OnClick := ClickImage;
+
+  fStorePathFile       := aStorePathFile;
+  fHeaderName          := aHeaderName;
 
   //Self.Visible := False;
   inherited Create(AOwner);
@@ -91,6 +105,34 @@ procedure TFloatingForm.FormShow(Sender: TObject);
 begin
   if Assigned(fOnShowFloat) then begin
     fOnShowFloat(self);
+  end;
+end;
+
+
+procedure TFloatingForm.LoadFormLocation;
+begin
+  fLocationStorage:= TGemINI.Create(fStorePathFile);
+  try
+    Left         := fLocationStorage.ReadInteger(fHeaderName, 'Left', 10);
+    Top          := fLocationStorage.ReadInteger(fHeaderName, 'Top', 10);
+    ClientWidth  := fLocationStorage.ReadInteger(fHeaderName, 'Width', 235);
+    ClientHeight := fLocationStorage.ReadInteger(fHeaderName, 'Height', 524);
+  finally
+    FreeAndNil(fLocationStorage);
+  end;
+end;
+
+
+procedure TFloatingForm.SaveFormLocation;
+begin
+  fLocationStorage:= TGemINI.Create(fStorePathFile);
+  try
+    fLocationStorage.WriteInteger(fHeaderName,'Left', Left);
+    fLocationStorage.WriteInteger(fHeaderName, 'Top', Top);
+    fLocationStorage.WriteInteger(fHeaderName, 'Width', ClientWidth);
+    fLocationStorage.WriteInteger(fHeaderName, 'Height', ClientHeight);
+  finally
+    FreeAndNil(fLocationStorage);
   end;
 end;
 

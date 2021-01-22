@@ -22,6 +22,7 @@ type
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
+    function IsNx1FileInFolder(aAliasFolder: string): Boolean;
   public
     { Public declarations }
     DbFolderAlias: string;
@@ -33,7 +34,7 @@ var
 
 implementation
 uses
-  NxToolsMain, MSspecialFolders;
+  NxToolsMain, MSspecialFolders, GEMUseFullRoutines;
 
 {$R *.dfm}
 
@@ -45,7 +46,10 @@ begin
 
   if jvslctdrctry_Folder.Execute then begin
     edt_Path.Text := jvslctdrctry_Folder.Directory;
-    DbFolderAlias := edt_Alias.Text + ' ('+ jvslctdrctry_Folder.Directory+')';
+    if IsNx1FileInFolder(edt_Path.Text) then
+      DbFolderAlias := edt_Alias.Text + ' ('+ jvslctdrctry_Folder.Directory+')'
+    else
+      DbFolderAlias := 'Error: No ''nx1'' files in folder';
   end;
 end;
 
@@ -62,5 +66,24 @@ begin
   jvslctdrctry_Folder.InitialDir := getWinSpecialFolder(CSIDL_PERSONAL, false);
 end;
 
+
+function TAliasPath.IsNx1FileInFolder(aAliasFolder: string): Boolean;
+begin
+  result := False;
+  if DirectoryExists(aAliasFolder) then
+  begin
+    if CountFilesInFolder( ExtractFilePath(aAliasFolder), 'nx1' ) < 1 then
+    begin
+      if (MessageDlg('There are not files ending in ''nx1'' '+#10+#13+
+                     ' in the folder. Use the folder anyway?',
+             mtWarning, [mbOK, mbCancel], 0) in [mrOk, mrCancel, mrNone]) then
+      begin
+        result := true;
+      end;
+    end
+    else
+      Result := true;
+  end;
+end;
 
 end.
