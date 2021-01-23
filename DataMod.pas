@@ -76,6 +76,7 @@ type
     nxtbl_NxDbSqlToolsPrjsLocalServerDbPath: TWideStringField;
     nxdtbsmpr_1: TnxDatabaseMapper;
     nxsrvrnfplgn_1: TnxServerInfoPlugin;
+    nxsrvrngn_LocalDb: TnxServerEngine;
     procedure NxSqlButtonsDbTAfterDelete(DataSet: TDataSet);
     procedure nxtbl_NxDbSqlToolsPrjsPostError(DataSet: TDataSet;
       E: EDatabaseError; var Action: TDataAction);

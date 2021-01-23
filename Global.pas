@@ -48,7 +48,6 @@ const
 
   cNxDbTimeOut = 3000;
 
-
   cTransportTypes: array[TTransportUsed] of string = ('Win Sock', 'Named Pipe',
                                                       'Local Server', 'Shared Mem',
                                                       'None', 'Error');
@@ -97,18 +96,20 @@ type
 
   TProjectInfo = class
     fAppPath                : string;
+
+    fIsDefaultPrj           : Boolean;
+//    fLocalServerAliasPathFile: string;
+
     fPrjName                : tStr25;
     fPrjPath                : tStr255;
 
     fPrjTransport           : TTransportUsed;
     fPrjServer              : tStr45;
     fPrjAlias               : tStr95;
-    fPrjLocalServerPath     : string;
 
     fActiveTransport        : TTransportUsed;
     fActiveServer           : tStr45;
     fActiveAlias            : tStr95;
-    fActiveLocalServerPath  : string;
 
     fPasSqlFileSaveLoc      : tStr255;
     fDefaultPasSqlFileLoc   : string;
@@ -135,6 +136,7 @@ type
     procedure SetPrjTransport(const Value: TTransportUsed);
     procedure SetDataSource(const Value: TJvDataSource);
     procedure SetIniPathFile(const Value: string);
+    procedure SetIsDefaultPrj(const Value: Boolean);
 //    procedure SetIniPathFile(const Value: string);
 //    procedure SetDefaultPasSqlFileLoc(const Value: string);
 //    procedure SetDataSource(const Value: TJvDataSource);
@@ -156,6 +158,9 @@ type
     function InsertPrjIntoDb(var Msg: string): Boolean;
     function DeletePrj(var Msg: string; aPrjName: string): Boolean;
 
+    property IsDefaultPrj: Boolean read fIsDefaultPrj write SetIsDefaultPrj;
+//    property LocalServerAliasPathFile: string read fLocalServerAliasPathFile;
+
     property DataSource           : TJvDataSource read fDataSource write SetDataSource;
     property PrjName              : tStr25 read fPrjName write fPrjName;
     property PrjPath              : tStr255 read fPrjPath write fPrjPath;
@@ -165,23 +170,21 @@ type
 
     property IniFilterPathFile    :string read fIniFilterPathFile write SetIniPathFile;
 
-    property PrjTransport          : TTransportUsed read fPrjTransport write SetPrjTransport;
-    property PrjServer             : tstr45 read fPrjServer write SetPrjServer;
-    property PrjAlias              : tstr95 read fPrjAlias write SetPrjAlias;
-    property PrjLocalServerPath    : string read fPrjLocalServerPath write fPrjLocalServerPath;
+    property PrjTransport         : TTransportUsed read fPrjTransport write SetPrjTransport;
+    property PrjServer            : tstr45 read fPrjServer write SetPrjServer;
+    property PrjAlias             : tstr95 read fPrjAlias write SetPrjAlias;
 
-    property ActiveTrans           : TTransportUsed read fActiveTransport write fActiveTransport;
-    property ActiveServer          : tstr45 read fActiveServer write fActiveServer;
-    property ActiveAlias           : tstr95 read fActiveAlias write fActiveAlias;
-    property ActiveLocalServerPath : string read fActiveLocalServerPath write fActiveLocalServerPath;
+    property ActiveTrans          : TTransportUsed read fActiveTransport write fActiveTransport;
+    property ActiveServer         : tstr45 read fActiveServer write fActiveServer;
+    property ActiveAlias          : tstr95 read fActiveAlias write fActiveAlias;
 
-    property Table                 : tStr25 read fTableName write fTableName;
-    property Node                  : tTreeNode read fTreeNode write fTreeNode;
+    property Table                : tStr25 read fTableName write fTableName;
+    property Node                 : tTreeNode read fTreeNode write fTreeNode;
 
-    property OnChangeTransport     : TChangeTransport read fOnChangeTransport write fOnChangeTransport;
-    property OnChangeServer        : tChangeServer read fOnChangeServer write fOnChangeServer;
-    property OnChangeAlias         : tChangeAlias read fOnChangeAlias write fOnChangeAlias;
-    property OnChangeFileSaveLoc   : tChangeFileSaveLoc read fOnChangeFileSaveLoc write fOnChangeFileSaveLoc;
+    property OnChangeTransport    : TChangeTransport read fOnChangeTransport write fOnChangeTransport;
+    property OnChangeServer       : tChangeServer read fOnChangeServer write fOnChangeServer;
+    property OnChangeAlias        : tChangeAlias read fOnChangeAlias write fOnChangeAlias;
+    property OnChangeFileSaveLoc  : tChangeFileSaveLoc read fOnChangeFileSaveLoc write fOnChangeFileSaveLoc;
   end;
 
   TSQLBtnsDefaults = record
@@ -254,18 +257,17 @@ type
     property UrlHelp: string read fUrlHelp write fUrlHelp;
   end;
 
-
+{TGobalVarClass============================================================= }
   TGobalVarClass = class
     fPathAndFileIni             : string;
     fPrjSetupCompomentsIni      : string;
     fPathAndFileAtFormLocSize   : string;
     fDelphiDbDefaultPath        : string;
-    fIniNxSQLPathFile           : string;   // location of saved SQL files
     fDefaultPathForPrjsFolder   : string;
     fMRUFile                    : string;
     fUpdateInstallPath          : string;
     fSqlFontStylesSaveFilePath  : string;   //keep
-    fAlisesForLocalServer       : string;
+    fAlisesFileForLocalServer   : string;
     fNxSQLViewerDataIniFile     : tGemINI;
     fAppPath                    : string;// := GetAppSettingsPath;
   private
@@ -279,12 +281,12 @@ type
     property PrjSetupCompomentsIni      : string read fPrjSetupCompomentsIni;
     property PathAndFileAtFormLocSize   : string read fPathAndFileAtFormLocSize;
     property DelphiDbDefaultPath        : string read fDelphiDbDefaultPath;
-    property IniNxSQLPathFile           : string read fIniNxSQLPathFile;   // location of saved SQL files
+//    property IniNxSQLPathFile           : string read fIniNxSQLPathFile;   // location of saved SQL files
     property DefaultPathForPrjsFolder   : string read fDefaultPathForPrjsFolder;
     property MRUFile                    : string read fMRUFile;
     property UpdateInstallPath          : string read fUpdateInstallPath;
     property SqlFontStylesSaveFilePath  : string read fSqlFontStylesSaveFilePath;   //keep
-    property AlisesForLocalServer       : string read fAlisesForLocalServer;
+    property AlisesFileForLocalServer   : string read fAlisesFileForLocalServer;
   end;
 
 var
@@ -629,7 +631,9 @@ end;
 //end;
 
 
-{ TProjectInfo }
+{ TProjectInfo ================================================================}
+{ TProjectInfo ================================================================}
+{ TProjectInfo ================================================================}
 
 procedure TProjectInfo.SetPrjTransport(const Value: TTransportUsed);
 begin
@@ -806,6 +810,18 @@ begin
   fIniFilterPathFile := Value;
 end;
 
+
+procedure TProjectInfo.SetIsDefaultPrj(const Value: Boolean);
+begin
+  if Value then
+  begin
+
+  end;
+
+  fIsDefaultPrj := Value;
+end;
+
+
 procedure TProjectInfo.PrjTransportChange(aTransport: TTransportUsed);
 begin
   if Assigned(fOnChangeTransport) then
@@ -836,8 +852,9 @@ end;
 procedure TProjectInfo.PrjPropertiesToActive;
 begin
    fActiveTransport := fPrjTransport;
-   fActiveServer := fPrjServer;
-   fActiveAlias :=  fPrjAlias;
+   fActiveServer    := fPrjServer;
+   fActiveAlias     := fPrjAlias;
+//   fActiveLocalServerPath :=
 end;
 
 
@@ -860,21 +877,14 @@ begin
   fPrjTransport          := tranNone;
   fPrjServer             := '';
   fPrjAlias              := '';
-  fPrjLocalServerPath    := '';
   fPasSqlFileSaveLoc     := '';
   fDBPassWord            := '';
   fActiveTransport       := tranNone;
   fActiveServer          := '';
   fActiveAlias           := '';
-  fActiveLocalServerPath := '';
   fTreeNode              := nil;
 end;
 
-
-constructor TProjectInfo.Create(aPrjName: string; aDataSet: TDataSet);
-begin
-
-end;
 
 //procedure TProjectInfo.SetIniPathFile(const Value: string);
 //var
@@ -893,18 +903,19 @@ end;
 //    if not CreateDir(fPath) then
 //      raise Exception.Create('Cannot create C:\temp');
 //end;
-//
-//
-//constructor TProjectInfo.Create(aPrjName: string; aDataSet: TDataSet);
-//begin
-//  fDataSource := tJvDataSource.Create(Nil);
-//  fPrjName := ShortString(aPrjName);
-//  fDataSource.DataSet := aDataSet;
-//  fAppPath := gGobalVarClass.AppPath;
-//  fDefaultPasSqlFileLoc := fAppPath + cDefaultPathForPrjs;
-//  fIniFilterPathFile := fDefaultPasSqlFileLoc + cFilterIniFiles;
-//end;
-//
+
+
+constructor TProjectInfo.Create(aPrjName: string; aDataSet: TDataSet);
+begin
+  fDataSource := tJvDataSource.Create(Nil);
+  fPrjName := ShortString(aPrjName);
+  fDataSource.DataSet := aDataSet;
+  fAppPath := gGobalVarClass.AppPath;
+  fDefaultPasSqlFileLoc := fAppPath + cDefaultPathForPrjs;
+  fIniFilterPathFile := fDefaultPasSqlFileLoc + cFilterIniFiles;
+  fIsDefaultPrj := False;
+end;
+
 
 destructor TProjectInfo.Destory;
 begin
@@ -912,7 +923,9 @@ begin
 end;
 
 
-{ TGobalVarClass }
+{ TGobalVarClass ==============================================================}
+{ TGobalVarClass ==============================================================}
+{ TGobalVarClass ==============================================================}
 
 constructor TGobalVarClass.Create;
 begin
@@ -935,21 +948,18 @@ begin
   fUpdateInstallPath        := fAppPath + cUpdateInstallPath;
 
   ForceDirectories(AppPath);
-
   ForceDirectories(fDefaultPathForPrjsFolder);
-
   ForceDirectories(UpdateInstallPath);
 
-  fIniNxSQLPathFile := fDefaultPathForPrjsFolder + cFilterIniFiles;
-
+//  fIniNxSQLPathFile          := fDefaultPathForPrjsFolder + cFilterIniFiles; // filters for a project
   fSqlFontStylesSaveFilePath := AppPath + cSqlFontFileName;
+  fPathAndFileIni            := AppPath + cNxTableViewerIni;
 
-  fPathAndFileIni             := AppPath + cNxTableViewerIni;
+  fPrjSetupCompomentsIni     := AppPath + cPrjSetUpComponents;
+  fDelphiDbDefaultPath       := AppPath + cDelphiSqToolsDbPath;
+  fPathAndFileAtFormLocSize  := AppPath + cFormLocSizeDef;
 
-  fPrjSetupCompomentsIni      := AppPath + cPrjSetUpComponents;
-  fDelphiDbDefaultPath        := AppPath + cDelphiSqToolsDbPath;
-  fPathAndFileAtFormLocSize   := AppPath + cFormLocSizeDef;
-  fLocalServerAliasesPath     := AppPath + cLocalServerAliases;
+  fAlisesFileForLocalServer  := fAppPath + cLocalServerAliases;
 end;
 
 end.

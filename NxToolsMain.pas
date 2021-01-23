@@ -411,6 +411,7 @@ type
     procedure act_ExpandTreeTFExecute(Sender: TObject);
     procedure act_CollapseTreeTFExecute(Sender: TObject);
     procedure act_AddAliasPathExecute(Sender: TObject);
+    procedure act_RemoveAliasPathExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -490,6 +491,7 @@ type
     procedure FreeTreeDataDbs;
     procedure FreeSQLandTableForms;
     procedure SaveSqlFormEditors;
+    function addAliasesToLocalServer: Boolean;
 
   public
     { Public declarations }
@@ -1251,6 +1253,8 @@ procedure Tfrm_NxToolsMain.FormDestroy(Sender: TObject);
 begin
   FreeAndNil(gGobalVarClass);
   FreeAndNil(gProjectInfo);
+  if fLocalAliasPaths <> nil then
+    FreeAndNil(fLocalAliasPaths);
   DestroyFormMenuItems;
 end;
 
@@ -1866,15 +1870,23 @@ begin
 end;
 
 
+procedure Tfrm_NxToolsMain.act_RemoveAliasPathExecute(Sender: TObject);
+begin
+ //
+end;
+
+
 procedure Tfrm_NxToolsMain.act_AddAliasPathExecute(Sender: TObject);
+var
+  AliasSL: TStringList;
 begin
   if AliasPath.Execute then
-    if (AliasPath.DbFolderAlias <> 'Error: No ''nx1'' files in folder') then begin
-      if FileExists(gGobalVarClass.LocalServerAliasesPath) then
-        lst_AliasListBox.Items.LoadFromFile(gGobalVarClass.LocalServerAliasesPath);
-      lst_AliasListBox.Items.Add(AliasPath.DbFolderAlias);
-      lst_AliasListBox.Items.SaveToFile(gGobalVarClass.LocalServerAliasesPath);
-      theTransport := tranLocalServer;
+    if (AliasPath.DbFolderAliasMsg <> 'Error: No ''nx1'' files in folder') then begin
+      if FileExists(gGobalVarClass.AlisesFileForLocalServer) then
+      begin
+
+        dm_DataMod.nxsrvrngn_LocalDb.AliasHandler.Add(AliasPath.Alias, AliasPath.AliasPath, false);
+      end;
     end;
 end;
 
@@ -2455,6 +2467,19 @@ end;
 
 // click the transport buttons  ================================================
 
+function Tfrm_NxToolsMain.addAliasesToLocalServer: Boolean;
+begin
+  result := True;
+  try
+    for var Index: integer := 0 to fLocalAliasPaths.Count - 1 do
+      dm_DataMod.nxsrvrngn_LocalDb.AliasHandler.add(fLocalAliasPaths.Names[Index],
+                                                    fLocalAliasPaths.ValueFromIndex[Index], false);
+  except
+    result := False;
+  end;
+end;
+
+
 procedure Tfrm_NxToolsMain.act_LocalServerExecute(Sender: TObject);
 begin
   gProjectInfo.ActiveTrans := tranLocalServer; // this triggers ontranportchange
@@ -2468,13 +2493,15 @@ begin
 
   try
     try
-      if FileExists(LocalServerAliasesPath) then begin
-        fLocalAliasPaths.LoadFromFile(LocalServerAliasesPath)
+      if FileExists(gGobalVarClass.AlisesFileForLocalServer) then
+      begin
+        fLocalAliasPaths.LoadFromFile(gGobalVarClass.AlisesFileForLocalServer);
+        addAliasesToLocalServer;
       end
       else
-        MessageDlg('msg 2444-The local db path file does not exist.', mtWarning, [mbOK], 0);
+        MessageDlg('msg 2483-The local db path file does not exist.', mtWarning, [mbOK], 0);
     except
-      MessageDlg('msg 2446-No Saved Local Db''s to open.'+#13+'Add a local Db using the File Menu', mtError, [mbOk],0);
+      MessageDlg('msg 2485-No Saved Local Db''s to open.'+#13+'Add a local Db using the File Menu', mtError, [mbOk],0);
     end;
   finally
     btn_LocalServer.Down := True;

@@ -1,9 +1,9 @@
 object dm_DataMod: Tdm_DataMod
   OldCreateOrder = False
   Height = 492
-  Width = 645
+  Width = 958
   object nxseAllEngines: TnxseAllEngines
-    Left = 96
+    Left = 384
     Top = 8
   end
   object nxWinsockTransport: TnxWinsockTransport
@@ -23,23 +23,23 @@ object dm_DataMod: Tdm_DataMod
   end
   object nxSession: TnxSession
     ServerEngine = nxsrvrngn_Local
-    Left = 86
-    Top = 184
+    Left = 142
+    Top = 192
   end
   object nxDatabase: TnxDatabase
     Session = nxSession
     AliasPath = 'H:\MOWDb_10-08-2018'
-    Left = 86
-    Top = 240
+    Left = 134
+    Top = 248
   end
   object nxTable: TnxTable
     Database = nxDatabase
-    Left = 30
-    Top = 296
+    Left = 86
+    Top = 312
   end
   object nxSqlUpdateObject: TnxSqlUpdateObject
-    Left = 120
-    Top = 296
+    Left = 176
+    Top = 312
   end
   object nxsrvrngn_Local: TnxServerEngine
     OnSettingsLoaded = nxsrvrngn_LocalSettingsLoaded
@@ -47,56 +47,56 @@ object dm_DataMod: Tdm_DataMod
     ServerName = ''
     Options = [seoCloseAllWhenInactive]
     TableExtension = 'nx1'
-    Left = 296
+    Left = 544
     Top = 136
   end
   object nxsqlngn_Local: TnxSqlEngine
     StmtLogging = False
     StmtLogTableName = 'QueryLog'
     UseFieldCache = False
-    Left = 288
-    Top = 208
+    Left = 384
+    Top = 153
   end
   object nxsn_SqlTools: TnxSession
     ActiveDesigntime = True
     ServerEngine = nxrse_SqlTools
-    Left = 400
-    Top = 192
+    Left = 608
+    Top = 184
   end
   object nxdb_SQLBtns: TnxDatabase
     ActiveDesigntime = True
     Session = nxsn_SqlTools
     AliasName = 'NxDelphiSqlTools'
-    Left = 400
-    Top = 248
+    Left = 608
+    Top = 240
   end
   object ds_NSqlBtnsT: TJvDataSource
     DataSet = NxSqlButtonsDbT
-    Left = 272
-    Top = 392
+    Left = 472
+    Top = 408
   end
   object ds_NxDbSqlToolsPrjs: TJvDataSource
     DataSet = nxtbl_NxDbSqlToolsPrjs
-    Left = 392
-    Top = 384
+    Left = 600
+    Top = 368
   end
   object nxwint_SqlToolsTrans: TnxWinsockTransport
     DisplayCategory = 'Transports'
     ActiveDesigntime = True
     ServerNameDesigntime = 'SRSDServer@10.0.0.62'
-    Left = 552
-    Top = 72
+    Left = 760
+    Top = 64
   end
   object nxrse_SqlTools: TnxRemoteServerEngine
     ActiveDesigntime = True
     Transport = nxwint_SqlToolsTrans
-    Left = 488
-    Top = 144
+    Left = 696
+    Top = 136
   end
   object ds_nxtbl_TransportLUT: TDataSource
     DataSet = nxtbl_TransportLUT
-    Left = 488
-    Top = 408
+    Left = 696
+    Top = 400
   end
   object nxtbl_NxDbSqlToolsPrjs: TnxTable
     ActiveDesigntime = True
@@ -105,8 +105,8 @@ object dm_DataMod: Tdm_DataMod
     OnEditError = nxtbl_NxDbSqlToolsPrjsEditError
     OnPostError = nxtbl_NxDbSqlToolsPrjsPostError
     TableName = 'NxDbSqlToolsPrjs'
-    Left = 392
-    Top = 312
+    Left = 600
+    Top = 304
     object nxtbl_NxDbSqlToolsPrjsPrjName: TWideStringField
       FieldName = 'PrjName'
       Required = True
@@ -158,8 +158,8 @@ object dm_DataMod: Tdm_DataMod
     ActiveDesigntime = True
     Database = nxdb_SQLBtns
     TableName = 'TransportLUT'
-    Left = 488
-    Top = 360
+    Left = 696
+    Top = 352
     object nxtbl_TransportLUTTransportID: TIntegerField
       FieldName = 'TransportID'
     end
@@ -170,15 +170,15 @@ object dm_DataMod: Tdm_DataMod
   end
   object nxStoredProc1: TnxStoredProc
     Database = nxDatabase
-    Left = 192
-    Top = 232
+    Left = 200
+    Top = 216
   end
   object NxSqlButtonsDbT: TGEMNxTable
     Database = nxdb_SQLBtns
     AfterDelete = NxSqlButtonsDbTAfterDelete
     TableName = 'NxSqlButtonsDb'
-    Left = 272
-    Top = 336
+    Left = 480
+    Top = 344
     object NxSqlButtonsDbTBtnId: TUnsignedAutoIncField
       FieldName = 'BtnId'
     end
@@ -237,27 +237,35 @@ object dm_DataMod: Tdm_DataMod
     end
   end
   object nxPascalScriptEngine1: TnxPascalScriptEngine
-    Left = 88
-    Top = 368
+    Left = 400
+    Top = 424
   end
   object nxBlowfishRC4SecuredTransport1: TnxBlowfishRC4SecuredTransport
     DisplayCategory = 'Transports,Secured'
-    Left = 288
-    Top = 8
+    Left = 384
+    Top = 56
   end
   object nxnmdp_trnsprt: TnxNamedPipeTransport
     DisplayCategory = 'Transports'
-    Left = 408
-    Top = 72
+    Left = 616
+    Top = 64
   end
   object nxdtbsmpr_1: TnxDatabaseMapper
     Mappings = <>
-    Left = 552
-    Top = 240
+    Left = 864
+    Top = 248
   end
   object nxsrvrnfplgn_1: TnxServerInfoPlugin
     DisplayCategory = 'Plugins'
-    Left = 560
-    Top = 312
+    Left = 872
+    Top = 320
+  end
+  object nxsrvrngn_LocalDb: TnxServerEngine
+    SqlEngine = nxsqlngn_Local
+    ServerName = ''
+    Options = []
+    TableExtension = 'nx1'
+    Left = 224
+    Top = 128
   end
 end

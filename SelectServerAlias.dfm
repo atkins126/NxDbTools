@@ -2,9 +2,9 @@ object GetServersAlias: TGetServersAlias
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'GetServersAlias'
-  ClientHeight = 537
-  ClientWidth = 538
+  Caption = 'Local Alias and Paths'
+  ClientHeight = 590
+  ClientWidth = 544
   Color = clAppWorkSpace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -16,18 +16,16 @@ object GetServersAlias: TGetServersAlias
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 20
   object jvpnl_TopPanel: TJvPanel
     Left = 0
     Top = 0
-    Width = 538
+    Width = 544
     Height = 41
     Align = alTop
     TabOrder = 0
-    ExplicitLeft = 1016
-    ExplicitTop = 88
-    ExplicitWidth = 185
     object lbl_SelectServerType: TLabel
       Left = 17
       Top = 12
@@ -62,7 +60,7 @@ object GetServersAlias: TGetServersAlias
     AlignWithMargins = True
     Left = 3
     Top = 44
-    Width = 532
+    Width = 538
     Height = 29
     Cursor = crHandPoint
     Hint = ''
@@ -80,29 +78,27 @@ object GetServersAlias: TGetServersAlias
       item
         Caption = 'Networked Project Database'
       end>
-    ExplicitWidth = 538
+    ExplicitWidth = 532
   end
   object pglst_LocalNetworkPages: TJvPageList
     Left = 0
     Top = 76
-    Width = 538
-    Height = 390
-    ActivePage = jvsp_LocalDb
+    Width = 544
+    Height = 443
+    ActivePage = jvsp_NetworkDb
     PropagateEnable = True
     Align = alClient
     OnChange = pglst_LocalNetworkPagesChange
-    ExplicitLeft = 616
-    ExplicitTop = 147
-    ExplicitWidth = 569
-    ExplicitHeight = 470
+    ExplicitWidth = 538
+    ExplicitHeight = 390
     object jvsp_LocalDb: TJvStandardPage
       Left = 0
       Top = 0
-      Width = 538
-      Height = 390
+      Width = 544
+      Height = 443
       Caption = 'jvsp_LocalDb'
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 538
+      ExplicitHeight = 390
       object lbl_Alias1: TLabel
         Left = 17
         Top = 24
@@ -185,11 +181,11 @@ object GetServersAlias: TGetServersAlias
     object jvsp_NetworkDb: TJvStandardPage
       Left = 0
       Top = 0
-      Width = 538
-      Height = 390
-      Caption = 'jvsp_NetworkDb'
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      Width = 544
+      Height = 443
+      Caption = 'jvsp_LocalDb'
+      ExplicitWidth = 538
+      ExplicitHeight = 390
       object lbl_Servers: TLabel
         Left = 25
         Top = 13
@@ -220,7 +216,7 @@ object GetServersAlias: TGetServersAlias
         Background.FillMode = bfmTile
         Background.Visible = False
         TabOrder = 0
-        OnClick = lst_Servers1Click
+        OnClick = lst_ServersClick
       end
       object lst_Alias: TJvListBox
         Left = 301
@@ -231,7 +227,7 @@ object GetServersAlias: TGetServersAlias
         Background.FillMode = bfmTile
         Background.Visible = False
         TabOrder = 1
-        OnClick = lst_Alias1Click
+        OnClick = lst_AliasClick
       end
       object mmo_IssuesMemo: TMemo
         Left = 14
@@ -248,13 +244,13 @@ object GetServersAlias: TGetServersAlias
   end
   object jvpnl_FooterPanel: TJvPanel
     Left = 0
-    Top = 466
-    Width = 538
+    Top = 519
+    Width = 544
     Height = 71
     Align = alBottom
     TabOrder = 3
-    ExplicitTop = 623
-    ExplicitWidth = 1424
+    ExplicitTop = 466
+    ExplicitWidth = 538
     object lbl_SelectedItems: TLabel
       Left = 17
       Top = 3
@@ -277,6 +273,7 @@ object GetServersAlias: TGetServersAlias
       Kind = bkOK
       NumGlyphs = 2
       TabOrder = 0
+      OnClick = bbt_OKClick
     end
     object bbt_Cancel: TBitBtn
       AlignWithMargins = True

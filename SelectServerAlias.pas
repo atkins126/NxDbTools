@@ -49,11 +49,13 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure lst_Servers1Click(Sender: TObject);
-    procedure lst_Alias1Click(Sender: TObject);
     procedure ts_LocalOrNetworkedClick(Sender: TObject);
     procedure btn__GetPrjPathClick(Sender: TObject);
     procedure pglst_LocalNetworkPagesChange(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure bbt_OKClick(Sender: TObject);
+    procedure lst_ServersClick(Sender: TObject);
+    procedure lst_AliasClick(Sender: TObject);
   private
     { Private declarations }
     Session        : TnxSession;
@@ -86,6 +88,20 @@ Uses
 {$R *.dfm}
 
 { TForm2 }
+
+procedure TGetServersAlias.bbt_OKClick(Sender: TObject);
+begin
+  if ts_LocalOrNetworked.State = tssOff then
+  begin
+    fAliasName   := edt_LocalAlias.Text;
+    fLocalDbPath := edt_DbPath.Text;
+  end
+  else begin
+//    fServerName := lst_Servers.Items[lst_Servers.ItemIndex];
+//    fAliasName :=  lst_Alias.Items[lst_Alias.ItemIndex];
+//    fTransport :=
+  end;
+end;
 
 procedure TGetServersAlias.btn__GetPrjPathClick(Sender: TObject);
 begin
@@ -152,6 +168,15 @@ begin
 end;
 
 
+procedure TGetServersAlias.FormShow(Sender: TObject);
+begin
+  if ts_LocalOrNetworked.State = tssOff then
+    jvtbr_DbBar.Tabs[0].Selected := true
+  else
+    jvtbr_DbBar.Tabs[1].Selected := true;
+end;
+
+
 function TGetServersAlias.GetServers: Boolean;
 var
   sl: TStringList;
@@ -207,7 +232,7 @@ begin
 end;
 
 
-procedure TGetServersAlias.lst_Alias1Click(Sender: TObject);
+procedure TGetServersAlias.lst_AliasClick(Sender: TObject);
 begin
   if lst_Alias.ItemIndex > -1 then
   begin
@@ -215,12 +240,11 @@ begin
     lbl_SelectedItems.Caption := lst_Servers.Items[lst_Servers.ItemIndex] + '/'+
                                  lst_Alias.Items[lst_Alias.ItemIndex];
     fAliasName := lst_Alias.Items[lst_Alias.ItemIndex];
-
   end;
 end;
 
 
-procedure TGetServersAlias.lst_Servers1Click(Sender: TObject);
+procedure TGetServersAlias.lst_ServersClick(Sender: TObject);
 begin
   if lst_Servers.ItemIndex > -1 then
   begin

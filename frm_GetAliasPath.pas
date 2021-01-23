@@ -22,11 +22,16 @@ type
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
+    fAlias: string;
+    fAliasPath: string;
     function IsNx1FileInFolder(aAliasFolder: string): Boolean;
   public
     { Public declarations }
-    DbFolderAlias: string;
+    DbFolderAliasMsg: string;
     function Execute: Boolean;
+    property Alias: string read fAlias;
+    property AliasPath: string read fAliasPath;
+
   end;
 
 var
@@ -41,15 +46,19 @@ uses
 
 procedure TAliasPath.btn_BrowseFolderClick(Sender: TObject);
 begin
-  DbFolderAlias := '';
+  DbFolderAliasMsg := '';
   edt_Alias.Text := StringReplace(edt_Alias.Text, ' ', '', [rfReplaceAll, rfIgnoreCase]);
 
   if jvslctdrctry_Folder.Execute then begin
     edt_Path.Text := jvslctdrctry_Folder.Directory;
     if IsNx1FileInFolder(edt_Path.Text) then
-      DbFolderAlias := edt_Alias.Text + ' ('+ jvslctdrctry_Folder.Directory+')'
+    begin
+      fAlias := edt_Alias.Text;
+      fAliasPath := jvslctdrctry_Folder.Directory;
+//      DbFolderAlias := edt_Alias.Text + '|'+ jvslctdrctry_Folder.Directory
+    end
     else
-      DbFolderAlias := 'Error: No ''nx1'' files in folder';
+      DbFolderAliasMsg := 'Error: No ''nx1'' files in folder';
   end;
 end;
 
@@ -62,7 +71,7 @@ end;
 
 procedure TAliasPath.FormCreate(Sender: TObject);
 begin
-  DbFolderAlias := '';
+  DbFolderAliasMsg := '';
   jvslctdrctry_Folder.InitialDir := getWinSpecialFolder(CSIDL_PERSONAL, false);
 end;
 
