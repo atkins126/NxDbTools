@@ -1,7 +1,7 @@
 unit GetPrjList;
 
 interface
-{.$DEFINE USE_CODESITE}
+{$DEFINE USE_CODESITE}
 
 uses
   Winapi.Windows, Winapi.Messages,
@@ -339,7 +339,7 @@ begin
 
   if not dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Active then
     dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Open;
-  dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Insert
+  dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Insert;
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'act_CreatePrjExecute' );{$ENDIF}
 end;
 
@@ -1011,33 +1011,38 @@ begin
   {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'before' );{$ENDIF}
       if not gProjectInfo.LoadPropertiesFromTable(fMsg, lstGemMruList1.GetName(lstGemMruList1.ItemIndex)) then
       begin
-        MessageDlg('msg 1065-Could not find project from MRU listing. Select '+#13+#10+
+        MessageDlg('msg 1014-Could not find project from MRU listing. Select '+#13+#10+
                    'another project from then MRU list or use the'+#13+#10+
                    'Db grid to select/create a project.', mtError, [mbOK], 0);
         if (MessageDlg('Remove item from MRU list?', mtWarning, [mbYes, mbNo], 0) = mrYes) then
           lstGemMruList1.Items.Delete(lstGemMruList1.ItemIndex);
         fError:= True;
-      end;
+      end
+      else
+        gProjectInfo.IsDefaultPrj := false;
   {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'after' );{$ENDIF}
     end;
 
     pot_PrjGrid:
-       if Not gProjectInfo.LoadPropertiesFromTable(fMsg) then
-       begin
-        MessageDlg('msg 1078-Could not find project from MRU listing. Used the'+#13+#10+
+      if Not gProjectInfo.LoadPropertiesFromTable(fMsg) then
+      begin
+        MessageDlg('msg 1029-Could not find project from MRU listing. Used the'+#13+#10+
                    'Db grid to select a project.', mtError, [mbOK], 0);
         fError:= True;
-       end;
+      end
+      else
+         gProjectInfo.IsDefaultPrj := false;
 
     pot_Default: begin
       gProjectInfo.PrjName := ShortString(AnsiRightStr(cthe_DefaultPrjPath, Length(cthe_DefaultPrjPath) - 1));
       gProjectInfo.PrjPath := ShortString(gGobalVarClass.DefaultPathForPrjsFolder);
+      gProjectInfo.IsDefaultPrj := true;
     end;
   end;
 
   if not FError then begin
     if (gProjectInfo.PrjPath<> '') and (not System.SysUtils.DirectoryExists(string(gProjectInfo.PrjPath))) then
-      if (MessageDlg('msg 571-Prj. Path does not Exist. Create?', mtWarning, [mbYes, mbNo], 0) in [mrYes, mrNone]) then begin
+      if (MessageDlg('msg 1045-Prj. Path does not Exist. Create?', mtWarning, [mbYes, mbNo], 0) in [mrYes, mrNone]) then begin
         if not System.SysUtils.ForceDirectories(String(gProjectInfo.PrjPath)) then begin
            gProjectInfo.PrjPath := '';
         end;

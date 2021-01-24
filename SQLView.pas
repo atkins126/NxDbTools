@@ -13,7 +13,8 @@ uses
   Vcl.DBCtrls, Vcl.ExtCtrls, Vcl.Buttons, Vcl.Grids, Vcl.DBGrids, Vcl.Forms,
   Vcl.Graphics, Vcl.Menus, Vcl.ComCtrls,
 
-  amSplitter, SBPro, GEMProcessTimer, adpMRU,
+  amSplitter, SBPro, GEMProcessTimer, adpMRU, Global,
+
 
   Data.DB, nxdb,
 
@@ -30,7 +31,7 @@ uses
 
   {RzCmboBx,} RzCommon, RzButton,  RzEdit, LbCipher, LbClass,
 
-  SQLChildFormChangeInterface, Global, SynEditCodeFolding;
+  SQLChildFormChangeInterface, SynEditCodeFolding;
 
 
 type
@@ -237,6 +238,7 @@ uses
   NxToolsMain,
   DockDemo.Utilities,
   DataMod,
+  Winapi.SHFolder,
   MSspecialFolders,
   GEMUseFullRoutines;
 
@@ -324,7 +326,7 @@ var
         fDelphiFileName := dlgOpen_MemoFiles.FileName;
         syndt_DelphiCodeMemo.Lines.LoadFromFile(fDelphiFileName);
         fDelphiSaved := true;
-        frm_NxToolsMain.PasFileLoc := ShortString(ExtractFileDir(fDelphiFileName));
+        gProjectInfo.PasSqlFileSaveLoc := ShortString(ExtractFileDir(fDelphiFileName));
         stsbrpr_StatusBar.Panels[9].Text := fDelphiFileName;
       end;
     end;
@@ -380,7 +382,7 @@ begin
       if DirectoryExists(ExtractFileDir(stsbrpr_StatusBar.Panels[9].Text)) then begin
         syndt_DelphiCodeMemo.Lines.SaveToFile(stsbrpr_StatusBar.Panels[9].Text);
         fDelphiSaved := True;
-        frm_NxToolsMain.PasFileLoc := ShortString(ExtractFileDir(stsbrpr_StatusBar.Panels[9].Text));
+        gProjectInfo.PasSqlFileSaveLoc := ShortString(ExtractFileDir(stsbrpr_StatusBar.Panels[9].Text));
       end
       else
         SaveEditorFileAs(EditorType);
@@ -408,7 +410,7 @@ procedure Tfrm_SQLView.SaveEditorFileAs(EditorType: TEditorUsed);
         dlgSave_Memos.Filter := 'pas|*.pas';
         if DirectoryExists(String(fPasFileSaveLoc)) then
 //        if (fProjectInfo.PasFileSaveLoc = '') or (fProjectInfo.PasFileSaveLoc = 'None') then
-          dlgSave_Memos.InitialDir := getWinSpecialFolder(CSIDL_PERSONAL, false)
+          dlgSave_Memos.InitialDir := GetSpecialFolderPath(CSIDL_PERSONAL, false)
         else
           dlgSave_Memos.InitialDir := string(fPasFileSaveLoc);
       end;
@@ -430,7 +432,7 @@ procedure Tfrm_SQLView.SaveEditorFileAs(EditorType: TEditorUsed);
         syndt_DelphiCodeMemo.Lines.SaveToFile(fDelphiFileName);
         fDelphiSaved := true;
         stsbrpr_StatusBar.Panels[9].Text := fDelphiFileName;
-        frm_NxToolsMain.PasFileLoc := ShortString(dlgSave_Memos.InitialDir);
+        gProjectInfo.PasSqlFileSaveLoc := ShortString(dlgSave_Memos.InitialDir);
         end;
     end;
   end;
@@ -865,7 +867,7 @@ begin
   fDockingRect.Ud_Width := Width;
   fDockingRect.Ud_Height := Height;
 
-  adpmr_FilterMRU.IniFilePath := IniNxSQLPathFile;
+  adpmr_FilterMRU.IniFilePath := gProjectInfo.IniFilterPathFile;
   adpmr_FilterMRU.UseIniFile := True;
 
   fChangeNum := 0;

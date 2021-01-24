@@ -4,7 +4,9 @@ unit Global;
 
 interface
 uses
-  Winapi.Winsock, Winapi.Messages,
+  Winapi.Winsock, Winapi.Messages, Winapi.SHFolder,  WinApi.Windows,
+  WinApi.KnownFolders,  WinApi.ShlObj,  Winapi.ActiveX,
+
 
   System.SysUtils, System.Inifiles, System.AnsiStrings, System.TypInfo,
   System.Classes, System.UITypes,  System.IOUtils, System.Types,
@@ -12,9 +14,9 @@ uses
   Vcl.Graphics, Vcl.StdCtrls, Vcl.Dialogs, Vcl.Controls, Vcl.Menus,
   Vcl.ComCtrls,
 
-  Data.DB, nxdb,
+  Data.DB, nxdb, MSspecialFolders,
 
-  MSspecialFolders, GemINI,
+  GemINI,
 
   JvPanel, JvDataSource,
 
@@ -98,11 +100,12 @@ type
     fAppPath                : string;
 
     fIsDefaultPrj           : Boolean;
-//    fLocalServerAliasPathFile: string;
+
+    fLocalAliasPath         : string;
+    fLocalAlias             : string;
 
     fPrjName                : tStr25;
     fPrjPath                : tStr255;
-
     fPrjTransport           : TTransportUsed;
     fPrjServer              : tStr45;
     fPrjAlias               : tStr95;
@@ -159,7 +162,6 @@ type
     function DeletePrj(var Msg: string; aPrjName: string): Boolean;
 
     property IsDefaultPrj: Boolean read fIsDefaultPrj write SetIsDefaultPrj;
-//    property LocalServerAliasPathFile: string read fLocalServerAliasPathFile;
 
     property DataSource           : TJvDataSource read fDataSource write SetDataSource;
     property PrjName              : tStr25 read fPrjName write fPrjName;
@@ -170,6 +172,8 @@ type
 
     property IniFilterPathFile    :string read fIniFilterPathFile write SetIniPathFile;
 
+    property LocalAliasPath       : string read fLocalAliasPath;
+    property LocalAlias           : string read fLocalAlias;
     property PrjTransport         : TTransportUsed read fPrjTransport write SetPrjTransport;
     property PrjServer            : tstr45 read fPrjServer write SetPrjServer;
     property PrjAlias             : tstr95 read fPrjAlias write SetPrjAlias;
@@ -272,6 +276,7 @@ type
     fAppPath                    : string;// := GetAppSettingsPath;
   private
     procedure SetProgramPaths;
+//    function getWinSpecialFolder(CSIDLFolder : integer; IncludeBackSlash: boolean) : string;
   public
     constructor Create;
     destructor Destory;
@@ -281,7 +286,6 @@ type
     property PrjSetupCompomentsIni      : string read fPrjSetupCompomentsIni;
     property PathAndFileAtFormLocSize   : string read fPathAndFileAtFormLocSize;
     property DelphiDbDefaultPath        : string read fDelphiDbDefaultPath;
-//    property IniNxSQLPathFile           : string read fIniNxSQLPathFile;   // location of saved SQL files
     property DefaultPathForPrjsFolder   : string read fDefaultPathForPrjsFolder;
     property MRUFile                    : string read fMRUFile;
     property UpdateInstallPath          : string read fUpdateInstallPath;
@@ -335,6 +339,8 @@ function ExtractAliasAndPath(aOrgStr: string; out aAlias, aPath: string): Boolea
 
 function BoolToStr(aBool: boolean): string;
 
+//function getWinSpecialFolder(CSIDLFolder : integer; IncludeBackSlash: boolean) : string;
+
 //function GetAppSettingsPath: string;
 
 //procedure GetProjectList;//(Out aResults: TStrings);
@@ -350,6 +356,40 @@ function BoolToStr(aBool: boolean): string;
 implementation
 uses
   GEMUseFullRoutines;
+
+
+//function getWinSpecialFolder(CSIDLFolder : integer; IncludeBackSlash: boolean) : string;
+//var
+//  vSFolder :  pItemIDList;
+//  vSpecialPath : array[0..MAX_PATH] of Char;
+//begin
+//  try
+//    ShowMessage('In CSIDLFolder');
+//
+//    SHGetSpecialFolderLocation(0, CSIDLFolder, vSFolder);
+//    ShowMessage('In SHGetSpecialFolderLocation');
+//    SHGetPathFromIDList(vSFolder, vSpecialPath);
+//    ShowMessage('In SHGetPathFromIDList');
+//    Result := StrPas(vSpecialPath);
+//    ShowMessage('In Result');
+//    if (Result <> '') then begin
+//      if IncludeBackSlash then
+//        Result := IncludeTrailingPathDelimiter(result); //   IncludeTrailingBackslash(Result)
+//    end
+//    else
+//      result := 'ERROR';
+//    ShowMessage('End CSIDLFolder');
+//  except
+//     on E: Exception do begin
+//       ShowMessage('Exception class name = '+E.ClassName);
+//       ShowMessage('Exception message = '+E.Message);
+//     end;
+//  end;
+//  ShowMessage('Real End CSIDLFolder');
+//  ShowMessage(result);
+////  Dispose(vSFolder);
+//end;
+
 
 //procedure GetProjectList;//(Out aResults: TStrings);
 //var
@@ -376,25 +416,37 @@ uses
 {Begin tJvPanel }
 constructor TJvPanel.Create(AOwner: TComponent);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'Create' );{$ENDIF}
+
   inherited;
   SQLExtended := TStringList.Create;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Create' );{$ENDIF}
 end;
 
 
 destructor TJvPanel.Destroy;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'Destroy' );{$ENDIF}
+
   SQLExtended.Free;
   inherited;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Destroy' );{$ENDIF}
 end;
 {End tJvPanel }
 
 
 function BoolToStr(aBool: boolean): string;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( 'BoolToStr' );{$ENDIF}
+
   if aBool then
     Result := 'True'
   else
     Result := 'False';
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( 'BoolToStr' );{$ENDIF}
 end;
 
 
@@ -402,10 +454,14 @@ function ExtractTextInsideGivenTagEx(const bTag, eTag, Text: string): string;
 var
   StartPos,  EndPos: integer;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( 'ExtractTextInsideGivenTagEx' );{$ENDIF}
+
   result := '';
   StartPos := Pos(bTag, Text) + Length(bTag);
   EndPos := Pos(eTag, Text);
   result := Copy(Text, StartPos, EndPos - StartPos);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( 'ExtractTextInsideGivenTagEx' );{$ENDIF}
 end;
 
 
@@ -417,6 +473,8 @@ var
   indexDelimiter: Byte;
   endDelimiter: Byte;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( 'ExtractAliasAndPath' );{$ENDIF}
+
   result := True;
   try
     indexDelimiter := Pos(bdelimiter, aOrgStr);
@@ -426,33 +484,47 @@ begin
   except
     result := False;
   end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( 'ExtractAliasAndPath' );{$ENDIF}
 end;
 
 
 function iif(Test: boolean; const TrueR, FalseR: string): string;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( 'iif' );{$ENDIF}
+
   if Test then
     Result := TrueR
   else
     Result := FalseR;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( 'iif' );{$ENDIF}
 end;
 
 
 function iif(Test: boolean; const TrueR, FalseR: integer): integer;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( 'iif' );{$ENDIF}
+
   if Test then
     Result := TrueR
   else
     Result := FalseR;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( 'iif' );{$ENDIF}
 end;
 
 
 function iif(Test: boolean; const TrueR, FalseR: extended): extended;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( 'iif' );{$ENDIF}
+
   if Test then
     Result := TrueR
   else
     Result := FalseR;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( 'iif' );{$ENDIF}
 end;
 
 
@@ -526,6 +598,8 @@ var
     i: Integer;
     GInitData: TWSADATA;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( 'LocalIP' );{$ENDIF}
+
     WSAStartup($101, GInitData);
     Result := '';
     GetHostName(Buffer, SizeOf(Buffer));
@@ -540,6 +614,8 @@ begin
     end;
 
     WSACleanup;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( 'LocalIP' );{$ENDIF}
 end;
 
 // font stuff ==================================================================
@@ -548,6 +624,8 @@ procedure SetFontAsStr(Var aFont : TFont; const aFontStr: String);
 Var
   FontStrList : TStringList;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( 'SetFontAsStr' );{$ENDIF}
+
   FontStrList := TStringList.Create;
   try
     FontStrList.QuoteChar := '''';
@@ -564,11 +642,15 @@ begin
   finally
     FontStrList.Free;
   end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( 'SetFontAsStr' );{$ENDIF}
 end;
 
 
 function GetFontAsStr(aFont : TFont) : String;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( 'GetFontAsStr' );{$ENDIF}
+
   If Assigned(aFont) Then
   Begin
     Result := QuotedStr('Name=' + aFont.Name);
@@ -580,19 +662,29 @@ begin
   End
   Else
     Result := 'DEFAULT';
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( 'GetFontAsStr' );{$ENDIF}
 end;
 
 
 function SetToInt(const aSet; const Size: integer): integer;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( 'SetToInt' );{$ENDIF}
+
   Result := 0;
   Move(aSet, Result, Size);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( 'SetToInt' );{$ENDIF}
 end;
 
 
 procedure IntToSet(const Value: integer; var aSet; const Size:integer);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( 'IntToSet' );{$ENDIF}
+
   Move(Value, aSet, Size);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( 'IntToSet' );{$ENDIF}
 end;
 
 
@@ -637,6 +729,8 @@ end;
 
 procedure TProjectInfo.SetPrjTransport(const Value: TTransportUsed);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.SetPrjTransport' );{$ENDIF}
+
   if Value <> fPrjTransport then begin
     fPrjTransport := Value;
     if not fUpdate then begin
@@ -645,10 +739,14 @@ begin
       fPrjAlias := '';
     end;
   end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.SetPrjTransport' );{$ENDIF}
 end;
 
 procedure TProjectInfo.SetPrjServer(const Value: tstr45);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.SetPrjServer' );{$ENDIF}
+
   if Value <> fPrjServer then begin
     fPrjServer := Value;
     if not fUpdate then begin
@@ -656,11 +754,15 @@ begin
       fPrjAlias := '';
     end;
   end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.SetPrjServer' );{$ENDIF}
 end;
 
 
 function TProjectInfo.SavePropertiesToTable(var Msg: string; aPrjName: string): Boolean;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.SavePropertiesToTable' );{$ENDIF}
+
   result := False;
   if fDataSource.DataSet = nil then
   begin
@@ -681,6 +783,8 @@ begin
   end
   else
     Msg := 'Could Not Locate Project';
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.SavePropertiesToTable' );{$ENDIF}
 end;
 
 
@@ -688,6 +792,8 @@ function TProjectInfo.LoadPropertiesFromTable(var Msg: string): Boolean;
 var
   s: string;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.LoadPropertiesFromTable' );{$ENDIF}
+
   result := False;
   if fDataSource.DataSet = nil then
   begin
@@ -717,11 +823,15 @@ begin
         result := False;
       end;
   end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.LoadPropertiesFromTable' );{$ENDIF}
 end;
 
 
 function TProjectInfo.LoadPropertiesFromTable(var Msg: string; aPrjName: string): Boolean;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.LoadPropertiesFromTable' );{$ENDIF}
+
 
   result := False;
   if fDataSource.DataSet = nil then
@@ -742,15 +852,20 @@ begin
     fPrjAlias          := ShortString(DataSource.DataSet.FieldByName('Alias').AsString);
     fDBPassWord        := ShortString(DataSource.DataSet.FieldByName('DbPassWord').AsString);
     fPasSqlFileSaveLoc := DataSource.DataSet.FieldByName('PassFileSaveLoc').AsString;
+    fLocalAliasPath    := DataSource.DataSet.FieldByName('LocalServerDbPath').AsString;
     Result := True;
   end
   else
     Msg := 'Could Not Locate Project: '+ aPrjName;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.LoadPropertiesFromTable' );{$ENDIF}
 end;
 
 
 function TProjectInfo.InsertPrjIntoDb(var Msg: string): Boolean;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.InsertPrjIntoDb' );{$ENDIF}
+
   result := False;
   if fDataSource.DataSet = nil then
   begin
@@ -765,16 +880,22 @@ begin
     DataSource.DataSet.FieldByName('Server').AsString       := fPrjServer;
     DataSource.DataSet.FieldByName('Alias').AsString        := fPrjAlias;
     DataSource.DataSet.FieldByName('DbPassWord').AsString   := fDBPassWord;
+    DataSource.DataSet.FieldByName('PassFileSaveLoc').AsString   := fPasSqlFileSaveLoc;
+    DataSource.DataSet.FieldByName('LocalServerDbPath').AsString := fLocalAliasPath;
     DataSource.DataSet.Post;
     Result := True;
   except
-    Msg := 'Error creating new project';
+    Msg := 'Error Writting Project to Db';
   end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.InsertPrjIntoDb' );{$ENDIF}
 end;
 
 
 function TProjectInfo.DeletePrj(var Msg: string; aPrjName: string): Boolean;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.DeletePrj' );{$ENDIF}
+
   result := False;
   if fDataSource.DataSet = nil then
   begin
@@ -788,90 +909,138 @@ begin
   end
   else
     result := false;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.DeletePrj' );{$ENDIF}
 end;
 
 
 procedure TProjectInfo.SetPrjAlias(const Value: tstr95);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.SetPrjAlias' );{$ENDIF}
+
   if Value <> fPrjAlias then begin
     fPrjAlias := Value;
     if not fUpdate then
       PrjAliasChange(fPrjAlias);
   end;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.SetPrjAlias' );{$ENDIF}
 end;
 
 procedure TProjectInfo.SetDataSource(const Value: TJvDataSource);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetDataSource' );{$ENDIF}
+
   fDataSource := Value;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.SetDataSource' );{$ENDIF}
 end;
 
 procedure TProjectInfo.SetIniPathFile(const Value: string);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.SetIniPathFile' );{$ENDIF}
+
   fIniFilterPathFile := Value;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.SetIniPathFile' );{$ENDIF}
 end;
 
 
 procedure TProjectInfo.SetIsDefaultPrj(const Value: Boolean);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.SetIsDefaultPrj' );{$ENDIF}
+
   if Value then
   begin
 
   end;
 
   fIsDefaultPrj := Value;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.SetIsDefaultPrj' );{$ENDIF}
 end;
 
 
 procedure TProjectInfo.PrjTransportChange(aTransport: TTransportUsed);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.PrjTransportChange' );{$ENDIF}
+
   if Assigned(fOnChangeTransport) then
     fOnChangeTransport(aTransport);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.PrjTransportChange' );{$ENDIF}
 end;
 
 procedure TProjectInfo.PrjServerChange(aServer: tStr45);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.PrjServerChange' );{$ENDIF}
+
   if Assigned(fOnChangeServer) then
     fOnChangeServer(aServer);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.PrjServerChange' );{$ENDIF}
 end;
 
 
 procedure TProjectInfo.PrjAliasChange(aAlias: tStr95);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.PrjAliasChange' );{$ENDIF}
+
   if Assigned(fOnChangeAlias) then
     fOnChangeAlias(aAlias);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.PrjAliasChange' );{$ENDIF}
 end;
 
 
 procedure TProjectInfo.PrjFileSaveLocChange(aFilePath: string);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'PrjFileSaveLocChange' );{$ENDIF}
+
   if Assigned(fOnChangeFileSaveLoc) then
     fOnChangeAlias(aFilePath);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.PrjFileSaveLocChange' );{$ENDIF}
 end;
 
 
 procedure TProjectInfo.PrjPropertiesToActive;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.PrjPropertiesToActive' );{$ENDIF}
+
    fActiveTransport := fPrjTransport;
    fActiveServer    := fPrjServer;
    fActiveAlias     := fPrjAlias;
 //   fActiveLocalServerPath :=
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.PrjPropertiesToActive' );{$ENDIF}
 end;
 
 
 procedure TProjectInfo.BeginUpdate;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.BeginUpdate' );{$ENDIF}
+
   fUpdate := True;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.BeginUpdate' );{$ENDIF}
 end;
 
 
 procedure TProjectInfo.EndUpdate;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.EndUpdate' );{$ENDIF}
+
   fUpdate := false;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.EndUpdate' );{$ENDIF}
 end;
 
 
 procedure TProjectInfo.ClearPrj;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.ClearPrj' );{$ENDIF}
+
   fPrjName               := '';
   fPrjPath               := '';
   fPrjTransport          := tranNone;
@@ -883,6 +1052,8 @@ begin
   fActiveServer          := '';
   fActiveAlias           := '';
   fTreeNode              := nil;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.ClearPrj' );{$ENDIF}
 end;
 
 
@@ -907,6 +1078,8 @@ end;
 
 constructor TProjectInfo.Create(aPrjName: string; aDataSet: TDataSet);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.Create' );{$ENDIF}
+
   fDataSource := tJvDataSource.Create(Nil);
   fPrjName := ShortString(aPrjName);
   fDataSource.DataSet := aDataSet;
@@ -914,12 +1087,18 @@ begin
   fDefaultPasSqlFileLoc := fAppPath + cDefaultPathForPrjs;
   fIniFilterPathFile := fDefaultPasSqlFileLoc + cFilterIniFiles;
   fIsDefaultPrj := False;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.Create' );{$ENDIF}
 end;
 
 
 destructor TProjectInfo.Destory;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.Destory' );{$ENDIF}
+
   FreeAndNil(fDataSource);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.Destory' );{$ENDIF}
 end;
 
 
@@ -929,27 +1108,69 @@ end;
 
 constructor TGobalVarClass.Create;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TGobalVarClass.Create' );{$ENDIF}
   SetProgramPaths;
+
   fNxSQLViewerDataIniFile := tGemINI.Create(fPathAndFileIni);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TGobalVarClass.Create' );{$ENDIF}
 end;
 
 destructor TGobalVarClass.Destory;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TGobalVarClass.Destory' );{$ENDIF}
+
   FreeAndNil(fNxSQLViewerDataIniFile);
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TGobalVarClass.Destory' );{$ENDIF}
 end;
 
 
+//function TGobalVarClass.getWinSpecialFolder(CSIDLFolder : integer; IncludeBackSlash: boolean) : string;
+//var
+//  vSFolder :  pItemIDList;
+//  vSpecialPath : array[0..MAX_PATH] of Char;
+//begin
+//  try
+//    SHGetSpecialFolderLocation(0, CSIDLFolder, vSFolder);
+//    SHGetPathFromIDList(vSFolder, vSpecialPath);
+//    Result := StrPas(vSpecialPath);
+//    if (Result <> '') then begin
+//      if IncludeBackSlash then
+//        Result := IncludeTrailingPathDelimiter(result); //   IncludeTrailingBackslash(Result)
+//    end
+//    else
+//      result := 'ERROR';
+//  except
+//     on E: Exception do begin
+//       ShowMessage('Exception class name = '+E.ClassName);
+//       ShowMessage('Exception message = '+E.Message);
+//     end;
+//  end;
+//end;
+//
+
 procedure TGobalVarClass.SetProgramPaths;
 begin
-  fAppPath                  := getWinSpecialFolder(CSIDL_LOCAL_APPDATA, False) + cSRSDpath;
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TGobalVarClass.SetProgramPaths' );{$ENDIF}
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'before fapp path' );{$ENDIF}
+
+  var tempstr: string := GetSpecialFolderPath(CSIDL_LOCAL_APPDATA, False);
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'TempStr: '+tempstr );{$ENDIF}
+  fAppPath                  :=  tempstr+ cSRSDpath;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'after fapp pat' );{$ENDIF}
+
   fDefaultPathForPrjsFolder := fAppPath + cDefaultPathForPrjs + '\';
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'set 2 paths' );{$ENDIF}
 
   fMRUFile                  := fAppPath + cMRUFileName;
   fUpdateInstallPath        := fAppPath + cUpdateInstallPath;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'set next 2 paths' );{$ENDIF}
 
   ForceDirectories(AppPath);
   ForceDirectories(fDefaultPathForPrjsFolder);
-  ForceDirectories(UpdateInstallPath);
+  ForceDirectories(fUpdateInstallPath);
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Force  3 paths' );{$ENDIF}
 
 //  fIniNxSQLPathFile          := fDefaultPathForPrjsFolder + cFilterIniFiles; // filters for a project
   fSqlFontStylesSaveFilePath := AppPath + cSqlFontFileName;
@@ -960,8 +1181,11 @@ begin
   fPathAndFileAtFormLocSize  := AppPath + cFormLocSizeDef;
 
   fAlisesFileForLocalServer  := fAppPath + cLocalServerAliases;
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TGobalVarClass.SetProgramPaths' );{$ENDIF}
 end;
 
 end.
+
 
 

@@ -27,7 +27,7 @@ object frm_SelectProject: Tfrm_SelectProject
     Width = 649
     Height = 412
     Align = alClient
-    ActiveCard = Card_CreateSelectPrjDb
+    ActiveCard = Card_MostRecentlyUsedPrj
     Caption = 'cardpnl_Dialogs'
     TabOrder = 0
     OnCardChange = cardpnl_DialogsCardChange

@@ -3,9 +3,13 @@ unit frm_GetAliasPath;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, JvBaseDlg,
-  JvSelectDirectory, Vcl.Buttons, JvComponentBase, JvFormPlacement;
+  Winapi.Windows, Winapi.Messages, Winapi.SHFolder,
+
+  System.SysUtils, System.Variants, System.Classes,
+
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
+
+  JvBaseDlg, JvSelectDirectory, Vcl.Buttons, JvComponentBase, JvFormPlacement;
 
 type
   TAliasPath = class(TForm)
@@ -39,7 +43,8 @@ var
 
 implementation
 uses
-  NxToolsMain, MSspecialFolders, GEMUseFullRoutines;
+  NxToolsMain, MSspecialFolders,
+  GEMUseFullRoutines, Global;
 
 {$R *.dfm}
 
@@ -72,7 +77,7 @@ end;
 procedure TAliasPath.FormCreate(Sender: TObject);
 begin
   DbFolderAliasMsg := '';
-  jvslctdrctry_Folder.InitialDir := getWinSpecialFolder(CSIDL_PERSONAL, false);
+  jvslctdrctry_Folder.InitialDir := GetSpecialFolderPath(CSIDL_PERSONAL, false);
 end;
 
 

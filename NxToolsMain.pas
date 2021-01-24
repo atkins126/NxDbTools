@@ -481,7 +481,7 @@ type
     procedure DoConfigChange(aFontStuff: TFontStuff);
     procedure SetupTreeViewTableFields(aNode: tTreeNode);
     procedure SetupTreeViewAliasTables;
-    function GetJustPathAlias(aAlisPath: string): string;
+//    function GetJustPathAlias(aAlisPath: string): string;
     procedure ClearTree;
     procedure Create_TablesView(aNode: tTreeNode; aTableName: string);
     procedure CreateSQLWindow(aNode: tTreeNode);
@@ -517,6 +517,8 @@ type
     property BtnSpacing      : integer read GetBtnSpacing;// write fBtnSpacing;
     property BtnLeftColStart : integer read GetBtnLeftColStart;// write fBtnLeftColStart;
     property BtnRightColStart: integer read GetBtnRightColStart;  // write fBtnRightColStart;
+    function GetAliasName(s: string): string;
+    function GetAliasPath(s: string): string;
 
 //    property PasFileLoc: tStr255 read fPasFileLoc write SetPasFileLoc;
 //    property ProjectInfo: TProjectInfo read fProjectInfo write fProjectInfo;
@@ -531,7 +533,8 @@ var
 implementation
 
 Uses
-  DataMod, MSspecialFolders, GemINI, GetPrjList,
+  DataMod, //MSspecialFolders,
+  GemINI, GetPrjList,
   GEMUseFullRoutines, Dimmer, frm_GetAliasPath, MoveResizeComponents,
   SQLChildFormChangeInterface, FontStuffTest;
 
@@ -1198,20 +1201,22 @@ var
   indexL     : tSqlFontType;
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormCreate' );{$ENDIF}
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part A1' );{$ENDIF}
 
   fFormShowing := true;
 
 //  fTheProjects := TStringList.Create;
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part A2' );{$ENDIF}
   gGobalVarClass.Create;
 //  SetProgramPaths;
-  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part A' );{$ENDIF}
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part B' );{$ENDIF}
 
   GEMAppUpdater.UpdaterApplicationLocName := ExtractFileDir(ParamStr(0)) + '\SRSDAppUpdater.exe';
   GEMAppUpdater.LocalInstallPath := gGobalVarClass.UpdateInstallPath;
   GEMAppUpdater.IconFileLocation := ExtractFileDir(ParamStr(0)) + '\NxDbSQLTableViewer_Icon.ico';
 
   jvpxmlflstrg_NxDbToolsPrefs.FileName := gGobalVarClass.PathAndFileAtFormLocSize;
-  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part B' );{$ENDIF}
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part C' );{$ENDIF}
 
   spltvw_ToolsCommands.Opened := False;
   sv_ProjectInfo.Opened := False;
@@ -1220,31 +1225,31 @@ begin
   pgc_ToolsChange(Sender);
 
   SetupDocking;
-  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part C' );{$ENDIF}
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part D' );{$ENDIF}
 
   for indexL := Low(tSqlFontType) to High(tSqlFontType) do
     fFontLabelArray[indexL] := FindComponent(FontLabelArray[indexL]) as TLabel;
-  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part D' );{$ENDIF}
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part E' );{$ENDIF}
 
   GetFonts;
-  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part E' );{$ENDIF}
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part F' );{$ENDIF}
 
   frm_NxToolsMain.Caption := 'Nexus SQL and Table Delphi Workshop: ' + GetAppVersionStr;
 
-  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part F' );{$ENDIF}
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part G' );{$ENDIF}
   for var cnt: integer := 1 to numCatPanels do begin
     ctgrypnl_Array[cnt] := FindComponent(mCatPanelsComponents[cnt]) as TCategoryPanel;
     ctgrypnl_Array[cnt].Collapsed := true;
     ctgrypnl_Array[cnt].tag := cnt;
   end;
-  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part G' );{$ENDIF}
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part H' );{$ENDIF}
 
   for var index: integer := 1 to NumBtns do
     fTransBtnsArray[index] := FindComponent(TransBtnsArray[index]) as TSpeedButton;
-  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part H' );{$ENDIF}
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part I' );{$ENDIF}
 
   pgc_ToolsCommands.ActivePage := ts_DatabaseTools;
-  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part I' );{$ENDIF}
+  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part J' );{$ENDIF}
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'FormCreate' );{$ENDIF}
 end;
 
@@ -1694,18 +1699,44 @@ begin
 end;
 
 
-function Tfrm_NxToolsMain.GetJustPathAlias(aAlisPath: string): string;
+//function Tfrm_NxToolsMain.GetJustPathAlias(aAlisPath: string): string;
+//var
+//  beginPos: Integer;
+//  endPos: integer;
+//begin
+//  beginPos := Pos('(', aAlisPath) + 1;
+//  endPos := Pos(')', aAlisPath);
+//  if beginPos > 0 then
+//    Result := Copy(aAlisPath, beginPos, endPos - beginPos) + '\'
+//  else
+//    Result := aAlisPath+'\';
+//end;
+
+
+function Tfrm_NxToolsMain.GetAliasName(s: string): string;
 var
-  beginPos: Integer;
-  endPos: integer;
+  i: byte;
 begin
-  beginPos := Pos('(', aAlisPath) + 1;
-  endPos := Pos(')', aAlisPath);
-  if beginPos > 0 then
-    Result := Copy(aAlisPath, beginPos, endPos - beginPos) + '\'
+  i := Pos('|', s);
+  if i = 0 then
+    result := 'Error'
   else
-    Result := aAlisPath+'\';
+    result := LeftStr(s, i - 1); // alias name
 end;
+
+
+function Tfrm_NxToolsMain.GetAliasPath(s: string): string;
+var
+  i: byte;
+begin
+  i := Pos('|', s);
+  if i = 0 then
+    result := 'Error'
+  else begin
+    result := RightStr(s, Length(s) - i); // alias path
+  end;
+end;
+
 
 
 procedure Tfrm_NxToolsMain.DatabaseToolsFFOnDestroyFloat(Sender: TObject);
@@ -2102,7 +2133,7 @@ procedure Tfrm_NxToolsMain.CreateSQLWindow(aNode: tTreeNode);
 
 begin
 {$IFDEF DEBUG}
-  showmessage('msg 2062-b. InSQL: ' + aNode.Text);
+  showmessage('msg 2133-b. InSQL: ' + aNode.Text);
 {$ENDIF}
   inc(DockingFormsInfo.NumSqlForms);
   SetLength(fSQLArrayDockForm, DockingFormsInfo.NumSqlForms+1);
@@ -2144,7 +2175,7 @@ begin
   if rNode.Level = 1 then
     rNode := rNode.Parent;
 {$IFDEF DEBUG}
-  showmessage('msg 25104-a. In Create SQL: '+rNode.text);
+  showmessage('msg 2175-a. In Create SQL: '+rNode.text);
 {$ENDIF}
   CreateSQLWindow(rNode);
   SetupTreeViewTableFields(rNode);
@@ -2309,15 +2340,14 @@ function Tfrm_NxToolsMain.SetServerTransport: TTransportUsed;
     except
       on E : Exception do
         begin
-          ShowMessage('Msg:2269-Error Setting Named Pipe Transport'+#10+#13+E.Message);
+          ShowMessage('Msg:2312-Error Setting Named Pipe Transport'+#10+#13+E.Message);
         end;
     end;
   end;
 
   procedure ifLocalServer;
   begin
-    dm_DataMod.nxSession.ServerEngine := dm_DataMod.nxsrvrngn_Local;
-//    dm_DataMod.nxSession.Open;
+    dm_DataMod.nxSession.ServerEngine := dm_DataMod.nxsrvrngn_LocalDb;
     result := tranLocalServer;
   end;
 
@@ -2345,7 +2375,7 @@ begin
       ifLocalServer;
   except
     result := tranError;
-    MessageDlg('Msg 2305-Error Setting up Transport!', mtError, [mbOK], 0);
+    MessageDlg('Msg 2347-Error Setting up Transport!', mtError, [mbOK], 0);
   end;
   setEnableTransportBtns(true);
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetServerTransport' );{$ENDIF}
@@ -2364,7 +2394,7 @@ begin
 
     if gProjectInfo.ActiveTrans = tranLocalServer then begin
       if ExtractAliasAndPath(String(gProjectInfo.ActiveAlias), aAlias, aPath) then
-        MessageDlg('msg 2324-Could NOT extract Alias and Path', mtError, [mbOK],0);
+        MessageDlg('msg 2366-Could NOT extract Alias and Path', mtError, [mbOK],0);
       aDatabase.AliasPath := aPath;
       aDatabase.Session := dm_DataMod.nxsn_SqlTools;
     end
@@ -2406,37 +2436,35 @@ begin
   tranResult := SetServerTransport;
   if tranResult in [tranError, tranNone] then begin
     gProjectInfo.ActiveTrans := tranResult;
-    MessageDlg('msg 2366-Could NOT open a transport!', mtError, [mbOK], 0);
+    MessageDlg('msg 2408-Could NOT open a transport!', mtError, [mbOK], 0);
     Exit;
   end;
   try
-//    gProjectInfo.Alias := '';
-
     case gProjectInfo.ActiveTrans of
       tranWinSock,
       tranNamePipe: begin
         dm_DataMod.nxRemoteServerEngine.Open;
         dm_DataMod.nxSession.Open;
+        if   (lst_ServerListBox.ItemIndex > -1) then
+          gProjectInfo.ActiveServer := ShortString(lst_ServerListBox.Items[lst_ServerListBox.ItemIndex])
+        else
+          gProjectInfo.ActiveServer := '';
       end;
 
       tranLocalServer: begin
         dm_DataMod.nxsqlngn_Local.Open;
         dm_DataMod.nxSession.Open;
+        gProjectInfo.ActiveServer := dm_DataMod.nxsrvrngn_LocalDb.Name;
       end;
 
       else begin
         Exit;
       end;
     end;
-//    SetAlias;
-    if lst_ServerListBox.ItemIndex > -1 then
-      gProjectInfo.ActiveServer := ShortString(lst_ServerListBox.Items[lst_ServerListBox.ItemIndex])
-    else
-      gProjectInfo.ActiveServer := '';
   except
     on E : Exception do
       begin
-        ShowMessage('Msg 2396-Could not Open Server engine:' + #13+#10+ E.Message);
+        ShowMessage('Msg 2436-Could not Open Server engine:' + #13+#10+ E.Message);
       end;
   end;
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetServer' );{$ENDIF}
@@ -2446,7 +2474,7 @@ end;
 procedure Tfrm_NxToolsMain.lst_ServerListBox1Click(Sender: TObject);
 begin
   if (length(fSQLArrayDockForm) > 0) or (length(fTblArrayDockForm) > 0) then
-    if (MessageDlg('2406-Changing Servers will close all opened sql and table forms.'+#13+#10+
+    if (MessageDlg('2449-Changing Servers will close all opened sql and table forms.'+#13+#10+
                    'Continue?', mtWarning, [mbYes, mbNo], 0) in [mrYes, mrNone]) then begin
       SaveSqlFormEditors;
       FreeSQLandTableForms;
@@ -2490,18 +2518,19 @@ begin
     fLocalAliasPaths.Clear;
 
   setEnableTransportBtns(False);
-
   try
     try
       if FileExists(gGobalVarClass.AlisesFileForLocalServer) then
       begin
         fLocalAliasPaths.LoadFromFile(gGobalVarClass.AlisesFileForLocalServer);
         addAliasesToLocalServer;
+        SetServer;
+        SetupTreeViewAliasTables;
       end
       else
-        MessageDlg('msg 2483-The local db path file does not exist.', mtWarning, [mbOK], 0);
+        MessageDlg('msg 2503-The local db path file does not exist.', mtWarning, [mbOK], 0);
     except
-      MessageDlg('msg 2485-No Saved Local Db''s to open.'+#13+'Add a local Db using the File Menu', mtError, [mbOk],0);
+      MessageDlg('msg 2505-No Saved Local Db''s to open.'+#13+'Add a local Db using the File Menu', mtError, [mbOk],0);
     end;
   finally
     btn_LocalServer.Down := True;
@@ -2652,7 +2681,7 @@ begin
 
         rNodeObjectPtr^.DataBase.Session := dm_DataMod.nxSession;
         if gProjectInfo.ActiveTrans = tranLocalServer then begin
-          rNodeObjectPtr^.DataBase.AliasPath := GetJustPathAlias(fAlias[Aindex]);
+          rNodeObjectPtr^.DataBase.AliasPath :=  GetAliasPath(fAlias[Aindex]);
         end
         else
           rNodeObjectPtr^.DataBase.AliasName := fAlias[Aindex];
