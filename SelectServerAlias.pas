@@ -9,7 +9,7 @@ uses
 
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls,
 
-  Data.DB, Global,
+  Data.DB, Global, GlobalVars,
 
   JvExComCtrls, JvListView,
 

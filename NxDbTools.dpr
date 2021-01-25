@@ -24,7 +24,8 @@ uses
   FontStuffTest in 'FontStuffTest.pas' {Form1},
   NxDbToolsDbEvolution_1 in 'NxDbToolsDbEvolution_1.pas',
   CardHelper in 'CardHelper.pas',
-  SelectServerAlias in 'SelectServerAlias.pas' {GetServersAlias};
+  SelectServerAlias in 'SelectServerAlias.pas' {GetServersAlias},
+  GlobalVars in 'GlobalVars.pas';
 
 {$R *.res}
 

@@ -14,7 +14,7 @@ uses
   Vcl.Imaging.pngimage, Vcl.PlatformDefaultStyleActnCtrls, Vcl.ActnMan,
   Vcl.ActnList, Vcl.Mask, Vcl.AppEvnts, Vcl.CheckLst,
 
-  adpMRU, SBPro, gemCustomButton, gemArrow,
+  adpMRU, SBPro, gemCustomButton, gemArrow,  MSspecialFolders,
 
   JvBaseDlg, JvWinDialogs, JvImageList, JvFormPlacement, JvComponentBase,
   JvAppStorage, JvAppXMLStorage, JvExControls, JvXPCore, JvXPButtons, JvPanel,
@@ -33,9 +33,9 @@ uses
 
   nxsdTypes, nxsdServerEngine, nxdb,
 
-  Global, floating, TableView, SQLView
+  Global, floating, TableView, SQLView, GlobalVars, JvComputerInfoEx
 
-  {$IFDEF  USE_CODESITE}, CodeSiteLogging{$ENDIF};
+  {$IFDEF  USE_CODESITE}, CodeSiteLogging {$ENDIF};
 
 const
   FontLabelArray: Array[tSqlFontType] of String =
@@ -323,6 +323,7 @@ type
     act_CollapseTreeTF                   : TAction;
     btn_AddSelectedToProject: TJvXPButton;
     act_AddSelectedToPrj: TAction;
+    jvcmptrnfx_1: TJvComputerInfoEx;
 
     procedure FormCreate(Sender: TObject);
     procedure btn__SplitViewOpenCloseClick(Sender: TObject);
@@ -431,6 +432,7 @@ type
 //    fProjectInfo       : TProjectInfo;
 //    fPasFileLoc        : tStr255;
     fFormShowing       : Boolean;
+    GetSpecialFolders  : TGEMSystemFolders;
 
     // floating forms
     function GetSQLCommandsFF: TFloatingForm;
@@ -533,7 +535,7 @@ var
 implementation
 
 Uses
-  DataMod, //MSspecialFolders,
+  DataMod,
   GemINI, GetPrjList,
   GEMUseFullRoutines, Dimmer, frm_GetAliasPath, MoveResizeComponents,
   SQLChildFormChangeInterface, FontStuffTest;
@@ -1203,12 +1205,13 @@ begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormCreate' );{$ENDIF}
   {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part A1' );{$ENDIF}
 
+  SetProgramPaths;
   fFormShowing := true;
-
+  GetSpecialFolders := TGEMSystemFolders.create;
+  GetSpecialFolders.TrailingPathDelimiter := false;
 //  fTheProjects := TStringList.Create;
   {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part A2' );{$ENDIF}
   gGobalVarClass.Create;
-//  SetProgramPaths;
   {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part B' );{$ENDIF}
 
   GEMAppUpdater.UpdaterApplicationLocName := ExtractFileDir(ParamStr(0)) + '\SRSDAppUpdater.exe';
@@ -1258,6 +1261,7 @@ procedure Tfrm_NxToolsMain.FormDestroy(Sender: TObject);
 begin
   FreeAndNil(gGobalVarClass);
   FreeAndNil(gProjectInfo);
+  FreeAndNil(GetSpecialFolders);
   if fLocalAliasPaths <> nil then
     FreeAndNil(fLocalAliasPaths);
   DestroyFormMenuItems;

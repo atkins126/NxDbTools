@@ -238,7 +238,8 @@ var
 
 implementation
 uses
-  NxToolsMain, nxllTransport, GEMUseFullRoutines, DataMod, SelectServerAlias;
+  NxToolsMain, nxllTransport, GEMUseFullRoutines, DataMod, SelectServerAlias,
+  GlobalVars;
 {$R *.dfm}
 {.$R Moreimages.res}
 

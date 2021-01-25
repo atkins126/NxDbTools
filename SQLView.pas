@@ -13,7 +13,8 @@ uses
   Vcl.DBCtrls, Vcl.ExtCtrls, Vcl.Buttons, Vcl.Grids, Vcl.DBGrids, Vcl.Forms,
   Vcl.Graphics, Vcl.Menus, Vcl.ComCtrls,
 
-  amSplitter, SBPro, GEMProcessTimer, adpMRU, Global,
+  amSplitter, SBPro, GEMProcessTimer, adpMRU, Global, MSspecialFolders,
+  GlobalVars,
 
 
   Data.DB, nxdb,
@@ -201,12 +202,13 @@ type
     fSQLSaved: Boolean;
     fSQLFileName: string;
 
-    fDelphiSaved   : Boolean;
-    fDelphiFileName: string;
-    fPrjPath       : string;
-    fPasFileSaveLoc: string;
-    fNodeDbIndex   : integer;
-    fDbTreeNode    : tTreeNode;
+    fDelphiSaved      : Boolean;
+    fDelphiFileName   : string;
+    fPrjPath          : string;
+    fPasFileSaveLoc   : string;
+    fNodeDbIndex      : integer;
+    fDbTreeNode       : tTreeNode;
+    GetSpecialFolders : TGEMSystemFolders;
 
     procedure PrintMemo(aHighlighter: TPrintHighLighter; Lines: TStrings);
     procedure SetEditorsChangesStatus;
@@ -239,7 +241,7 @@ uses
   DockDemo.Utilities,
   DataMod,
   Winapi.SHFolder,
-  MSspecialFolders,
+
   GEMUseFullRoutines;
 
 {$R *.dfm}
@@ -408,9 +410,12 @@ procedure Tfrm_SQLView.SaveEditorFileAs(EditorType: TEditorUsed);
         dlgSave_Memos.FileName := stsbrpr_StatusBar.Panels[9].Text;
         dlgSave_Memos.DefaultExt := 'pas';
         dlgSave_Memos.Filter := 'pas|*.pas';
-        if DirectoryExists(String(fPasFileSaveLoc)) then
+        if DirectoryExists(String(fPasFileSaveLoc)) then begin
 //        if (fProjectInfo.PasFileSaveLoc = '') or (fProjectInfo.PasFileSaveLoc = 'None') then
-          dlgSave_Memos.InitialDir := GetSpecialFolderPath(CSIDL_PERSONAL, false)
+          GetSpecialFolders := TGEMSystemFolders.Create;
+          dlgSave_Memos.InitialDir := GetSpecialFolders.PERSONAL;
+          FreeAndNil(GetSpecialFolders);
+        end
         else
           dlgSave_Memos.InitialDir := string(fPasFileSaveLoc);
       end;

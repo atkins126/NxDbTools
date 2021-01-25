@@ -106,7 +106,8 @@ uses
   NxToolsMain,
   Global,
   DockDemo.Utilities,
-  DataMod;
+  DataMod,
+  GlobalVars;
 
 const
   TableFilterSectionPrefix = 'Tbl';

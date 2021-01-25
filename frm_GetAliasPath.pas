@@ -9,10 +9,13 @@ uses
 
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
 
+  MSspecialFolders,
+
   JvBaseDlg, JvSelectDirectory, Vcl.Buttons, JvComponentBase, JvFormPlacement;
 
 type
   TAliasPath = class(TForm)
+
     lbl_Alias: TLabel;
     lbl_theAlias: TLabel;
     lbl_thePath: TLabel;
@@ -26,8 +29,10 @@ type
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
-    fAlias: string;
-    fAliasPath: string;
+    fAlias            : string;
+    fAliasPath        : string;
+    GetSpecialFolders : TGEMSystemFolders;
+
     function IsNx1FileInFolder(aAliasFolder: string): Boolean;
   public
     { Public declarations }
@@ -43,7 +48,7 @@ var
 
 implementation
 uses
-  NxToolsMain, MSspecialFolders,
+  NxToolsMain,
   GEMUseFullRoutines, Global;
 
 {$R *.dfm}
@@ -76,8 +81,11 @@ end;
 
 procedure TAliasPath.FormCreate(Sender: TObject);
 begin
+  GetSpecialFolders := TGEMSystemFolders.Create;
   DbFolderAliasMsg := '';
-  jvslctdrctry_Folder.InitialDir := GetSpecialFolderPath(CSIDL_PERSONAL, false);
+  jvslctdrctry_Folder.InitialDir := GetSpecialFolders.Personal;
+  FreeAndNil(GetSpecialFolders);
+
 end;
 
 
