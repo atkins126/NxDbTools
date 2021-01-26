@@ -68,7 +68,7 @@ const
 type
 
 {TGobalVarClass============================================================= }
-  TGobalVarClass = class
+  TGobalVarClass = Record
     fSpecialFolders             : TGEMSystemFolders;
     fPathAndFileIni             : string;
     fPrjSetupCompomentsIni      : string;
@@ -81,14 +81,15 @@ type
     fAlisesFileForLocalServer   : string;
     fNxSQLViewerDataIniFile     : tGemINI;
     fAppPath                    : string;// := GetAppSettingsPath;
-    SetMainPath                 : string;
+    fPersonalFolder             : string;
+//    SetMainPath                 : string;
   private
     procedure SetProgramPaths;
 //    function getWinSpecialFolder(CSIDLFolder : integer; IncludeBackSlash: boolean) : string;
   public
-    constructor Create;
-    destructor Destory;
-  published
+    constructor Create(aFileName: string);
+    procedure  Destory;
+//  published
     property AppPath                    : string read fAppPath;
     property PathAndFileIni             : string read fPathAndFileIni;
     property PrjSetupCompomentsIni      : string read fPrjSetupCompomentsIni;
@@ -99,86 +100,116 @@ type
     property UpdateInstallPath          : string read fUpdateInstallPath;
     property SqlFontStylesSaveFilePath  : string read fSqlFontStylesSaveFilePath;   //keep
     property AlisesFileForLocalServer   : string read fAlisesFileForLocalServer;
+    property PersonalFolder             : string read fPersonalFolder;
   end;
 
 var
   gLoclDataStore : string;
 
+//function SetaProgramPaths: string;
+
+
 implementation
 
 
-function SetaProgramPaths: string;
-
+function GetPersonalFolderForPrjDefault: string;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( 'SetaProgramPaths' );{$ENDIF}
+
 {$IFDEF USE_CODESITE}CodeSite.SendMsg('GlobalVars A. in SetProgramPaths'); {$ENDIF}
   result := GetWinSpecialFolder(CSIDL_PERSONAL, false);
 {$IFDEF USE_CODESITE}CodeSite.SendMsg('GlobalVars B. in SetProgramPaths: '+ result); {$ENDIF}
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( 'SetaProgramPaths' );{$ENDIF}
 end;
 
-
-{ TGobalVarClass ==============================================================}
-{ TGobalVarClass ==============================================================}
-{ TGobalVarClass ==============================================================}
-
-constructor TGobalVarClass.Create;
+function GetAppFolderForAppSettings: string;
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TGobalVarClass.Create' );{$ENDIF}
-//  fSpecialFolders := TGEMSystemFolders.Create;
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( 'SetaProgramPaths' );{$ENDIF}
+
+{$IFDEF USE_CODESITE}CodeSite.SendMsg('GlobalVars A. in SetProgramPaths'); {$ENDIF}
+  result := GetWinSpecialFolder(CSIDL_APPDATA, false);
+{$IFDEF USE_CODESITE}CodeSite.SendMsg('GlobalVars B. in SetProgramPaths: '+ result); {$ENDIF}
+
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( 'SetaProgramPaths' );{$ENDIF}
+end;
+
+{ TGobalVarClass ==============================================================}
+{ TGobalVarClass ==============================================================}
+{ TGobalVarClass ==============================================================}
+
+constructor TGobalVarClass.Create(aFileName: string);
+begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( 'TGobalVarClass.Create' );{$ENDIF}
+
+  fSpecialFolders := TGEMSystemFolders.Create;
 {$IFDEF USE_CODESITE}CodeSite.SendMsg('before SetaProgramPaths'); {$ENDIF}
-   SetMainPath := SetaProgramPaths;
+   fAppPath :=  trim(GetAppFolderForAppSettings);
+
+   fPersonalFolder := Trim(GetPersonalFolderForPrjDefault);
 {$IFDEF USE_CODESITE}CodeSite.SendMsg('before Create Ini file: '+ fPathAndFileIni); {$ENDIF}
+  SetProgramPaths;
   fNxSQLViewerDataIniFile := tGemINI.Create(fPathAndFileIni);
   {$IFDEF USE_CODESITE}CodeSite.SendMsg('after Create Ini file'); {$ENDIF}
 
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TGobalVarClass.Create' );{$ENDIF}
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( 'TGobalVarClass.Create' );{$ENDIF}
 end;
 
 
-destructor TGobalVarClass.Destory;
+procedure TGobalVarClass.Destory;
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TGobalVarClass.Destory' );{$ENDIF}
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( 'TGobalVarClass.Destory' );{$ENDIF}
 
   FreeAndNil(fNxSQLViewerDataIniFile);
   FreeAndNil(fSpecialFolders);
 
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TGobalVarClass.Destory' );{$ENDIF}
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( 'TGobalVarClass.Destory' );{$ENDIF}
 end;
 
 
 procedure TGobalVarClass.SetProgramPaths;
+
+  procedure SetAppFilesPaths;
+  begin
+    fSqlFontStylesSaveFilePath := fAppPath + cSqlFontFileName;
+    fPathAndFileIni            := fAppPath + cNxTableViewerIni;
+
+    fPrjSetupCompomentsIni     := fAppPath + cPrjSetUpComponents;
+    fDelphiDbDefaultPath       := fAppPath + cDelphiSqToolsDbPath;
+    fPathAndFileAtFormLocSize  := fAppPath + cFormLocSizeDef;
+
+    fAlisesFileForLocalServer  := fAppPath + cLocalServerAliases;
+    fMRUFile                   := fAppPath + cMRUFileName;
+  end;
+
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TGobalVarClass.SetProgramPaths' );{$ENDIF}
-  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'before fapp path' );{$ENDIF}
-  {$IFDEF USE_CODESITE}CodeSite.SendMsg('before get gLoclDataStore'); {$ENDIF}
-  var tempstr: string := SetMainPath;
-  {$IFDEF USE_CODESITE}CodeSite.SendMsg('After get gLoclDataStore: '+tempstr); {$ENDIF}
-  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'TempStr: '+tempstr );{$ENDIF}
-  fAppPath                  :=  tempstr+ cSRSDpath;
-  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'after fapp pat' );{$ENDIF}
+  if not DirectoryExists(fAppPath) then
+  begin
+    if not CreateDir(fAppPath) then
+      MessageDlg('Could not Create the App Path folder. Error:'+IntToStr(GetLastError)+ #13+#10+
+                  'Folder: '+ fAppPath , mtError, [mbOK], 0)
+    else
+      SetAppFilesPaths;
+  end
+  else
+    SetAppFilesPaths;
 
-  fDefaultPathForPrjsFolder := fAppPath + cDefaultPathForPrjs + '\';
-  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'set 2 paths' );{$ENDIF}
 
-  fMRUFile                  := fAppPath + cMRUFileName;
-  fUpdateInstallPath        := fAppPath + cUpdateInstallPath;
-  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'set next 2 paths' );{$ENDIF}
+  fDefaultPathForPrjsFolder := fPersonalFolder + cDefaultPathForPrjs + '\';
+  if not DirectoryExists(fDefaultPathForPrjsFolder) then
+    if not ForceDirectories(fDefaultPathForPrjsFolder) then
+      MessageDlg('Could Default project folder. Error:'+IntToStr(GetLastError), mtError, [mbOK], 0);
 
-  ForceDirectories(AppPath);
-  ForceDirectories(fDefaultPathForPrjsFolder);
-  ForceDirectories(fUpdateInstallPath);
-  {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Force  3 paths' );{$ENDIF}
 
-//  fIniNxSQLPathFile          := fDefaultPathForPrjsFolder + cFilterIniFiles; // filters for a project
-  fSqlFontStylesSaveFilePath := AppPath + cSqlFontFileName;
-  fPathAndFileIni            := AppPath + cNxTableViewerIni;
+  fUpdateInstallPath := fAppPath + cUpdateInstallPath;
+  if not DirectoryExists(fUpdateInstallPath) then
+    if not ForceDirectories(fUpdateInstallPath) then
+      MessageDlg('Could create Updater folder. Error:'+IntToStr(GetLastError), mtError, [mbOK], 0);
 
-  fPrjSetupCompomentsIni     := AppPath + cPrjSetUpComponents;
-  fDelphiDbDefaultPath       := AppPath + cDelphiSqToolsDbPath;
-  fPathAndFileAtFormLocSize  := AppPath + cFormLocSizeDef;
-
-  fAlisesFileForLocalServer  := fAppPath + cLocalServerAliases;
-
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TGobalVarClass.SetProgramPaths' );{$ENDIF}
 end;
 
+
+
 end.
+
+

@@ -1205,13 +1205,14 @@ begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormCreate' );{$ENDIF}
   {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part A1' );{$ENDIF}
 
-  SetProgramPaths;
-  fFormShowing := true;
   GetSpecialFolders := TGEMSystemFolders.create;
   GetSpecialFolders.TrailingPathDelimiter := false;
+
+//  SetProgramPaths;
+  fFormShowing := true;
 //  fTheProjects := TStringList.Create;
   {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part A2' );{$ENDIF}
-  gGobalVarClass.Create;
+  gGobalVarClass.Create ('shitr');    //('c:\Users\Gary\Documents');
   {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part B' );{$ENDIF}
 
   GEMAppUpdater.UpdaterApplicationLocName := ExtractFileDir(ParamStr(0)) + '\SRSDAppUpdater.exe';
@@ -1259,7 +1260,8 @@ end;
 
 procedure Tfrm_NxToolsMain.FormDestroy(Sender: TObject);
 begin
-  FreeAndNil(gGobalVarClass);
+  FreeBtns;
+  gGobalVarClass.Destory;
   FreeAndNil(gProjectInfo);
   FreeAndNil(GetSpecialFolders);
   if fLocalAliasPaths <> nil then

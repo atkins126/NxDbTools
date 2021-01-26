@@ -85,7 +85,6 @@ begin
   DbFolderAliasMsg := '';
   jvslctdrctry_Folder.InitialDir := GetSpecialFolders.Personal;
   FreeAndNil(GetSpecialFolders);
-
 end;
 
 

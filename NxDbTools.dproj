@@ -176,26 +176,29 @@
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=5.0.0.1;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=$(MSBuildProjectName);ProductVersion=5.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=5.0.0.2;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=$(MSBuildProjectName);ProductVersion=5.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);LastCompiledTime=2021/01/26 11:20:46</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Build>1</VerInfo_Build>
+        <VerInfo_Build>2</VerInfo_Build>
         <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
         <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
         <VerInfo_MajorVer>5</VerInfo_MajorVer>
+        <DCC_Define>madExcept;LeakChecking;$(DCC_Define)</DCC_Define>
+        <DCC_MapFile>3</DCC_MapFile>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=5.0.0.389;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=5.0.0;Comments=;LastCompiledTime=2021/01/25 15:42:17</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=5.0.0.408;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=5.0.0;Comments=;LastCompiledTime=2021/01/26 11:11:38</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <UWP_DelphiLogo44>Gylphs\44NexusDBTableViewer.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>Gylphs\150NexysDBTableViewer.png</UWP_DelphiLogo150>
         <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
         <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
-        <VerInfo_Build>389</VerInfo_Build>
+        <VerInfo_Build>408</VerInfo_Build>
         <VerInfo_MajorVer>5</VerInfo_MajorVer>
-        <DCC_Define>NXSQLTOOLS;$(DCC_Define)</DCC_Define>
+        <DCC_Define>NXSQLTOOLS;madExcept;LeakChecking;$(DCC_Define)</DCC_Define>
         <Icon_MainIcon>NxDbTools_Icon2.ico</Icon_MainIcon>
+        <DCC_MapFile>3</DCC_MapFile>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">

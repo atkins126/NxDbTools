@@ -219,6 +219,7 @@ end;
 
 procedure Tfrm_TableView.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
+//  FreeAndNil(DragObject);
   CanClose := true;
 end;
 

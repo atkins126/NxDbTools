@@ -355,7 +355,7 @@ destructor TJvPanel.Destroy;
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'Destroy' );{$ENDIF}
 
-  SQLExtended.Free;
+  FreeAndNil(SQLExtended);
   inherited;
 
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Destroy' );{$ENDIF}

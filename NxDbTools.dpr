@@ -2,6 +2,11 @@
 program NxDbTools;
 
 uses
+  madExcept,
+  madLinkDisAsm,
+  madListHardware,
+  madListProcesses,
+  madListModules,
   Vcl.Forms,
   TableView in 'TableView.pas' {frm_TableView},
   SQLView in 'SQLView.pas' {frm_SQLView},
