@@ -39,8 +39,6 @@ object frm_SelectProject: Tfrm_SelectProject
       Caption = 'CreateSelectPrjDb'
       CardIndex = 0
       TabOrder = 0
-      ExplicitWidth = 96
-      ExplicitHeight = 87
       object Label3: TLabel
         Left = 0
         Top = 2

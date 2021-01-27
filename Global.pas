@@ -40,7 +40,7 @@ type
 
   TEditAttri = (eaKeyAttri, eaCommentAttri, eaNumberAttri, eaSQLEditor,
                 eaTableNameAttri, eaFunctionAttri);
-  TDockingFormType = (TSQLForm, TTblForm, TNoForm);
+
 
   tStr95  = string[95];
   tStr45  = string[45];
@@ -100,8 +100,8 @@ type
 //    procedure SetDefaultPasSqlFileLoc(const Value: string);
 //    procedure SetDataSource(const Value: TJvDataSource);
   public
-    constructor Create(aPrjName: string; aDataSet: TDataSet);
-    destructor Destory;
+    constructor Create(aPrjName: string; aDataSet: TDataSet); overload;
+    destructor Destory; overload;
     procedure BeginUpdate;
     procedure EndUpdate;
     procedure ClearPrj;
@@ -354,8 +354,8 @@ end;
 destructor TJvPanel.Destroy;
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'Destroy' );{$ENDIF}
-
-  FreeAndNil(SQLExtended);
+   SQLExtended.Free;
+//  FreeAndNil(SQLExtended);
   inherited;
 
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Destroy' );{$ENDIF}
@@ -1007,7 +1007,7 @@ end;
 constructor TProjectInfo.Create(aPrjName: string; aDataSet: TDataSet);
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.Create' );{$ENDIF}
-
+//  inherited;
   fDataSource := tJvDataSource.Create(Nil);
   fPrjName := ShortString(aPrjName);
   fDataSource.DataSet := aDataSet;
@@ -1025,6 +1025,7 @@ begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TProjectInfo.Destory' );{$ENDIF}
 
   FreeAndNil(fDataSource);
+  inherited;
 
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TProjectInfo.Destory' );{$ENDIF}
 end;

@@ -68,7 +68,7 @@ const
 type
 
 {TGobalVarClass============================================================= }
-  TGobalVarClass = Record
+  TGobalVarClass = record
     fSpecialFolders             : TGEMSystemFolders;
     fPathAndFileIni             : string;
     fPrjSetupCompomentsIni      : string;
@@ -87,8 +87,8 @@ type
     procedure SetProgramPaths;
 //    function getWinSpecialFolder(CSIDLFolder : integer; IncludeBackSlash: boolean) : string;
   public
-    constructor Create(aFileName: string);
-    procedure  Destory;
+    constructor Create(aFileName: string); overload;
+    procedure Destroy; overload;
 //  published
     property AppPath                    : string read fAppPath;
     property PathAndFileIni             : string read fPathAndFileIni;
@@ -141,7 +141,7 @@ end;
 constructor TGobalVarClass.Create(aFileName: string);
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( 'TGobalVarClass.Create' );{$ENDIF}
-
+//  inherited;  // Call the parent Create method
   fSpecialFolders := TGEMSystemFolders.Create;
 {$IFDEF USE_CODESITE}CodeSite.SendMsg('before SetaProgramPaths'); {$ENDIF}
    fAppPath :=  trim(GetAppFolderForAppSettings);
@@ -156,13 +156,13 @@ begin
 end;
 
 
-procedure TGobalVarClass.Destory;
+procedure TGobalVarClass.Destroy;
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( 'TGobalVarClass.Destory' );{$ENDIF}
 
   FreeAndNil(fNxSQLViewerDataIniFile);
   FreeAndNil(fSpecialFolders);
-
+  inherited;
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( 'TGobalVarClass.Destory' );{$ENDIF}
 end;
 

@@ -769,13 +769,10 @@ begin
   lb_ServerNames.Items.Clear;
   jvlstbx_AlaisNames.Items.Clear;
 
-  with dm_DataMod do
-  begin
-    nxwint_SqlToolsTrans.close;
-    nxsrvrngn_Local.close;
-    nxnmdp_trnsprt.Close;
-    nxrse_SqlTools.Close;
-  end;
+  dm_DataMod.nxwint_SqlToolsTrans.close;
+  dm_DataMod.nxsrvrngn_Local.close;
+  dm_DataMod.nxnmdp_trnsprt.Close;
+  dm_DataMod.nxrse_SqlTools.Close;
 
   act_ConnectBtn.Enabled                := False;
   act_ConnectBtn.ImageIndex             := 8;
@@ -790,9 +787,6 @@ begin
     1: lbl_CaptionForServerLb.Caption := 'Select Named Pipe Server:';
     2: lbl_CaptionForServerLb.Caption := 'Select Tcpip Server:';
   end;
-
-
-
 
   btn_ResetLocalDbPath.Enabled         :=  jvrdgrp_ServerType.ItemIndex = 0;
   lbl_CaptionForLocalDbPath.Enabled    :=  jvrdgrp_ServerType.ItemIndex = 0;
@@ -1206,7 +1200,7 @@ begin
 
 
   CanClose := JvLED1.Status;
-//  IniSaveComponents(PrjSetupCompomentsIni, fComponentIni);//, Ext_Section:String='', false);
+  IniSaveComponents(gGobalVarClass.PrjSetupCompomentsIni, fComponentIni);//, Ext_Section:String='', false);
 
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'FormCloseQuery' );{$ENDIF}
 end;
@@ -1423,7 +1417,7 @@ procedure Tfrm_SelectProject.FormShow(Sender: TObject);
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormShow' );{$ENDIF}
 
-//  IniLoadComponents(PrjSetupCompomentsIni, fComponentIni, false);
+  IniLoadComponents(gGobalVarClass.PrjSetupCompomentsIni, fComponentIni, false);
   SetDialogServerType;
   CheckUserServerSelection(True);
   act_ConnectBtn.Execute;
@@ -1524,20 +1518,17 @@ begin
   end;
 
   try
-    with dm_DataMod do
-    begin
-      s := 'Database - nxdb_SQLBtns';
-      nxdb_SQLBtns.Open;
+    s := 'Database - nxdb_SQLBtns';
+    dm_DataMod.nxdb_SQLBtns.Open;
 
-      s := 'Table - NxSqlButtonsDbT';
-      NxSqlButtonsDbT.Open;
+    s := 'Table - NxSqlButtonsDbT';
+    dm_DataMod.NxSqlButtonsDbT.Open;
 
-      s := 'Table - nxtbl_NxDbSqlToolsPrjs';
-      nxtbl_NxDbSqlToolsPrjs.Open;
+    s := 'Table - nxtbl_NxDbSqlToolsPrjs';
+    dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Open;
 
-      s := 'Table - nxtbl_TransportLUT';
-      nxtbl_TransportLUT.Open;
-    end;
+    s := 'Table - nxtbl_TransportLUT';
+    dm_DataMod.nxtbl_TransportLUT.Open;
 
     act_ConnectBtn.ImageIndex := 9;
     if not dm_DataMod.nxtbl_NxDbSqlToolsPrjs.Active then
