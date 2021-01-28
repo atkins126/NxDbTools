@@ -39,7 +39,7 @@ type
     DbFolderAliasMsg: string;
     function Execute: Boolean;
     property Alias: string read fAlias;
-    property AliasPath: string read fAliasPath;
+    property theAliasPath: string read fAliasPath;
 
   end;
 
@@ -85,7 +85,6 @@ begin
   DbFolderAliasMsg := '';
   jvslctdrctry_Folder.InitialDir := GetSpecialFolders.Personal;
   FreeAndNil(GetSpecialFolders);
-
 end;
 
 
@@ -96,7 +95,7 @@ begin
   begin
     if CountFilesInFolder( ExtractFilePath(aAliasFolder), 'nx1' ) < 1 then
     begin
-      if (MessageDlg('There are not files ending in ''nx1'' '+#10+#13+
+      if (MessageDlg('There are no files ending in ''nx1'' '+#10+#13+
                      ' in the folder. Use the folder anyway?',
              mtWarning, [mbOK, mbCancel], 0) in [mrOk, mrCancel, mrNone]) then
       begin

@@ -51,7 +51,7 @@ const
                                                            'catpan_SetSplitViewAction');
 
 type
-
+  TDockingFormType = (TSQLForm, TTblForm, TNoForm);
   TChangeFontStuff = procedure(aFontStuff: TFontStuff) of object;
 
   TSqlFontParams = record
@@ -988,7 +988,7 @@ procedure Tfrm_NxToolsMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormClose' );{$ENDIF}
 
-  fLocalAliasPaths.Free;
+  //fLocalAliasPaths.Free;
 
 //  IniWriteString(PathAndFileIni, 'DefaultPrj','Path', stsbrpr_StatusBar.Panels[ord(spoDefaultPrjDir)].Text);
 //  FreeAndNil(fTheProjects);
@@ -1205,13 +1205,14 @@ begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormCreate' );{$ENDIF}
   {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part A1' );{$ENDIF}
 
-  SetProgramPaths;
-  fFormShowing := true;
   GetSpecialFolders := TGEMSystemFolders.create;
   GetSpecialFolders.TrailingPathDelimiter := false;
+
+//  SetProgramPaths;
+  fFormShowing := true;
 //  fTheProjects := TStringList.Create;
   {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part A2' );{$ENDIF}
-  gGobalVarClass.Create;
+  gGobalVarClass.Create ('shitr');    //('c:\Users\Gary\Documents');
   {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'Part B' );{$ENDIF}
 
   GEMAppUpdater.UpdaterApplicationLocName := ExtractFileDir(ParamStr(0)) + '\SRSDAppUpdater.exe';
@@ -1259,7 +1260,8 @@ end;
 
 procedure Tfrm_NxToolsMain.FormDestroy(Sender: TObject);
 begin
-  FreeAndNil(gGobalVarClass);
+  FreeBtns;
+  gGobalVarClass.destroy;
   FreeAndNil(gProjectInfo);
   FreeAndNil(GetSpecialFolders);
   if fLocalAliasPaths <> nil then
@@ -1919,8 +1921,7 @@ begin
     if (AliasPath.DbFolderAliasMsg <> 'Error: No ''nx1'' files in folder') then begin
       if FileExists(gGobalVarClass.AlisesFileForLocalServer) then
       begin
-
-        dm_DataMod.nxsrvrngn_LocalDb.AliasHandler.Add(AliasPath.Alias, AliasPath.AliasPath, false);
+        dm_DataMod.nxsrvrngn_LocalDb.AliasHandler.Add(AliasPath.Alias, AliasPath.theAliasPath, false);
       end;
     end;
 end;
@@ -2547,7 +2548,7 @@ end;
 
 procedure Tfrm_NxToolsMain.act_LocalServerUpdate(Sender: TObject);  //fix
 begin
-  act_AddAliasPath.Enabled := gProjectInfo.ActiveTrans = tranLocalServer;   // menu item
+//  act_AddAliasPath.Enabled := gProjectInfo.ActiveTrans = tranLocalServer;   // menu item
 //  act_RemoveAliasPath.Enabled := (gProjectInfo.Transport = tranLocalServer) and  // menu item
 //                                 (lst_AliasListBox.Count > 0);
 
