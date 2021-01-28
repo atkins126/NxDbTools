@@ -446,7 +446,7 @@ object frm_SelectProject: Tfrm_SelectProject
       end
       object lstGemMruList1: tGemMruList
         Left = 2
-        Top = 58
+        Top = 50
         Width = 447
         Height = 351
         MaxNumItems = 15

@@ -1,7 +1,7 @@
 unit GetPrjList;
 
 interface
-{$DEFINE USE_CODESITE}
+{.$DEFINE USE_CODESITE}
 
 uses
   Winapi.Windows, Winapi.Messages,
@@ -960,7 +960,7 @@ begin
     else
       fTransport := tranNone;
   except
-    MessageDlg('msg 882-Could NOT open project due to Db table error.', mtError, [mbOK], 0);
+    MessageDlg('msg 963-Could NOT open project due to Db table error.', mtError, [mbOK], 0);
     Exit;
   end;
   Close;
@@ -1006,7 +1006,7 @@ begin
   {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'before' );{$ENDIF}
       if not gProjectInfo.LoadPropertiesFromTable(fMsg, lstGemMruList1.GetName(lstGemMruList1.ItemIndex)) then
       begin
-        MessageDlg('msg 1014-Could not find project from MRU listing. Select '+#13+#10+
+        MessageDlg('msg 1009-Could not find project from MRU listing. Select '+#13+#10+
                    'another project from then MRU list or use the'+#13+#10+
                    'Db grid to select/create a project.', mtError, [mbOK], 0);
         if (MessageDlg('Remove item from MRU list?', mtWarning, [mbYes, mbNo], 0) = mrYes) then
@@ -1021,7 +1021,7 @@ begin
     pot_PrjGrid:
       if Not gProjectInfo.LoadPropertiesFromTable(fMsg) then
       begin
-        MessageDlg('msg 1029-Could not find project from MRU listing. Used the'+#13+#10+
+        MessageDlg('msg 1024-Could not find project from MRU listing. Used the'+#13+#10+
                    'Db grid to select a project.', mtError, [mbOK], 0);
         fError:= True;
       end
@@ -1030,14 +1030,14 @@ begin
 
     pot_Default: begin
       gProjectInfo.PrjName := ShortString(AnsiRightStr(cthe_DefaultPrjPath, Length(cthe_DefaultPrjPath) - 1));
-      gProjectInfo.PrjPath := ShortString(gGobalVarClass.DefaultPathForPrjsFolder);
+      gProjectInfo.PrjPath := ShortString(gGobalVarClass.AppDefaultPrjPath);
       gProjectInfo.IsDefaultPrj := true;
     end;
   end;
 
   if not FError then begin
     if (gProjectInfo.PrjPath<> '') and (not System.SysUtils.DirectoryExists(string(gProjectInfo.PrjPath))) then
-      if (MessageDlg('msg 1045-Prj. Path does not Exist. Create?', mtWarning, [mbYes, mbNo], 0) in [mrYes, mrNone]) then begin
+      if (MessageDlg('msg 1040-Prj. Path does not Exist. Create?', mtWarning, [mbYes, mbNo], 0) in [mrYes, mrNone]) then begin
         if not System.SysUtils.ForceDirectories(String(gProjectInfo.PrjPath)) then begin
            gProjectInfo.PrjPath := '';
         end;
@@ -1200,7 +1200,7 @@ begin
 
 
   CanClose := JvLED1.Status;
-  IniSaveComponents(gGobalVarClass.PrjSetupCompomentsIni, fComponentIni);//, Ext_Section:String='', false);
+  IniSaveComponents(gGobalVarClass.PrjsSetupCompomentsIni, fComponentIni);//, Ext_Section:String='', false);
 
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'FormCloseQuery' );{$ENDIF}
 end;
@@ -1212,7 +1212,7 @@ var
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormCreate' );{$ENDIF}
 
-  lstGemMruList1.MruListFile := gGobalVarClass.MRUFile;
+  lstGemMruList1.MruListFile := gGobalVarClass.fMRURecentPrjsFile;
   {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'FormCreate A' );{$ENDIF}
   {$IFDEF USE_CODESITE}CodeSite.SendMsg( 'FormCreate B' );{$ENDIF}
   JvFormStorage1.RestoreFormPlacement;
@@ -1417,7 +1417,7 @@ procedure Tfrm_SelectProject.FormShow(Sender: TObject);
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'FormShow' );{$ENDIF}
 
-  IniLoadComponents(gGobalVarClass.PrjSetupCompomentsIni, fComponentIni, false);
+  IniLoadComponents(gGobalVarClass.PrjsSetupCompomentsIni, fComponentIni, false);
   SetDialogServerType;
   CheckUserServerSelection(True);
   act_ConnectBtn.Execute;
@@ -1441,7 +1441,10 @@ begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'jvxpbtn_HaltProgramClick' );{$ENDIF}
 
   if (MessageDlg('mmsg 945-Do want to Halt the program?', mtWarning, [mbYes, mbNo], 0) in [mrYes, mrNone]) then
+  begin
+
     Halt(9);
+  end;
 
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'jvxpbtn_HaltProgramClick' );{$ENDIF}
 end;
@@ -1603,7 +1606,7 @@ procedure Tfrm_SelectProject.btn_ResetLocalDbPathClick(Sender: TObject);
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'btn_ResetLocalDbPathClick' );{$ENDIF}
 
-  edit_LocalDbPath.Text := gGobalVarClass.DelphiDbDefaultPath;
+  edit_LocalDbPath.Text := gGobalVarClass.AppDefaultPrjPath;
 
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'btn_ResetLocalDbPathClick' );{$ENDIF}
 end;

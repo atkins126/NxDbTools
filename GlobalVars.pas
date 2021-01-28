@@ -1,5 +1,5 @@
 unit GlobalVars;
-{$DEFINE USE_CODESITE}
+{.$DEFINE USE_CODESITE}
 interface
 Uses
   Winapi.Messages, Winapi.SHFolder,
@@ -20,23 +20,23 @@ type
 
 
 const
-  WM_SHOWPRJSDIALOG = WM_APP + 321;
+  WM_SHOWPRJSDIALOG         = WM_APP + 321;
+  cBtnDefaultHieght         = 20;   // keep
+  cSRSDpath                 = '\SlickRockSoftwareDesign\NxDelphiSqlTools';
+  cPrjsSetUpComponents      = '\PrjSetUp.ini';         //keep //components values
+  cMRUFileName              = '\MRUPrj.txt';  // ok   recent used projects
+  cLocalServerAliases       = '\LocalDbs.txt'; //  keep
+  cFloatingFormLocationsIni = '\FloatingFromLocations.ini';   // keep  // Floating form location and size memory
 
-  cSRSDpath = '\SlickRockSoftwareDesign\NxDelphiSqlTools';
 
-  cNxTableViewerIni    = '\nxTableViewer.ini';   // keep  // Floating form location and size memory
   cDelphiSqToolsDbPath = '\DelphiSqlToolsDb\';   // keep // Nexus Delphi Sql Tools database
   cFormLocSizeDef      = '\FormLocSizeDefs.xml'; // keep  // Location and size of forms memory
-  cPrjSetUpComponents  = '\PrjSetUp.ini';         //keep //components values
 
-  cBtnDefaultHieght    = 20;   // keep
-  cLocalServerAliases  = '\LocalDbs.txt'; //  keep
   cFilterIniFiles      = '\Filters\Filters.ini';   //keep
   cDefaultPathForPrjs  = '\NxSQL_Prjs'; // keep
   cThe_DefaultPrjPath = '\DefaultPrj'; // ok
 
 //  cPrgFileName = '\ProjectSetup.prj'; // remove
-  cMRUFileName = '\MRUPrj.txt';  // ok   recent used projects
   cUpdateInstallPath = '\Installer'; //ok
 //  cSqlBtnsDbAlias    = 'NxDelphiSqlTools'; // ok
   cSqlFontFileName   = '\EditorFonts.bin'; // ok
@@ -70,18 +70,20 @@ type
 {TGobalVarClass============================================================= }
   TGobalVarClass = record
     fSpecialFolders             : TGEMSystemFolders;
-    fPathAndFileIni             : string;
-    fPrjSetupCompomentsIni      : string;
-    fPathAndFileAtFormLocSize   : string;
-    fDelphiDbDefaultPath        : string;
-    fDefaultPathForPrjsFolder   : string;
-    fMRUFile                    : string;
-    fUpdateInstallPath          : string;
+    fFloatFormLocIni            : string;
+    fPrjsSetupCompomentsIni     : string;
+    fAppPreferences             : string;
     fSqlFontStylesSaveFilePath  : string;   //keep
-    fAlisesFileForLocalServer   : string;
-    fNxSQLViewerDataIniFile     : tGemINI;
+    fAppDefaultPrjPath          : string;
+    fMRURecentPrjsFile          : string;
+    fUpdateInstallPath          : string;
     fAppPath                    : string;// := GetAppSettingsPath;
     fPersonalFolder             : string;
+    fAlisesFileForLocalServer   : string;
+    fAppFormsLocations          : string;
+
+//    fDefaultPathForPrjsFolder   : string;
+    fNxSQLViewerDataIniFile     : tGemINI;
 //    SetMainPath                 : string;
   private
     procedure SetProgramPaths;
@@ -90,17 +92,20 @@ type
     constructor Create(aFileName: string); overload;
     procedure Destroy; overload;
 //  published
-    property AppPath                    : string read fAppPath;
-    property PathAndFileIni             : string read fPathAndFileIni;
-    property PrjSetupCompomentsIni      : string read fPrjSetupCompomentsIni;
-    property PathAndFileAtFormLocSize   : string read fPathAndFileAtFormLocSize;
-    property DelphiDbDefaultPath        : string read fDelphiDbDefaultPath;
-    property DefaultPathForPrjsFolder   : string read fDefaultPathForPrjsFolder;
-    property MRUFile                    : string read fMRUFile;
-    property UpdateInstallPath          : string read fUpdateInstallPath;
-    property SqlFontStylesSaveFilePath  : string read fSqlFontStylesSaveFilePath;   //keep
-    property AlisesFileForLocalServer   : string read fAlisesFileForLocalServer;
+
     property PersonalFolder             : string read fPersonalFolder;
+    property AppPath                    : string read fAppPath;
+    property FloatFormLocIni            : string read fFloatFormLocIni;
+    property PrjsSetupCompomentsIni     : string read fPrjsSetupCompomentsIni;
+    property AppFormsLocations          : string read fAppFormsLocations;
+    property SqlFontStylesSaveFilePath  : string read fSqlFontStylesSaveFilePath;   //keep
+    property AppDefaultPrjPath          : string read fAppDefaultPrjPath;
+    property MRURecentPrjsFile          : string read fMRURecentPrjsFile;
+    property AlisesFileForLocalServer   : string read fAlisesFileForLocalServer;
+    property UpdateInstallPath          : string read fUpdateInstallPath;
+
+
+//    property DefaultPathForPrjsFolder   : string read fDefaultPathForPrjsFolder;
   end;
 
 var
@@ -149,7 +154,7 @@ begin
    fPersonalFolder := Trim(GetPersonalFolderForPrjDefault);
 {$IFDEF USE_CODESITE}CodeSite.SendMsg('before Create Ini file: '+ fPathAndFileIni); {$ENDIF}
   SetProgramPaths;
-  fNxSQLViewerDataIniFile := tGemINI.Create(fPathAndFileIni);
+  fNxSQLViewerDataIniFile := tGemINI.Create(''  );
   {$IFDEF USE_CODESITE}CodeSite.SendMsg('after Create Ini file'); {$ENDIF}
 
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( 'TGobalVarClass.Create' );{$ENDIF}
@@ -172,14 +177,14 @@ procedure TGobalVarClass.SetProgramPaths;
   procedure SetAppFilesPaths;
   begin
     fSqlFontStylesSaveFilePath := fAppPath + cSqlFontFileName;
-    fPathAndFileIni            := fAppPath + cNxTableViewerIni;
-
-    fPrjSetupCompomentsIni     := fAppPath + cPrjSetUpComponents;
-    fDelphiDbDefaultPath       := fAppPath + cDelphiSqToolsDbPath;
-    fPathAndFileAtFormLocSize  := fAppPath + cFormLocSizeDef;
-
+    fMRURecentPrjsFile         := fAppPath + cMRUFileName;
     fAlisesFileForLocalServer  := fAppPath + cLocalServerAliases;
-    fMRUFile                   := fAppPath + cMRUFileName;
+    fFloatFormLocIni           := fAppPath + cFloatingFormLocationsIni;
+    fPrjsSetupCompomentsIni    := fAppPath + cPrjsSetUpComponents;
+    fAppFormsLocations         := fAppPath + cFormLocSizeDef;
+
+//    fDelphiDbDefaultPath       := fAppPath + cDelphiSqToolsDbPath;
+
   end;
 
 begin
@@ -195,9 +200,9 @@ begin
     SetAppFilesPaths;
 
 
-  fDefaultPathForPrjsFolder := fPersonalFolder + cDefaultPathForPrjs + '\';
-  if not DirectoryExists(fDefaultPathForPrjsFolder) then
-    if not ForceDirectories(fDefaultPathForPrjsFolder) then
+  fAppDefaultPrjPath := fPersonalFolder + cDefaultPathForPrjs + '\';
+  if not DirectoryExists(fAppDefaultPrjPath) then
+    if not ForceDirectories(fAppDefaultPrjPath) then
       MessageDlg('Could Default project folder. Error:'+IntToStr(GetLastError), mtError, [mbOK], 0);
 
 
@@ -205,7 +210,6 @@ begin
   if not DirectoryExists(fUpdateInstallPath) then
     if not ForceDirectories(fUpdateInstallPath) then
       MessageDlg('Could create Updater folder. Error:'+IntToStr(GetLastError), mtError, [mbOK], 0);
-
 end;
 
 
