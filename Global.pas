@@ -1,6 +1,6 @@
 unit Global;
 
-{$DEFINE USE_CODESITE}
+{.$DEFINE USE_CODESITE}
 
 interface
 uses
